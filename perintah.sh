@@ -48,3 +48,20 @@ echo "=== 7. PERINTAH GIT STATUS & LOG REPOSITORI ==="
 git -C /home/rep/catatan-eyay status
 git -C /home/rep/catatan-eyay log -n 5 --oneline
 
+echo "=== 8. PERINTAH AUDIT DETAIL SISTEM GENTOO LINUX ==="
+uname -a
+cat /etc/os-release
+cat /etc/gentoo-release 2>/dev/null
+uptime
+lscpu
+free -h
+df -h
+lsblk
+cat /etc/portage/make.conf 2>/dev/null
+eselect profile show 2>/dev/null
+gcc --version | head -n 1
+ld --version | head -n 1
+python3 --version 2>/dev/null
+ruby -v 2>/dev/null
+
+

@@ -25,6 +25,8 @@
 10. [Sesi 10: Penutup & Kesiapan Praktik Mandiri](#sesi-10-penutup--kesiapan-praktik-mandiri)
 11. [Sesi 11: Pembuktian Sesi Baru & Kontinuitas Mode Autopush](#sesi-11-pembuktian-sesi-baru--kontinuitas-mode-autopush)
 12. [Sesi 12: Standarisasi Format 3 Pilar & Berkas `LOG_AKTIVITAS.md`](#sesi-12-standarisasi-format-3-pilar--berkas-log_aktivitasmd)
+13. [Sesi 13: Audit Detail Sistem Gentoo Linux (rep-box / tux)](#sesi-13-audit-detail-sistem-gentoo-linux-rep-box--tux)
+
 
 
 ---
@@ -475,3 +477,17 @@ git push
    * Menjadi ringkasan utama, dashboard proyek, dan navigasi seluruh materi belajar.
 4. **Autopush ke GitHub**:
    * Seluruh berkas baru dan modifikasi langsung di-*push* ke GitHub [rezkyekaputra/catatan-eyay](https://github.com/rezkyekaputra/catatan-eyay) secara konsisten di setiap respon.
+---
+
+## Sesi 13: Audit Detail Sistem Gentoo Linux (rep-box / tux)
+
+### 💬 Permintaan Pengguna:
+> *"sekarang coba cek system gentoo linux saya secara detail"*
+
+### ⚙️ Ringkasan Audit Sistem Gentoo:
+* **OS & Kernel**: Gentoo Base System release 2.18, Kernel `6.12.111-gentoo-ultramin` (SMP, kustom ultramin), Init OpenRC (non-systemd).
+* **Hardware**: Intel Pentium Gold G5500 @ 3.80GHz (2 Cores, 4 Threads), RAM 7.5 GiB (Tersedia 4.9 GiB), SWAP 15 GiB.
+* **Storage**: Disk `/dev/sda` (149.1 GB), Partisi Root `/dev/sda3` (100 GB, terpakai 70 GB / 75%).
+* **Portage Profile & Kompilasi**: Profile `default/linux/amd64/23.0`, Flags `-march=native -O2 -fno-plt -fomit-frame-pointer`, Makeopts `-j4 -l4`, Fitur Ccache dan Parallel-Install aktif dengan konfigurasi hemat I/O untuk HDD.
+* **Toolchain**: GCC 14.3.1, GNU Binutils 2.47, Python 3.14.7, Ruby 2.3.8 (RVM).
+* *(Detail lengkap perintah & output dapat dilihat pada berkas [`LOG_AKTIVITAS.md`](file:///home/rep/catatan-eyay/LOG_AKTIVITAS.md))*.
