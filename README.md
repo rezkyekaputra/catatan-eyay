@@ -410,3 +410,18 @@ git push
 4. **Cara Melanjutkan di Sesi Baru**:
    * Cukup katakan: *"Lanjutkan catatan di folder catatan-eyay dan tetap gunakan autopush"* $\rightarrow$ AI di sesi baru langsung membaca berkas `README.md` dan melanjutkan ritme kerja yang sama.
    * Atau gunakan perintah `/resume` saat membuka `agy` untuk memulihkan seluruh konteks percakapan secara instan.
+
+
+---
+
+## Sesi 10: Penutup & Kesiapan Praktik Mandiri
+
+### 💬 Pernyataan Pengguna:
+> *"oke akan saya peraktekan saya akan exit"*
+
+### 🏁 Status Akhir Sesi:
+* Seluruh audit akun Linux `rep` selesai dan berhasil.
+* Konfigurasi SSL Ruby dan kompilasi GCC 14 telah teruji sukses.
+* Pembuatan kunci SSH Ed25519 dan integrasi ke GitHub `rezkyekaputra` berhasil 100%.
+* Folder `catatan-eyay` aktif terhubung ke GitHub dengan mode *Full Autopilot*.
+* Pengguna siap melakukan uji coba keluar (*exit*) dan memulai sesi baru secara mandiri.
