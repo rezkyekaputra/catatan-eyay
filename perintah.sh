@@ -40,3 +40,11 @@ echo "Sintaks .bashrc OK!"
 # git branch -M main
 # git remote add origin git@github.com:UsernameGitHubAnda/catatan-eyay.git
 # git push -u origin main
+
+echo "=== 6. PERINTAH UJI KONEKSI SSH GITHUB ==="
+ssh -T git@github.com
+
+echo "=== 7. PERINTAH GIT STATUS & LOG REPOSITORI ==="
+git -C /home/rep/catatan-eyay status
+git -C /home/rep/catatan-eyay log -n 5 --oneline
+

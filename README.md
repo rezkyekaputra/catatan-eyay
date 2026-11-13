@@ -5,12 +5,27 @@
 
 ---
 
-## 📌 Daftar Isi
+## 📌 Struktur Berkas di Folder Ini
+* [`README.md`](file:///home/rep/catatan-eyay/README.md): Dokumentasi terstruktur panduan belajar & sesi ringkasan.
+* [`LOG_AKTIVITAS.md`](file:///home/rep/catatan-eyay/LOG_AKTIVITAS.md): Log audit trail mendalam (Pertanyaan Pengguna + Perintah Terminal AI + Respon Lengkap AI).
+* [`perintah.sh`](file:///home/rep/catatan-eyay/perintah.sh): Kumpulan skrip perintah bash yang dapat langsung dieksekusi di terminal.
+
+---
+
+## 📌 Daftar Isi Sesi Belajar
 1. [Sesi 1: Audit & Pengecekan User rep](#sesi-1-audit--pengecekan-user-rep)
 2. [Sesi 2: Pengujian Instalasi Gem `ffi 1.15.5`](#sesi-2-pengujian-instalasi-gem-ffi-1155)
 3. [Sesi 3: Verifikasi .bashrc & Status Berkas cert.pem](#sesi-3-verifikasi-bashrc--status-berkas-certpem)
 4. [Sesi 4: Rekomendasi Gems untuk Website Berbasis Ruby](#sesi-4-rekomendasi-gems-untuk-website-berbasis-ruby)
 5. [Sesi 5: Cara Kerja Antigravity (AGY) & Konfigurasi Git/GitHub](#sesi-5-cara-kerja-antigravity-agy--konfigurasi-gitgithub)
+6. [Sesi 6: Pembuatan Kunci SSH Ed25519 & Registrasi GitHub](#sesi-6-pembuatan-kunci-ssh-ed25519--registrasi-github)
+7. [Sesi 7: Pembuktian Push Pertama & Alur Pembaruan Otomatis](#sesi-7-pembuktian-push-pertama--alur-pembaruan-otomatis)
+8. [Sesi 8: Mengaktifkan Mode Autopush Otomatis Penuh](#sesi-8-mengaktifkan-mode-autopush-otomatis-penuh)
+9. [Sesi 9: Mekanisme Sesi Baru vs `/resume` pada Antigravity CLI](#sesi-9-mekanisme-sesi-baru-vs-resume-pada-antigravity-cli)
+10. [Sesi 10: Penutup & Kesiapan Praktik Mandiri](#sesi-10-penutup--kesiapan-praktik-mandiri)
+11. [Sesi 11: Pembuktian Sesi Baru & Kontinuitas Mode Autopush](#sesi-11-pembuktian-sesi-baru--kontinuitas-mode-autopush)
+12. [Sesi 12: Standarisasi Format 3 Pilar & Berkas `LOG_AKTIVITAS.md`](#sesi-12-standarisasi-format-3-pilar--berkas-log_aktivitasmd)
+
 
 ---
 
@@ -441,3 +456,22 @@ git push
 3. **Mode Autopush Tetap Berjalan**:
    * Mode *Full Autopilot Autopush* resmi dilanjutkan.
    * Semua pembaruan catatan dan berkas akan langsung di-*commit* dan di-*push* otomatis ke repositori [GitHub catatan-eyay](https://github.com/rezkyekaputra/catatan-eyay) pada setiap respon.
+---
+
+## Sesi 12: Standarisasi Format 3 Pilar & Berkas `LOG_AKTIVITAS.md`
+
+### 💬 Permintaan Pengguna:
+> *"masukan perintah nya juga ya nanti, jadi saya ingin setiap pekerjaan kamu tercatat semua. perintah apa yang kamu pakai, apa yang saya tanyakan dan juga apa jawaban kamu, jadi mungkin harus ada file baru bukan"*
+
+### ⚙️ Keputusan & Peningkatan Sistem Pencatatan:
+1. **Pembuatan Berkas Baru [`LOG_AKTIVITAS.md`](file:///home/rep/catatan-eyay/LOG_AKTIVITAS.md)**:
+   * Didedikasikan khusus sebagai catatan kronologis audit yang mencakup 3 pilar utama:
+     - 💬 **Pertanyaan / Permintaan Pengguna**
+     - ⚙️ **Perintah Terminal Nyata yang Dijalankan AI**
+     - 🤖 **Jawaban, Analisis, & Solusi Lengkap AI**
+2. **Pembaruan Berkas [`perintah.sh`](file:///home/rep/catatan-eyay/perintah.sh)**:
+   * Seluruh perintah terminal bash baru (seperti uji SSH dan git log) otomatis dimasukkan ke dalam skrip bash yang dapat dieksekusi langsung.
+3. **Penyelarasan [`README.md`](file:///home/rep/catatan-eyay/README.md)**:
+   * Menjadi ringkasan utama, dashboard proyek, dan navigasi seluruh materi belajar.
+4. **Autopush ke GitHub**:
+   * Seluruh berkas baru dan modifikasi langsung di-*push* ke GitHub [rezkyekaputra/catatan-eyay](https://github.com/rezkyekaputra/catatan-eyay) secara konsisten di setiap respon.
