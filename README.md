@@ -1,0 +1,338 @@
+# 📖 Buku Catatan & Jurnal Eksekusi Antigravity (eyay)
+> Folder: `/home/rep/catatan-eyay`  
+> Tanggal Mulai: 13 November 2026  
+> Pengguna: `rep` (Gentoo Linux)
+
+---
+
+## 📌 Daftar Isi
+1. [Sesi 1: Audit & Pengecekan User rep](#sesi-1-audit--pengecekan-user-rep)
+2. [Sesi 2: Pengujian Instalasi Gem `ffi 1.15.5`](#sesi-2-pengujian-instalasi-gem-ffi-1155)
+3. [Sesi 3: Verifikasi .bashrc & Status Berkas cert.pem](#sesi-3-verifikasi-bashrc--status-berkas-certpem)
+4. [Sesi 4: Rekomendasi Gems untuk Website Berbasis Ruby](#sesi-4-rekomendasi-gems-untuk-website-berbasis-ruby)
+5. [Sesi 5: Cara Kerja Antigravity (AGY) & Konfigurasi Git/GitHub](#sesi-5-cara-kerja-antigravity-agy--konfigurasi-gitgithub)
+
+---
+
+## Sesi 1: Audit & Pengecekan User rep
+
+### 💬 Pertanyaan Pengguna:
+> *"cek user rep ini apakah sudah benar"*
+
+### ⚙️ Perintah Terminal yang Digunakan:
+```bash
+# 1. Mengecek identitas user, UID, GID, dan lokasi folder home
+whoami
+id
+pwd
+
+# 2. Melihat seluruh berkas di home direktori
+ls -la /home/rep
+
+# 3. Mengecek entri user di /etc/passwd dan riwayat bash
+grep rep /etc/passwd
+cat ~/.bash_history
+
+# 4. Mengecek berkas konfigurasi bash
+cat /home/rep/.bash_profile
+cat /home/rep/.bashrc
+```
+
+### 🔍 Temuan & Analisis Masalah:
+1. **Identitas Akun**: User `rep` (UID 1004, GID 1004) dengan permission home `700` (`drwx------`) sudah aman dan terisolasi.
+2. **Kendala pada `.bashrc`**: Variabel penting (`PATH`, `TMPDIR`, `XDG_*`, dan `RVM`) diletakkan setelah baris `if [[ $- != *i* ]] ; then return; fi`, sehingga sesi non-interaktif atau skrip tidak dapat membaca `PATH` Ruby dan `~/.local/bin`.
+3. **Kendala Sertifikat SSL**: OpenSSL bawaan RVM mencari sertifikat di `/home/rep/.rvm/usr/ssl/cert.pem`, padahal berkas `cert.pem` masih berada di `/home/rep/cert.pem`, sehingga koneksi HTTPS Ruby gagal dengan error `certificate verify failed`.
+
+---
+
+## Sesi 2: Pengujian Instalasi Gem `ffi 1.15.5`
+
+### 💬 Pertanyaan Pengguna:
+> *"saya akan menjalankan perintah gem install ffi -v 1.15.5 cek ya"*
+
+### ⚙️ Perintah Terminal yang Digunakan:
+```bash
+# 1. Memeriksa ketersediaan kompiler GCC dan GNU Make
+gcc --version
+make --version
+
+# 2. Memeriksa kecocokan versi Ruby untuk gem ffi
+gem spec ffi-1.15.5.gem required_ruby_version
+
+# 3. Uji kompilasi dan instalasi
+gem install ffi -v 1.15.5
+
+# 4. Memverifikasi pemanggilan native C extension di Ruby
+ruby -e "require 'rubygems'; require 'ffi'; puts 'FFI Version: ' + FFI::VERSION; puts 'Platform: ' + FFI::Platform::ARCH + '-' + FFI::Platform::OS"
+```
+
+### 🔍 Hasil Verifikasi:
+* Ekstensi C berhasil dikompilasi oleh GCC 14.3.1.
+* Instalasi sukses: `Successfully installed ffi-1.15.5`.
+* Uji coba pemanggilan fungsi native berhasil mengeluarkan: `x86_64-linux`.
+
+---
+
+## Sesi 3: Verifikasi .bashrc & Status Berkas cert.pem
+
+### 💬 Pertanyaan Pengguna:
+> *"cek lagi di .bashrc"*  
+> *"cert.pem nya di hapus jangan"*
+
+### ⚙️ Perintah Terminal yang Digunakan:
+```bash
+# 1. Memeriksa sintaks bash
+bash -n /home/rep/.bashrc
+
+# 2. Menguji koneksi HTTPS setelah pemindahan cert.pem
+ruby -ropen-uri -e 'open("https://rubygems.org") { puts "HTTPS OK" }'
+
+# 3. Membandingkan file cert.pem di home dengan di RVM
+cmp /home/rep/cert.pem /home/rep/.rvm/usr/ssl/cert.pem
+```
+
+### 🔍 Keputusan Teknis:
+1. **`.bashrc`**: Sudah diperbarui dan sangat rapi (33 baris). Mengandung bendera kompiler GCC 14 (`CFLAGS`) dan path SSL yang tepat.
+2. **Berkas `cert.pem`**:
+   * [`/home/rep/.rvm/usr/ssl/cert.pem`](file:///home/rep/.rvm/usr/ssl/cert.pem): **JANGAN DIHAPUS**, karena merupakan lokasi standar OpenSSL RVM.
+   * [`/home/rep/cert.pem`](file:///home/rep/cert.pem) (di root home): **Boleh dihapus** karena sudah diduplikasi secara mandiri ke dalam folder RVM.
+
+---
+
+## Sesi 4: Rekomendasi Gems untuk Website Berbasis Ruby
+
+### 💬 Pertanyaan Pengguna:
+> *"untuk membuat website berbasis ruby . gems apa yang perlu di install"*
+
+### ⚙️ Rekomendasi Framework & Versi Kompatibel (Ruby 2.3.8):
+1. **Sinatra (Micro-framework - Sangat Direkomendasikan)**:
+   ```bash
+   gem install sinatra -v 2.2.4
+   gem install puma -v 5.6.5
+   ```
+2. **Ruby on Rails (Full-Stack MVC)**:
+   ```bash
+   gem install rails -v 5.2.8.1
+   gem install sqlite3 -v 1.3.13
+   ```
+
+### 📝 Contoh Kode Sederhana Sinatra (`app.rb`):
+```ruby
+require 'rubygems'
+require 'sinatra'
+
+get '/' do
+  "<h1>Selamat Datang di Website Ruby!</h1>"
+end
+```
+Dijalankan dengan: `ruby app.rb`.
+
+---
+
+## Sesi 5: Cara Kerja Antigravity (AGY) & Konfigurasi Git/GitHub
+
+### 💬 Pertanyaan Pengguna:
+> *"sebenarnya antygrapity itu seperti apa cara kerja nya"*  
+> *"semua perintah yang kamu tulis dan pakai juga karena kamu agent"*
+
+### 🔍 Cara Kerja Agentic Loop Antigravity:
+Antigravity bekerja dengan siklus otonom:
+1. **Input**: Menerima pertanyaan/tugas dari pengguna.
+2. **Plan & Think**: Merencanakan aksi yang dibutuhkan.
+3. **Tool Execution**: Menjalankan alat nyata di sistem:
+   - `run_command`: Eksekusi terminal bash.
+   - `view_file`: Membaca berkas.
+   - `write_to_file` / `replace_file_content`: Membuat atau memodifikasi berkas.
+4. **Observe**: Menganalisis output terminal atau isi berkas.
+5. **Verify & Respond**: Memastikan solusi bekerja sebelum memberi jawaban akhir.
+
+---
+
+## 🚀 Panduan Mengunggah Folder Ini ke GitHub
+
+Jalankan perintah berikut di terminal Anda untuk menghubungkan folder `catatan-eyay` ini ke akun GitHub Anda:
+
+```bash
+# 1. Atur identitas Git Anda
+git config --global user.name "UsernameGitHubAnda"
+git config --global user.email "email-anda@example.com"
+
+# 2. Buat SSH Key (jika belum ada)
+ssh-keygen -t ed25519 -C "email-anda@example.com"
+# (Tekan Enter sampai selesai, lalu tempel isi ~/.ssh/id_ed25519.pub ke GitHub Settings -> SSH Keys)
+
+# 3. Masuk ke folder catatan-eyay dan inisialisasi Git
+cd ~/catatan-eyay
+git init
+
+# 4. Tambahkan berkas README.md ini ke Git
+git add README.md
+git commit -m "Inisialisasi buku catatan dan log eksekusi Antigravity"
+
+# 5. Ganti nama branch utama ke main
+git branch -M main
+
+# 6. Hubungkan ke repository GitHub Anda
+# (Buat repo kosong bernama 'catatan-eyay' di GitHub terlebih dahulu)
+git remote add origin git@github.com:UsernameGitHubAnda/catatan-eyay.git
+
+# 7. Push catatan ini ke GitHub
+git push -u origin main
+```
+
+
+---
+
+## Sesi 6: Panduan Praktik Setting SSH untuk GitHub
+
+### 💬 Pertanyaan Pengguna:
+> *"oke sekarang saya ingin ajarkan setting ssh untuk git"*
+
+### 🧠 Konsep Dasar SSH (Kunci Gembok & Anak Kunci):
+SSH (*Secure Shell*) menggunakan sepasang kunci kriptografi:
+1. **Private Key (`id_ed25519`)**: Anak kunci rahasia. Tetap tersimpan di komputer Anda dan TIDAK BOLEH dibagikan kepada siapa pun.
+2. **Public Key (`id_ed25519.pub`)**: Gembok. Berkas ini yang kita serahkan dan pasang di akun GitHub.
+
+---
+
+### 🛠️ Langkah Demi Langkah yang Dijalankan Pengguna:
+
+#### Langkah 1: Membuat Kunci SSH (Algoritma Modern Ed25519)
+Jalankan perintah ini di terminal Anda:
+```bash
+ssh-keygen -t ed25519 -C "email-github-anda@example.com"
+```
+*Ganti `email-github-anda@example.com` dengan email yang Anda daftarkan di GitHub.*
+
+**Dialog yang akan muncul di layar:**
+1. `Enter file in which to save the key (/home/rep/.ssh/id_ed25519):`
+   👉 **Cukup tekan Enter** (memilih lokasi standar).
+2. `Enter passphrase (empty for no passphrase):`
+   👉 **Tekan Enter** (jika tidak ingin repot mengetik password tiap kali push).
+3. `Enter same passphrase again:`
+   👉 **Tekan Enter lagi**.
+
+---
+
+#### Langkah 2: Melihat dan Menyalin Kunci Publik (Gembok)
+Jalankan perintah ini untuk melihat isi kuncinya:
+```bash
+cat ~/.ssh/id_ed25519.pub
+```
+Akan muncul teks panjang satu baris, contohnya:
+```text
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... email-github-anda@example.com
+```
+👉 **Salin (copy)** seluruh baris teks tersebut.
+
+---
+
+#### Langkah 3: Menempelkan Kunci Publik ke Akun GitHub
+1. Buka browser $\rightarrow$ Login ke **[GitHub.com](https://github.com)**.
+2. Klik foto profil Anda di pojok kanan atas $\rightarrow$ Pilih **Settings**.
+3. Pada bilah menu sebelah kiri, klik **SSH and GPG keys**.
+4. Klik tombol hijau **New SSH key**.
+5. Isi formulir:
+   * **Title**: Beri nama bebas (contoh: `Gentoo rep-box`).
+   * **Key type**: Biarkan `Authentication Key`.
+   * **Key**: Tempelkan (*paste*) teks panjang yang Anda salin dari langkah 2 tadi.
+6. Klik tombol hijau **Add SSH key**.
+
+---
+
+#### Langkah 4: Menguji Koneksi dari Komputer ke GitHub
+Untuk memastikan komputer sudah berhasil terhubung dengan aman, ketik di terminal:
+```bash
+ssh -T git@github.com
+```
+* Jika muncul konfirmasi sidik jari: `Are you sure you want to continue connecting (yes/no)?` $\rightarrow$ Ketik **yes** lalu Enter.
+* Jika sukses, GitHub akan membalas:
+  ```text
+  Hi UsernameAnda! You've successfully authenticated, but GitHub does not provide shell access.
+  ```
+
+---
+
+#### Langkah 5: Mengatur Identitas Nama & Email Git
+Agar setiap commit tercatat rapi atas nama akun GitHub Anda:
+```bash
+git config --global user.name "UsernameGitHubAnda"
+git config --global user.email "email-github-anda@example.com"
+```
+Untuk memverifikasi pengaturan sudah tersimpan:
+```bash
+git config --global --list
+```
+
+
+---
+
+### 💬 Pertanyaan Tambahan Pengguna:
+> *"perlu token github g"*
+
+### 💡 Penjelasan: Apakah Perlu GitHub Personal Access Token (PAT)?
+**Jawabannya: TIDAK PERLU!**
+
+GitHub memiliki dua jalur autentikasi untuk push kode:
+1. **Jalur SSH (`git@github.com:...`) 👉 (Metode yang Kita Gunakan)**:
+   * **Tidak butuh token sama sekali**.
+   * Autentikasi ditangani otomatis oleh sepasang kunci kriptografi (`id_ed25519`).
+   * Bebas kedaluwarsa (permanen selama kunci tidak Anda hapus dari akun GitHub).
+2. **Jalur HTTPS (`https://github.com/...`)**:
+   * Baru di jalur inilah token (`ghp_...`) diwajibkan sebagai pengganti password.
+   * Kekurangan HTTPS: Token biasanya memiliki masa kedaluwarsa (30/90 hari) sehingga harus diperbarui berkala.
+
+**Kesimpulan**: Karena kita menggunakan **SSH**, Anda tidak perlu repot-repot membuat token GitHub!
+
+
+---
+
+### 💬 Pertanyaan Tambahan Pengguna:
+> *"ed25519 itu artinya apa bisa di ganti"*
+
+### 🧠 Penjelasan Mendalam tentang Algoritma `ed25519`:
+* **Arti `ed25519`**:
+  * Opsi `-t` singkatan dari **Type** (tipe algoritma kriptografi).
+  * `ed25519` adalah singkatan dari **Edwards-curve Digital Signature Algorithm 25519** (algoritma kriptografi berbasis kurva eliptik / *Elliptic Curve Cryptography*).
+* **Kelebihan `ed25519`**:
+  1. **Keamanan Tinggi**: Tingkat keamanan sangat kuat dengan kunci yang sangat ringkas.
+  2. **Cepat**: Proses enkripsi dan verifikasi koneksi jauh lebih cepat dibanding algoritma lama.
+  3. **Rekomendasi Resmi**: GitHub dan pengembang OpenSSH resmi merekomendasikan Ed25519 sebagai standar utama saat ini.
+* **Apakah Bisa Diganti?**
+  * **Bisa!** Alternatif utamanya adalah `rsa`:
+    ```bash
+    ssh-keygen -t rsa -b 4096 -C "email@example.com"
+    ```
+    *(Algoritma RSA adalah algoritma klasik, namun kuncinya jauh lebih panjang dan lebih lambat dibanding Ed25519).*
+
+
+---
+
+### 💬 Pertanyaan Tambahan Pengguna:
+> *"ed25519 ngka nya emang harus seperti itu"*
+
+### 🔢 Kenapa Angkanya Harus `25519`?
+* **Wajib Persis**: Angka `25519` **tidak boleh diubah** (misalnya menjadi `ed12345` atau angka lain), karena jika diubah terminal akan error: `unknown key type`.
+* **Asal Usul Angka `25519`**:
+  * Angka ini berasal dari rumus matematika bilangan prima yang dirancang oleh penemunya (Prof. Daniel J. Bernstein):
+    $$2^{255} - 19$$
+    *(Dua pangkat 255 dikurangi 19).*
+  * Karena rumusnya menggunakan kurva tersebut, nama resmi kurva matematikanya dinamai **Curve25519**, dan tanda tangan digitalnya dinamai **Ed25519**.
+* **Analogi**: Sama seperti tipe pesawat **Boeing 747** atau nama **Windows 11**; angka tersebut adalah nama paten/resmi dari spesifikasi teknologinya.
+
+
+---
+
+### ✅ Perkembangan: Kunci SSH Berhasil Dibuat!
+* Berkas private key [`~/.ssh/id_ed25519`](file:///home/rep/.ssh/id_ed25519) dan public key [`~/.ssh/id_ed25519.pub`](file:///home/rep/.ssh/id_ed25519.pub) sudah sukses terbuat dengan hak akses privat `600`.
+
+
+---
+
+### 🎉 Milestone Sukses: SSH Terhubung ke GitHub!
+```text
+Hi rezkyekaputra! You've successfully authenticated, but GitHub does not provide shell access.
+```
+* **Status**: Autentikasi SSH sukses 100%.
+* **Akun GitHub Terhubung**: `rezkyekaputra`
+* **Email Akun**: `rea_museb1@ymail.com`
