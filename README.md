@@ -27,6 +27,8 @@
 12. [Sesi 12: Standarisasi Format 3 Pilar & Berkas `LOG_AKTIVITAS.md`](#sesi-12-standarisasi-format-3-pilar--berkas-log_aktivitasmd)
 13. [Sesi 13: Audit Detail Sistem Gentoo Linux (rep-box / tux)](#sesi-13-audit-detail-sistem-gentoo-linux-rep-box--tux)
 14. [Sesi 14: Panduan Pemula & Terjemahan Bahasa Awam untuk Sistem Gentoo](#sesi-14-panduan-pemula--terjemahan-bahasa-awam-untuk-sistem-gentoo)
+15. [Sesi 15: Penetapan SOP Alur Kerja "Tanya - Perintah - Jawab - Autopush Real-Time"](#sesi-15-penetapan-sop-alur-kerja-tanya---perintah---jawab---autopush-real-time)
+
 
 
 
@@ -508,3 +510,21 @@ git push
 * **Kondisi Komputer Anda Saat Ini**:
   - **Sangat Sehat**: RAM masih tersisa 4.9 GB (sangat lega), penyimpanan root masih tersisa 24 GB.
   - **Buku Catatan Terhubung**: Folder [`catatan-eyay`](file:///home/rep/catatan-eyay) terhubung permanen ke GitHub [rezkyekaputra/catatan-eyay](https://github.com/rezkyekaputra/catatan-eyay), mencatat semua obrolan dan perintah secara aman.
+---
+
+## Sesi 15: Penetapan SOP Alur Kerja "Tanya - Perintah - Jawab - Autopush Real-Time"
+
+### 💬 Permintaan Pengguna:
+> *"jadi yang ku ingin kan adalah. aku beri kamu pertanyaan, kamu pasti jawab kan dengan perintah nya dan detailnya, nah aku ingin semua terupload semua ke github satu demi satu , dan juga lengkap tanpa terlewat"*
+
+### ⚙️ Ketetapan Alur Kerja Baku (SOP):
+* **Satu demi Satu (Turn-by-Turn)**: Setiap satu pertanyaan dari pengguna selesai dijawab, sistem langsung mengeksekusi `git add .`, `git commit`, dan `git push` ke GitHub tanpa menunggu akhir sesi.
+* **Format 4 Pilar Wajib**:
+  1. **Pertanyaan Pengguna**: Dicatat persis apa adanya.
+  2. **Perintah Terminal**: Seluruh perintah bash yang dijalankan dicatat lengkap dan rapi.
+  3. **Jawaban & Detail**: Dijelaskan dengan bahasa yang mudah dipahami dan mendalam.
+  4. **Autopush Real-Time**: Terunggah langsung ke repositori [GitHub catatan-eyay](https://github.com/rezkyekaputra/catatan-eyay).
+* **Lokasi Berkas**:
+  - Log audit lengkap tersimpan di [`LOG_AKTIVITAS.md`](file:///home/rep/catatan-eyay/LOG_AKTIVITAS.md).
+  - Skrip bash yang dapat dieksekusi tersimpan di [`perintah.sh`](file:///home/rep/catatan-eyay/perintah.sh).
+  - Dashboard ringkasan tersimpan di [`README.md`](file:///home/rep/catatan-eyay/README.md).
