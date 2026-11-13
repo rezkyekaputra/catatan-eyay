@@ -472,3 +472,32 @@ git -C /home/rep/catatan-eyay push origin main
 2. **Tindakan Nyata (Backfill 100% Lengkap)**:
    * AI membuktikan ini secara langsung dengan memasukkan (*backfill*) seluruh detail pertanyaan, perintah terminal, dan jawaban dari **Sesi 1 sampai Sesi 10** ke dalam berkas [`LOG_AKTIVITAS.md`](file:///home/rep/catatan-eyay/LOG_AKTIVITAS.md).
    * Sekarang, [`LOG_AKTIVITAS.md`](file:///home/rep/catatan-eyay/LOG_AKTIVITAS.md) resmi berisi riwayat utuh dari **Sesi 1 hingga Sesi 17 tanpa ada satu pun yang terlewat**.
+---
+
+## Sesi 18: Pembaruan Total (Overhaul) Format Catatan Agar Rapi & Mudah Dibaca
+* **Waktu**: 13 November 2026, 19:12 WIB  
+* **Identitas Pengguna**: `rep` (Gentoo Linux)
+
+### 💬 Pertanyaan Pengguna:
+> *"tapi kok saya baca nya kurang singkron ya yang ada di github apakah harus di perbaharui dari awal oleh kamu, karena saya kurang bisa membaca nya"*
+
+### ⚙️ Perintah Terminal yang Dijalankan AI:
+```bash
+# 1. Menulis ulang berkas README.md dan LOG_AKTIVITAS.md dengan tata letak seragam (Sesi 1 s.d. 18)
+# 2. Sinkronisasi seluruh skrip bash pada perintah.sh
+git -C /home/rep/catatan-eyay add .
+git -C /home/rep/catatan-eyay commit -m "Update Sesi 18: Overhaul menyeluruh tata letak catatan agar seragam, indah, dan mudah dibaca di GitHub"
+git -C /home/rep/catatan-eyay push origin main
+```
+
+### 🤖 Jawaban & Analisis AI:
+1. **Identifikasi Masalah Tampilan GitHub**:
+   * Halaman depan GitHub secara bawaan menampilkan [`README.md`](file:///home/rep/catatan-eyay/README.md).
+   * Sebelumnya, berkas `README.md` memiliki format yang tidak seragam (ada sesi panjang dengan tutorial markdown acak, ada sesi yang hanya ringkasan pendek), sementara format 3 pilar yang rapi berada di file terpisah ([`LOG_AKTIVITAS.md`](file:///home/rep/catatan-eyay/LOG_AKTIVITAS.md)). Ini membuat pengguna kesulitan membaca di GitHub.
+2. **Eksekusi Solusi Overhaul Total**:
+   * Berkas [`README.md`](file:///home/rep/catatan-eyay/README.md) dirombak total dari **Sesi 1 sampai Sesi 18** dengan format baku yang 100% seragam:
+     - 📌 Judul Sesi & Waktu
+     - 💬 Pertanyaan Anda
+     - ⚙️ Perintah Terminal Lengkap
+     - 🤖 Jawaban & Penjelasan Runtut
+   * Dilengkapi tabel struktur berkas dan daftar isi interaktif yang rapi di bagian atas halaman depan repositori.
