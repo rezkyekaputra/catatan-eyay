@@ -35,6 +35,8 @@
 16. [Sesi 16: Kronologi Sinkronisasi 3 Berkas Sejak Awal Penggunaan](#sesi-16-kronologi-sinkronisasi-3-berkas-sejak-awal-penggunaan)
 17. [Sesi 17: Sinkronisasi Lintas Sesi & Backfill Seluruh Riwayat dari Sesi Pertama](#sesi-17-sinkronisasi-lintas-sesi--backfill-seluruh-riwayat-dari-sesi-pertama)
 18. [Sesi 18: Pembaruan Total (Overhaul) Format Catatan Agar Rapi & Mudah Dibaca](#sesi-18-pembaruan-total-overhaul-format-catatan-agar-rapi--mudah-dibaca)
+19. [Sesi 19: Penyempurnaan & Eksekusi Skrip `perintah.sh`](#sesi-19-penyempurnaan--eksekusi-skrip-perintahsh)
+
 
 ---
 
@@ -399,3 +401,34 @@ git -C /home/rep/catatan-eyay push origin main
 * **Solusi Perombakan Menyeluruh (Overhaul)**:
   - Berkas [`README.md`](file:///home/rep/catatan-eyay/README.md) kini dirombak total menjadi **Jurnal Utama Super Rapi**.
   - Setiap sesi dari **Sesi 1 hingga Sesi 18** kini memiliki bentuk, ikon, urutan, dan bahasa penjelasan yang 100% seragam, runtut, dan sangat nyaman dibaca langsung di browser GitHub Anda.
+---
+
+## Sesi 19: Penyempurnaan & Eksekusi Skrip `perintah.sh`
+* **Waktu**: 13 November 2026, 19:15 WIB
+
+### 💬 Pertanyaan Anda:
+> *"bagaimana dengan perintah.sh"*
+
+### ⚙️ Perintah Terminal:
+```bash
+# 1. Menulis ulang skrip perintah.sh agar terkelompok per modul sesi belajar
+# 2. Memberikan hak akses eksekusi dan menguji coba secara langsung
+chmod +x /home/rep/catatan-eyay/perintah.sh
+/home/rep/catatan-eyay/perintah.sh
+
+# 3. Autopush perubahan ke GitHub rezkyekaputra/catatan-eyay
+git -C /home/rep/catatan-eyay add .
+git -C /home/rep/catatan-eyay commit -m "Update Sesi 19: Penyempurnaan & standardisasi skrip executable perintah.sh"
+git -C /home/rep/catatan-eyay push origin main
+```
+
+### 🤖 Jawaban & Penjelasan:
+* **Status Berkas [`perintah.sh`](file:///home/rep/catatan-eyay/perintah.sh)**:
+  - Berkas ini telah **dirombak total dan disinkronkan 100%**.
+  - Sekarang skrip ini dibagi menjadi 6 blok modul rapi yang merepresentasikan perintah-perintah kunci dari Sesi 1 sampai Sesi 18 (Cek User, Kompiler GCC & Gem FFI, Sintaks .bashrc & HTTPS SSL, Uji SSH GitHub, Status Git, dan Audit Spesifikasi Gentoo).
+  - Skrip sudah diuji coba dan **berjalan sukses 100% tanpa error**.
+* **Cara Menggunakannya Secara Mandiri**:
+  ```bash
+  cd ~/catatan-eyay
+  ./perintah.sh
+  ```
