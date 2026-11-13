@@ -62,6 +62,14 @@ echo "Kompiler : $(gcc --version | head -n 1)"
 echo "Linker   : $(ld --version | head -n 1)"
 
 echo ""
+echo "[7] SESI 20-22: Verifikasi Akses & Sinkronisasi Arsip Sesi dongkrak"
+echo "----------------------------------------------------------------------"
+ls -ld /home/dongkrak/.gemini/antigravity-cli 2>/dev/null && echo "Akses Folder dongkrak: TERSEDIA (Read-OK)"
+echo "Total Berkas di arsip-dongkrak/:"
+ls -lh /home/rep/catatan-eyay/arsip-dongkrak/
+
+echo ""
 echo "======================================================================"
 echo "✅ SEMUA PERINTAH DARI BUKU CATATAN BERHASIL DIUJI COBA 100%!"
 echo "======================================================================"
+
