@@ -26,6 +26,8 @@
 11. [Sesi 11: Pembuktian Sesi Baru & Kontinuitas Mode Autopush](#sesi-11-pembuktian-sesi-baru--kontinuitas-mode-autopush)
 12. [Sesi 12: Standarisasi Format 3 Pilar & Berkas `LOG_AKTIVITAS.md`](#sesi-12-standarisasi-format-3-pilar--berkas-log_aktivitasmd)
 13. [Sesi 13: Audit Detail Sistem Gentoo Linux (rep-box / tux)](#sesi-13-audit-detail-sistem-gentoo-linux-rep-box--tux)
+14. [Sesi 14: Panduan Pemula & Terjemahan Bahasa Awam untuk Sistem Gentoo](#sesi-14-panduan-pemula--terjemahan-bahasa-awam-untuk-sistem-gentoo)
+
 
 
 
@@ -491,3 +493,18 @@ git push
 * **Portage Profile & Kompilasi**: Profile `default/linux/amd64/23.0`, Flags `-march=native -O2 -fno-plt -fomit-frame-pointer`, Makeopts `-j4 -l4`, Fitur Ccache dan Parallel-Install aktif dengan konfigurasi hemat I/O untuk HDD.
 * **Toolchain**: GCC 14.3.1, GNU Binutils 2.47, Python 3.14.7, Ruby 2.3.8 (RVM).
 * *(Detail lengkap perintah & output dapat dilihat pada berkas [`LOG_AKTIVITAS.md`](file:///home/rep/catatan-eyay/LOG_AKTIVITAS.md))*.
+---
+
+## Sesi 14: Panduan Pemula & Terjemahan Bahasa Awam untuk Sistem Gentoo
+
+### 💬 Permintaan Pengguna:
+> *"aku sendiri masih ga ngerti ini bantu saya"*
+
+### 💡 Penjelasan Ramah Pemula:
+* **Jangan Khawatir**: Gentoo Linux memang terkenal sebagai sistem yang sangat teknis di dunia Linux karena pengguna memegang kendali penuh atas kompilasi sistemnya.
+* **Analogi Mobil Rakitan**:
+  - Distro biasa (seperti Windows atau Ubuntu) seperti mobil pabrikan siap pakai yang banyak fitur tak terpakai (*bloatware*).
+  - Gentoo Linux seperti mobil balap rakitan kustom yang disetel khusus pas dengan mesin fisik pengguna agar super enteng dan kencang.
+* **Kondisi Komputer Anda Saat Ini**:
+  - **Sangat Sehat**: RAM masih tersisa 4.9 GB (sangat lega), penyimpanan root masih tersisa 24 GB.
+  - **Buku Catatan Terhubung**: Folder [`catatan-eyay`](file:///home/rep/catatan-eyay) terhubung permanen ke GitHub [rezkyekaputra/catatan-eyay](https://github.com/rezkyekaputra/catatan-eyay), mencatat semua obrolan dan perintah secara aman.

@@ -132,3 +132,32 @@ ruby -v 2>/dev/null
    * **GNU Binutils / Linker**: 2.47.0.
    * **Python Sistem**: Python 3.14.7.
    * **Ruby (RVM user rep)**: Ruby 2.3.8p459 dengan ekstensi `ffi 1.15.5`.
+---
+
+## Sesi 14: Panduan Pemula & Terjemahan Bahasa Awam untuk Sistem Gentoo
+* **Waktu**: 13 November 2026, 19:03 WIB  
+* **Identitas Pengguna**: `rep` (Gentoo Linux)
+
+### 💬 Pertanyaan Pengguna:
+> *"aku sendiri masih ga ngerti ini bantu saya"*
+
+### ⚙️ Perintah Terminal yang Dijalankan AI:
+```bash
+# Melakukan sinkronisasi catatan dan autopush panduan ramah pemula ke repositori GitHub
+git -C /home/rep/catatan-eyay status
+git -C /home/rep/catatan-eyay add .
+git -C /home/rep/catatan-eyay commit -m "Update Sesi 14: Penjelasan sederhana & analogi sistem Gentoo untuk pemula"
+git -C /home/rep/catatan-eyay push origin main
+```
+
+### 🤖 Jawaban & Analisis AI:
+1. **Penenangan & Empati**:
+   * Menjelaskan bahwa wajar sekali jika merasa bingung. Gentoo Linux adalah salah satu distro paling teknis di dunia Linux, dipenuhi istilah teknis yang rumit.
+2. **Analogi Mobil Rakitan Sederhana**:
+   * **Gentoo Linux**: Bukan mobil keluarga siap pakai (seperti Windows/Ubuntu), melainkan mobil balap rakitan kustom di mana setiap komponen dikompilasi khusus agar pas dengan mesin Intel Pentium pengguna.
+   * **CPU Intel Pentium Gold (4 Threads)**: Mesin utama dengan 4 jalur tenaga kerja.
+   * **RAM 8 GB (Sisa 4.9 GB)**: Meja kerja yang sangat lega dan tidak sesak.
+   * **Hard Disk 149 GB (Sisa 24 GB)**: Lemari penyimpanan data.
+   * **Folder catatan-eyay & GitHub**: Buku harian otomatis yang menyimpan seluruh obrolan dan kode ke internet agar tidak pernah hilang.
+3. **Pemberian Arah Belajar**:
+   * Menawarkan opsi langkah santai berikutnya: belajar perintah dasar terminal, memahami cara membuat website dengan Ruby, atau eksplorasi praktis tanpa istilah yang membingungkan.
