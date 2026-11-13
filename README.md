@@ -387,3 +387,26 @@ git push
   2. AI memproses, menganalisis, atau menjalankan kode.
   3. AI langsung mencatat semua aspek (tanya-jawab, perintah, dan kode) ke dalam berkas `README.md`.
   4. AI secara proaktif mengeksekusi `git add .`, `git commit`, dan `git push` ke GitHub `rezkyekaputra/catatan-eyay` di setiap akhir respon tanpa perlu diminta lagi.
+
+
+---
+
+## Sesi 9: Mekanisme Sesi Baru vs `/resume` pada Antigravity CLI
+
+### 💬 Pertanyaan Pengguna:
+> *"jika saya exit sesi ini. dan ke sesi baru tanpa /resume apa yang terjadi"*
+
+### 🔍 Analisis Arsitektur Antigravity:
+1. **Memori Konteks Obrolan (Chat Memory)**:
+   * Dimulai dari lembaran bersih (*fresh context window*).
+   * AI di sesi baru belum membaca percakapan sesi sebelumnya di dalam memori aktifnya (seperti instruksi lisan instan).
+2. **Berkas Nyata di Hard Disk (Permanent Storage) 👉 AMAN 100%**:
+   * Kunci SSH [`~/.ssh/id_ed25519`](file:///home/rep/.ssh/id_ed25519) tetap aktif dan terhubung ke GitHub.
+   * Konfigurasi [`~/.bashrc`](file:///home/rep/.bashrc) (SSL, GCC CFLAGS) tetap permanen.
+   * Repository Git [`~/catatan-eyay`](file:///home/rep/catatan-eyay) dan berkas `README.md` tetap utuh.
+   * Gem yang terpasang di RVM (`ffi 1.15.5`) tetap terpasang.
+3. **Repository GitHub**:
+   * Semua commit yang sudah di-push tetap tersimpan di server GitHub `rezkyekaputra/catatan-eyay`.
+4. **Cara Melanjutkan di Sesi Baru**:
+   * Cukup katakan: *"Lanjutkan catatan di folder catatan-eyay dan tetap gunakan autopush"* $\rightarrow$ AI di sesi baru langsung membaca berkas `README.md` dan melanjutkan ritme kerja yang sama.
+   * Atau gunakan perintah `/resume` saat membuka `agy` untuk memulihkan seluruh konteks percakapan secara instan.
