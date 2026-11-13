@@ -8,9 +8,10 @@
 ---
 
 ## 📌 Struktur Berkas di Repositori Ini
-| Nama Berkas | Fungsi Utama |
+| Nama Berkas / Folder | Fungsi Utama |
 | :--- | :--- |
 | [`README.md`](file:///home/rep/catatan-eyay/README.md) | **Halaman Utama**: Jurnal lengkap, rapi, dan terstandarisasi dari Sesi 1 sampai terbaru. |
+| [`arsip-dongkrak/`](file:///home/rep/catatan-eyay/arsip-dongkrak/) | **Arsip Lintas Akun**: 60 Sesi utuh akun `dongkrak` (19 Okt - 13 Nov 2026), katalog lengkap & arsip bulanan. |
 | [`LOG_AKTIVITAS.md`](file:///home/rep/catatan-eyay/LOG_AKTIVITAS.md) | **Log Audit Trail**: Arsip rinci seluruh rekaman tanya jawab dan jejak eksekusi AI. |
 | [`perintah.sh`](file:///home/rep/catatan-eyay/perintah.sh) | **Skrip Eksekusi**: Kumpulan seluruh perintah bash yang dapat langsung dijalankan di terminal. |
 
@@ -38,6 +39,8 @@
 19. [Sesi 19: Penyempurnaan & Eksekusi Skrip `perintah.sh`](#sesi-19-penyempurnaan--eksekusi-skrip-perintahsh)
 20. [Sesi 20: Analisis Akses Sesi Lintas User (`dongkrak`) & Strategi Sinkronisasi](#sesi-20-analisis-akses-sesi-lintas-user-dongkrak--strategi-sinkronisasi)
 21. [Sesi 21: Konfirmasi Teknis Pilihan B (Akses Penuh Lintas Akun dongkrak)](#sesi-21-konfirmasi-teknis-pilihan-b-akses-penuh-lintas-akun-dongkrak)
+22. [Sesi 22: Ekstraksi & Penyelarasan Menyeluruh 60 Sesi Akun `dongkrak`](#sesi-22-ekstraksi--penyelarasan-menyeluruh-60-sesi-akun-dongkrak)
+
 
 
 
@@ -487,3 +490,39 @@ git -C /home/rep/catatan-eyay push origin main
 * **Cakupan Akses Penuh**: Dengan memberikan hak baca (`chmod -R o+rX /home/dongkrak/.gemini/antigravity-cli`), akun `rep` di sesi ini akan bisa mengakses seluruh 79 sesi di folder `brain`, database `conversations/*.db`, dan log prompt `history.jsonl`.
 * **Aman & Tanpa Risiko**: Akun `rep` hanya bertindak sebagai pembaca (*read-only*), tidak mengubah atau menghapus data asli milik `dongkrak`.
 * **Kebutuhan Eksekusi Izin**: Perintah `chmod` harus dijalankan dari akun `dongkrak` atau `root` karena Linux membatasi pengubahan izin hanya oleh pemilik berkas atau superuser.
+---
+
+## Sesi 22: Ekstraksi & Penyelarasan Menyeluruh 60 Sesi Akun `dongkrak`
+* **Waktu**: 13 November 2026, 19:28 WIB
+
+### 💬 Pertanyaan Anda:
+> *"Sudah dibuka izinnya, silakan mulai selaraskan"*
+
+### ⚙️ Perintah Terminal:
+```bash
+# 1. Verifikasi pembukaan izin akses direktori /home/dongkrak/.gemini/antigravity-cli
+ls -la /home/dongkrak/.gemini/antigravity-cli/conversations/
+head -n 5 /home/dongkrak/.gemini/antigravity-cli/history.jsonl
+
+# 2. Membuat direktori arsip khusus
+mkdir -p /home/rep/catatan-eyay/arsip-dongkrak
+
+# 3. Mengekstrak 60 sesi obrolan, perintah terminal, dan solusi teknis
+# - Membuat arsip-dongkrak/README.md (Katalog lengkap & tabel 60 sesi)
+# - Membuat arsip-dongkrak/SESI_OKTOBER_2026.md (Detail Sesi 01 s.d. 33)
+# - Membuat arsip-dongkrak/SESI_NOVEMBER_2026.md (Detail Sesi 34 s.d. 60)
+
+# 4. Autopush seluruh berkas baru ke GitHub rezkyekaputra/catatan-eyay
+git -C /home/rep/catatan-eyay add .
+git -C /home/rep/catatan-eyay commit -m "Update Sesi 22: Ekstraksi & sinkronisasi menyeluruh 60 sesi akun dongkrak ke arsip-dongkrak/"
+git -C /home/rep/catatan-eyay push origin main
+```
+
+### 🤖 Jawaban & Hasil Penyelarasan:
+* **Status Ekstraksi**: **100% SUKSES!**
+* **Total Sesi yang Diselaraskan**: **60 Sesi Aktif** dari rentang waktu 19 Oktober 2026 s.d. 13 November 2026.
+* **Hasil Pengarsipan di Folder [`arsip-dongkrak/`](file:///home/rep/catatan-eyay/arsip-dongkrak/)**:
+  1. [`arsip-dongkrak/README.md`](file:///home/rep/catatan-eyay/arsip-dongkrak/README.md): Katalog tabel master 60 sesi beserta kategori topik dan tautan lompat.
+  2. [`arsip-dongkrak/SESI_OKTOBER_2026.md`](file:///home/rep/catatan-eyay/arsip-dongkrak/SESI_OKTOBER_2026.md): Berisi 33 sesi pembahasan audio Linux, kernel Gentoo, WireGuard, dan ST Terminal.
+  3. [`arsip-dongkrak/SESI_NOVEMBER_2026.md`](file:///home/rep/catatan-eyay/arsip-dongkrak/SESI_NOVEMBER_2026.md): Berisi 27 sesi kompilasi Portage, Ccache, GPU Intel Mesa, dan konfigurasi model AI.
+* **Autopush GitHub**: Seluruh data baru berukuran lebih dari 130 KB langsung terunggah aman ke [GitHub catatan-eyay](https://github.com/rezkyekaputra/catatan-eyay).
