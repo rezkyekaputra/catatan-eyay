@@ -1010,3 +1010,30 @@ Google Colab menyediakan fitur integrasi SSH resmi berbasis **Colab CLI** dan ko
 
 ### 📋 Tindakan:
 Menunggu teks perintah di dalam kotak tombol `content_copy` (perintah di bawah "Shell interaktif langsung" dan isi `~/.ssh/config`) untuk dipasang dan dikonfigurasi di lingkungan Gentoo Linux lokal.
+
+
+---
+
+## Sesi 27: Pemasangan Resmi Google Colab CLI & Konfigurasi OpenSSH ProxyCommand
+
+### 💬 Input dari Pengguna:
+> *Konfigurasi OpenSSH Google Colab:*
+```text
+Host colab
+  User root
+  ProxyCommand colab ssh --proxy-mode -s colab
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+```
+
+---
+
+### ⚙️ Eksekusi yang Telah Selesai Diterapkan di Gentoo:
+1. **Pemasangan `google-colab-cli` Resmi**:
+   * Dipasang di lingkungan terisolasi [`~/.local/share/colab-venv`](file:///home/rep/.local/share/colab-venv).
+   * Ditautkan biner `colab` ke [`/home/rep/.local/bin/colab`](file:///home/rep/.local/bin/colab) (aktif di PATH sistem).
+2. **Konfigurasi Berkas SSH**:
+   * Berkas [`~/.ssh/config`](file:///home/rep/.ssh/config) sudah dibuat dengan hak akses aman `600`.
+   * Integrasi menggunakan kunci SSH Ed25519 yang sudah dibuat sebelumnya.
+3. **Cara Kerja Autentikasi**:
+   * Menghubungkan terminal lokal ke Colab melalui jalur resmi Google WebSockets tanpa perantara pihak ketiga.
