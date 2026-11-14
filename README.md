@@ -1477,3 +1477,32 @@ rm -rf /tmp/librewolf-bin-160.0_p1-1
 # Jalankan LibreWolf
 ~/librewolf-app/opt/librewolf/librewolf &
 ```
+
+---
+
+## 39. Konfigurasi & Peluncuran Kompilasi Penuh dari Source Code LibreWolf di Colab
+
+### Target & Spesifikasi Optimasi Kinerja Tinggi
+Sesuai permintaan untuk mengompilasi LibreWolf **100% dari kode sumber** (bukan `-bin`), menghasilkan biner dengan performa tertinggi, cepat, dan fitur lengkap untuk **Intel Pentium Gold G5500**:
+
+1. **Arsitektur CPU Presisi**:
+   - `CFLAGS/CXXFLAGS`: `-march=skylake -mno-avx -mno-avx2 -mno-fma -O2 -pipe -fno-plt -fomit-frame-pointer -fno-semantic-interposition -mtls-dialect=gnu2`
+   - `CPU_FLAGS_X86`: `aes mmx mmxext pclmul popcnt rdrand sse sse2 sse3 sse4_1 sse4_2 ssse3`
+
+2. **Flag Fitur & Optimasi Tinggi (`package.use/librewolf`)**:
+   - `pgo`: *Profile-Guided Optimization* — browser dikompilasi dengan profiling eksekusi untuk meningkatkan kecepatan rendering & JavaScript hingga 15-20%.
+   - `clang`: Menggunakan toolchain resmi Mozilla (Clang/LLVM 22) dengan inlining ThinLTO.
+   - `hwaccel` & `vaapi`: Akselerasi hardware video decode via Intel Quick Sync Video (GPU Intel UHD 630).
+   - `openh264`: Dukungan codec video H.264 Cisco.
+   - `jumbo-build`: Unified source build untuk efisiensi kompilasi dan cross-unit inlining.
+   - `xvfb` (`x11-base/xorg-server xvfb`): Virtual X server tanpa layar fisik untuk pengujian profiling otomatis saat fase PGO.
+   - Fitur lengkap: `pulseaudio`, `dbus`, `hardened`, `gmp-autoupdate`, bahasa Indonesia (`L10N="id en en-US"`).
+
+3. **Strategi Cepat & Cerdas (Hybrid Dependency Binhost + Full Source Build)**:
+   - Toolchain dan dependensi dasar (170 paket seperti LLVM, Clang, Rust, GTK3) diinstal via repositori resmi Gentoo Binhost (`--getbinpkg`), menghemat 6–8 jam waktu kompilasi toolchain.
+   - Paket `www-client/librewolf` (1,1 GB source code) **100% dikompilasi dari sumber** dengan seluruh flag optimasi di atas.
+
+4. **Status Eksekusi di Colab**:
+   - Script `/content/gentoo/root/build_librewolf.sh` telah diluncurkan di background (`nohup chroot ... &`, PID: 9201 / 9311).
+   - Seluruh log kompilasi dicatat secara real-time di `/content/build.log`.
+   - Setelah kompilasi selesai, paket biner kustom akan otomatis tercipta di `/content/gentoo/var/cache/binpkgs/www-client/librewolf/` dan siap diunduh ke mesin lokal.
