@@ -2445,3 +2445,39 @@ rm -f /home/dongkrak/stage4-ultra-ramping.tar.zst && tar --exclude=/proc/* --exc
 3. **Proyeksi Ukuran Akhir**:
    * Saat pembacaan mencapai 100%, ukuran akhir berkas `stage4-ultra-ramping.tar.zst` diproyeksikan akan mendarat di kisaran **2,2 GB s/d 2,6 GB** saja!
    * Ini berarti terjadi penghematan ruang penyimpanan lebih dari **60%** dibandingkan versi komplit (6,7 GB).
+
+---
+
+## 67. Prosedur Pemasangan LibreWolf Biner ke Direktori Sistem Global (`/opt` & `/usr/bin`) Agar Bisa Diakses Akun `dongkrak`
+
+### 💬 Pertanyaan Anda:
+> *"tadi kan sudah emerge librewolf bin gimana cara nya agar user dongkrak bisa akses di user local"*
+
+### ⚙️ Analisis Izin Akses Linux:
+1. **Mengapa Akun `dongkrak` Belum Bisa Mengaksesnya?**:
+   * Berkas biner `LibreWolf 160.0-1` yang kita unduh dari Colab dan kita uji coba saat ini tersimpan di dalam folder pribadi akun `rep`: `/home/rep/librewolf-app/image/`.
+   * Direktori `/home/rep` memiliki izin akses privat `700` (`drwx------`). Akibatnya, pengguna lain seperti `dongkrak` dilarang oleh kernel Linux untuk masuk atau mengeksekusi berkas apa pun di dalamnya (*Permission denied*).
+2. **Solusi Standar Linux**:
+   * Memasang berkas biner tersebut ke lokasi sistem global:
+     - Program utama: diletakkan di `/opt/librewolf/` dengan izin baca-eksekusi publik (`755`).
+     - Tautan eksekusi (*Symlink/wrapper*): diletakkan di `/usr/bin/librewolf` (agar masuk ke dalam `$PATH` seluruh pengguna).
+     - Menu desktop & Icon: diletakkan di `/usr/share/applications/` dan `/usr/share/icons/` (agar otomatis muncul di launcher aplikasi X11/Wayland akun `dongkrak`).
+
+---
+
+### 🚀 Perintah Satu Baris Pemasangan Global (Jalankan dengan `doas` / Root):
+
+```bash
+doas cp -a /home/rep/librewolf-app/image/opt/librewolf /opt/ && doas chmod -R 755 /opt/librewolf && doas cp -a /home/rep/librewolf-app/image/usr/bin/librewolf-bin /usr/bin/ && doas ln -sf /usr/bin/librewolf-bin /usr/bin/librewolf && doas cp -a /home/rep/librewolf-app/image/usr/share/applications/* /usr/share/applications/ && doas cp -a /home/rep/librewolf-app/image/usr/share/icons/* /usr/share/icons/ 2>/dev/null || true
+```
+
+---
+
+### 🖥️ Cara Membuka LibreWolf dari Akun `dongkrak`:
+Setelah perintah di atas dijalankan:
+1. Masuk ke sesi login akun `dongkrak`.
+2. Buka terminal dan ketik langsung:
+   ```bash
+   librewolf
+   ```
+3. Atau buka melalui launcher aplikasi desktop Anda (Rofi, Dmenu, atau menu aplikasi desktop) $\rightarrow$ ikon **LibreWolf Browser** akan langsung muncul dan siap dijalankan dengan akselerasi penuh!
