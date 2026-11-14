@@ -608,3 +608,30 @@ git -C /home/rep/catatan-eyay push origin main
    * **7.577 Paket Pengembangan (*Development Packages*)** di seluruh kategori `dev-*` (termasuk library, framework, profiler, dan toolchain).
 3. **Filosofi Gentoo Linux**:
    * Gentoo adalah sistem berbasis kompilasi (*source-based*) dengan prinsip efisiensi: sistem hanya memasang perangkat lunak yang benar-benar Anda butuhkan agar tidak membebani ruang penyimpanan dan CPU.
+
+
+---
+
+## Sesi 14: Status Lengkap Pengaturan Ruby Saat Ini
+
+### 💬 Pertanyaan Pengguna:
+> *"setting ruby sekarang gimana"*
+
+### 🔍 Ringkasan Konfigurasi Aktif (*Live Status*):
+1. **Versi & Biner Ruby**:
+   * **Versi**: `ruby 2.3.8p459 [x86_64-linux]`
+   * **Biner**: `/home/rep/.rvm/rubies/ruby-2.3.8/bin/ruby`
+   * **Manajer Versi**: RVM (`~/.rvm`)
+2. **RubyGems & Lokasi Gem**:
+   * **Versi Gem**: `3.0.9` (`/home/rep/.rvm/rubies/ruby-2.3.8/bin/gem`)
+   * **GEM_HOME**: `/home/rep/.rvm/gems/ruby-2.3.8`
+   * **Gem Tambahan yang Terpasang**: `ffi (1.15.5)`, `bundler (1.17.3)`, `rake (10.4.2)`, `json (1.8.3.1)`, dll.
+3. **Sertifikat SSL**:
+   * **Berkas**: [`~/.rvm/usr/ssl/cert.pem`](file:///home/rep/.rvm/usr/ssl/cert.pem)
+   * **Variabel Lingkungan**: `SSL_CERT_FILE=/home/rep/.rvm/usr/ssl/cert.pem`
+   * **Status Koneksi**: Berhasil `200 OK` saat menghubungi `https://rubygems.org`.
+4. **Kompiler C untuk Gem Native (`CFLAGS`)**:
+   * `-Wno-error=incompatible-pointer-types -Wno-error=implicit-function-declaration`
+   * Menjamin ekstensi C lawas dapat dikompilasi mulus oleh GCC 14.3.1.
+5. **Uji FFI**:
+   * `require 'ffi'` aktif normal dan siap digunakan.
