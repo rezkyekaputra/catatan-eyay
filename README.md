@@ -816,3 +816,38 @@ Jalankan langkah berikut di Google Colab untuk membuat paket biner (*binpkg*) Ge
 !docker cp gentoo-builder:/var/cache/binpkgs /content/hasil_binpkg
 ```
 Setelah paket biner selesai di-build di Colab, berkas tersebut diunduh ke PC lokal dan diinstal secara instan dengan `emerge -K librewolf`.
+
+
+---
+
+## Sesi 20: Cara Menghadirkan Gentoo Linux Lengkap di Google Colab (Docker & Chroot)
+
+### 💬 Pertanyaan Pengguna:
+> *"tapi di collab belum ada gento linux"*
+
+### 💡 Penjelasan:
+Sistem bawaan Google Colab memang menggunakan Ubuntu. Namun, kita bisa menjalankan **Gentoo Linux Stage3 resmi** di dalam Colab hanya dalam waktu ~30 detik menggunakan **Docker** atau **Chroot**.
+
+---
+
+### 🚀 Cara Paling Praktis di Google Colab (Metode Docker Resmi):
+Ketik dan jalankan perintah ini di sel Google Colab Anda:
+
+```python
+# 1. Unduh sistem Gentoo Linux resmi dan jalankan di Colab (~30 detik)
+!docker run -d --name gentoo-box gentoo/stage3:nomultilib-openrc sleep infinity
+
+# 2. Periksa apakah sistem Gentoo sudah aktif
+!docker exec gentoo-box cat /etc/os-release
+```
+*Outputnya akan langsung menampilkan:* `NAME="Gentoo Linux"`.
+
+#### Cara Menggunakan Emerge di Colab:
+Sekarang Anda bisa menjalankan perintah Gentoo apa saja di Colab dengan awalan `!docker exec gentoo-box`:
+```python
+# Sinkronisasi repositori Portage
+!docker exec gentoo-box emerge-webrsync
+
+# Memasang / mengompilasi paket
+!docker exec gentoo-box emerge --ask=n app-misc/screen
+```
