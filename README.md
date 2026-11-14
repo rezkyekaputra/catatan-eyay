@@ -2589,7 +2589,9 @@ Setelah berkas salah ketik tersebut dihapus, saat Anda menjalankan ulang `rc-ser
 ### ⏳ Berapa Lama Lagi Akan Selesai?
 * Karena sistem saat ini **sudah membaca 9,10 GiB dari total ~10,1 GiB**, proses pembacaan data sebenarnya sudah mencapai **hampir 90% selesai**!
 * Sisa data yang belum dikompresi hanya tinggal sekitar **1,0 GB lagi**.
-* **Estimasi Waktu Selesai**:
-  $$\mathbf{Sekitar\ 3\ s/d\ 5\ Menit\ Lagi!}$$
-  *(Diperkirakan tuntas sekitar pukul **01:48 s/d 01:50 WIB**)*.
-* Begitu selesai, perintah otomatis akan mengubah kepemilikan berkas ke `dongkrak:dongkrak` dan berkas siap di-upload ke Google Drive!
+* **Status Aktual Saat Ini**:
+  $$\mathbf{PROSES\ TELAH\ 100\%\ SELESAI\ PADA\ PUKUL\ 01:45\ WIB!}$$
+* **Hasil Berkas Akhir**:
+  * Lokasi: [`/home/dongkrak/stage4-ultra-ramping.tar.zst`](file:///home/dongkrak/stage4-ultra-ramping.tar.zst)
+  * Ukuran akhir: **4,8 GB** (sukses terpangkas jauh lebih kecil dari versi awal).
+  * Hak milik: Sudah otomatis diubah menjadi `dongkrak:dongkrak` dan **SIAP DI-UPLOAD SEKARANG**!
