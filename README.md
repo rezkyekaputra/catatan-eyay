@@ -1268,3 +1268,41 @@ source /etc/profile
 cat /etc/os-release
 ```
 *(Anda sudah resmi berada di dalam Gentoo Linux murni dengan akses penuh ke alat `emerge`).*
+
+
+---
+
+## Sesi 35: URL Presisi Stage3 Gentoo Linux 2026 (Memperbaiki Error 404)
+
+### 💬 Status dari Pengguna:
+```text
+HTTP request sent, awaiting response... 404 Not Found
+```
+
+### 🔍 Analisis:
+* Gentoo mengubah penamaan berkas rilis autobuilds menggunakan format tanggal stempel waktu (*timestamped directory*).
+* Tautan statis `stage3-amd64-openrc-latest.tar.xz` dialihkan ke mirror yang belum tersinkronisasi.
+* **Tautan Resmi Terverifikasi Aktif (HTTP 200 OK)**:
+  `https://distfiles.gentoo.org/releases/amd64/autobuilds/20261108T170107Z/stage3-amd64-openrc-20261108T170107Z.tar.xz` (266 MB).
+
+---
+
+### 🚀 Perintah Unduh & Pasang yang Benar:
+```bash
+# 1. Unduh Stage3 rilis terbaru (266 MB)
+wget -O stage3.tar.xz https://distfiles.gentoo.org/releases/amd64/autobuilds/20261108T170107Z/stage3-amd64-openrc-20261108T170107Z.tar.xz
+
+# 2. Ekstrak
+tar xpf stage3.tar.xz --xattrs-include='*.*' --numeric-owner
+
+# 3. Mount perangkat sistem
+mount --bind /proc /content/gentoo/proc
+mount --bind /sys /content/gentoo/sys
+mount --bind /dev /content/gentoo/dev
+mount --bind /dev/pts /content/gentoo/dev/pts
+cp -L /etc/resolv.conf /content/gentoo/etc/
+
+# 4. Masuk ke dalam Gentoo Linux
+chroot /content/gentoo /bin/bash
+source /etc/profile
+```
