@@ -1773,3 +1773,20 @@ Gunakan opsi ini jika Anda ingin semua berkas pengguna, dotfiles (`.bashrc`, `.c
 ```bash
 doas tar --zstd -cvpf /home/rep/stage4-gentoo.tar.zst --exclude=/proc/* --exclude=/sys/* --exclude=/dev/* --exclude=/run/* --exclude=/tmp/* --exclude=/mnt/* --exclude=/media/* --exclude=/lost+found --exclude=/var/tmp/* --exclude=/var/cache/distfiles/* --exclude=/var/cache/binpkgs/* --exclude=/home/*/.cache/* --exclude=/root/.cache/* --exclude=/var/log/* /
 ```
+
+---
+
+## 47. Perintah Satu Baris Stage 4 Khusus Menyertakan `/home/rep` Saja
+
+### Konfigurasi Khusus Pengguna `rep`
+Jika Anda ingin menyertakan seluruh konfigurasi dan berkas di `/home/rep` tanpa membawa direktori akun pengguna lain di `/home` (`dongkrak`, `larry`, `nidun`, `sapi`), serta mengecualikan cache dan berkas arsip itu sendiri:
+
+```bash
+doas tar --zstd -cvpf /home/rep/stage4-gentoo.tar.zst --exclude=/proc/* --exclude=/sys/* --exclude=/dev/* --exclude=/run/* --exclude=/tmp/* --exclude=/mnt/* --exclude=/media/* --exclude=/lost+found --exclude=/var/tmp/* --exclude=/var/cache/distfiles/* --exclude=/var/cache/binpkgs/* --exclude=/home/dongkrak --exclude=/home/larry --exclude=/home/nidun --exclude=/home/sapi --exclude=/home/rep/.cache/* --exclude=/home/rep/stage4-gentoo.tar.zst --exclude=/root/.cache/* --exclude=/var/log/* /
+```
+
+### Keunggulan Format Ini:
+1. **Hanya Akun Anda yang Masuk**: Folder `/home/rep/` (termasuk `.bashrc`, repositori Git, skrip pribadi) ikut terarsip utuh.
+2. **Akun Lain Ditinggalkan**: Akun `dongkrak`, `larry`, `nidun`, dan `sapi` tidak akan ikut terbawa, menjaga privasi dan menghemat ruang disk.
+3. **Cache Dibuang**: Cache browser dan thumbnail di `/home/rep/.cache/*` dilewati sehingga ukuran berkas tetap padat dan cepat diunggah.
+4. **Bebas Rekursif**: File arsip `/home/rep/stage4-gentoo.tar.zst` otomatis dikecualikan agar tidak terjadi pembacaan arsip di dalam arsip.
