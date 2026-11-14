@@ -1950,3 +1950,24 @@ Pengecekan mendalam terhadap konfigurasi `/etc/portage/make.conf` dan direktori 
 ```bash
 doas tar --zstd -cvpf /home/rep/stage4-gentoo.tar.zst --exclude=/proc/* --exclude=/sys/* --exclude=/dev/* --exclude=/run/* --exclude=/tmp/* --exclude=/mnt/* --exclude=/media/* --exclude=/lost+found --exclude=/var/tmp/* --exclude=/var/cache/distfiles/* --exclude=/var/cache/binpkgs/* --exclude=/var/cache/ccache* --exclude=/home/dongkrak --exclude=/home/larry --exclude=/home/nidun --exclude=/home/sapi --exclude=/home/rep/.cache/* --exclude=/home/rep/.ccache* --exclude=/home/rep/stage4*.tar.zst --exclude=/root/.cache/* --exclude=/root/.ccache* --exclude=/var/log/* /
 ```
+
+---
+
+## 55. Estimasi Ukuran Berkas Arsip Stage 4 Definitif
+
+### Kalkulasi Rincian Ruang Penyimpanan
+Berdasarkan pengecekan berkas pada sistem lokal dan rasio kompresi algoritma `zstd`:
+
+1. **Berkas yang Diikutsertakan**:
+   - Sistem inti (`/usr`, `/etc`, `/boot`): ~12 s/d 14 GB (uncompressed).
+   - Database ebuild & portage (`/var/db/`): ~1,5 GB (uncompressed).
+   - Akun pengguna `rep` (`/home/rep` tanpa cache): ~2,7 GB (uncompressed).
+   - **Total data mentah uncompressed**: Sekitar **16 GB s/d 18 GB**.
+
+2. **Faktor Kompresi Algoritma Zstandard (`zstd`)**:
+   - Biner ELF (`/usr/lib64/*.so`) terkompresi ~3x lipat.
+   - Kode sumber & teks ebuild terkompresi ~5x lipat.
+
+3. **Perkiraan Hasil Ukuran Akhir**:
+   - Berkas `stage4-gentoo.tar.zst` diperkirakan akan berukuran antara **3,5 GB sampai 5,0 GB saja**.
+   - Ukuran ini sangat aman, hemat kuota, dan hanya memakan sepertiga dari kapasitas gratis Google Drive (15 GB).
