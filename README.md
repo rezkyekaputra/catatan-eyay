@@ -2398,3 +2398,32 @@ doas tar --exclude=/proc/* --exclude=/sys/* --exclude=/dev/* --exclude=/run/* --
 | **Stage 4 Komplit Personal** | Sistem Penuh + Akun `/home/rep` + Kernel Source | **6,7 GB** *(Berkas saat ini)* | Kloning instan 1:1 tanpa setting ulang desktop sama sekali. |
 | **Stage 4 Bersih Standar** | Sistem Penuh tanpa `/home` | **~5,7 GB** | Backup sistem OS murni. |
 | **Stage 4 Ultra Ramping** | Sistem Inti Paling Ramping (Tanpa `/usr/src`, repo ebuild, & home) dengan `zstd -19` | **Hanya ~2,0 GB s/d 2,5 GB!** | Upload super cepat, hemat kuota internet darurat, atau deployment minimalis ke cloud. |
+
+---
+
+## 65. Solusi Kendala Zstandard "already exists; stdin is an input" Pada Stage 4 Ultra Ramping
+
+### 💬 Pertanyaan Anda:
+> *"zstd: /home/dongkrak/stage4-ultra-ramping.tar.zst already exists; stdin is an input - not proceeding."*
+
+### ⚙️ Penyebab & Analisis Teknis:
+1. **Fitur Pengaman Data (*Data Protection Guardrail*)**:
+   * Program kompresi `zstd` memiliki pengaman bawaan saat menerima data dari pipa (*pipe* `| stdin`).
+   * Jika berkas target sudah ada di disk (meskipun hanya berukuran 13 byte dari percobaan sebelumnya), `zstd` secara otomatis menolak menimpa (*overwrite*) agar tidak terjadi kehilangan data secara tidak sengaja.
+2. **Solusi Perbaikan**:
+   * Cukup tambahkan parameter **`-f`** (*force overwrite*) pada perintah `zstd` atau hapus berkas parsial 13 byte tersebut sebelum memulai.
+
+---
+
+### 🚀 Perintah Definitif Sempurna Satu Baris (Dengan `-f`):
+
+Jalankan perintah ini di terminal root (`#`):
+
+```bash
+rm -f /home/dongkrak/stage4-ultra-ramping.tar.zst && tar --exclude=/proc/* --exclude=/sys/* --exclude=/dev/* --exclude=/run/* --exclude=/tmp/* --exclude=/mnt/* --exclude=/media/* --exclude=/lost+found --exclude=/var/tmp/* --exclude=/var/cache/distfiles/* --exclude=/var/cache/binpkgs/* --exclude=/var/cache/ccache* --exclude=/var/log/* --exclude=/usr/src/* --exclude=/var/db/repos/gentoo/* --exclude=/home/* --exclude=/root/.cache/* --exclude=/root/.ccache* -cvpf - / | zstd -f -19 -T0 -o /home/dongkrak/stage4-ultra-ramping.tar.zst && chown dongkrak:dongkrak /home/dongkrak/stage4-ultra-ramping.tar.zst
+```
+
+* **Penjelasan Parameter Tambahan**:
+  * `rm -f ...`: Membersihkan sisa berkas 13 byte sebelumnya.
+  * `zstd -f`: Memaksa penulisan berkas baru tanpa halangan *already exists*.
+  * `&& chown dongkrak:dongkrak ...`: Begitu proses selesai, berkas langsung diserahkan kepemilikannya ke akun `dongkrak` agar siap di-upload ke Google Drive.
