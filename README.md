@@ -2296,3 +2296,53 @@ doas mv /home/rep/stage4-gentoo.tar.zst /home/dongkrak/
 doas chown dongkrak:dongkrak /home/dongkrak/stage4-gentoo.tar.zst
 ```
 * **Catatan**: Berkas langsung berpindah instan (1 detik) ke `/home/dongkrak/` dan tidak lagi berada di `/home/rep/`.
+
+---
+
+## 63. Komparasi Ukuran Stage 4: Tanpa `/home` dan Pengaruh Pengecualian `distfiles`
+
+### 💬 Pertanyaan Anda:
+> *"tar --zstd -cvpf /home/rep/stage4-gentoo.tar.zst ... jika tanpa home apakah jadi berapa giga"*  
+> *"dan tanpa distfile"*
+
+### ⚙️ Hasil Audit Ukuran Data Riil Sistem Lokal:
+
+Berdasarkan pemindaian langsung pada partisi sistem Anda saat ini:
+
+| Direktori Sistem | Ukuran Mentah Asli | Keterangan Status dalam Perintah Anda |
+| :--- | :--- | :--- |
+| **`/usr`** | **7,8 GB** | Biner sistem inti, compiler, dan pustaka `.so` (wajib masuk). |
+| **`/opt`** | **1,3 GB** | Toolchain Rust (`rust-bin-1.92.0`) (wajib masuk). |
+| **`/var` (Bersih)** | **883 MB** | Database portage dan repositori ebuild (wajib masuk). |
+| **`/var/cache/distfiles`** | **4,0 GB** | **SUDAH BERHASIL DIKECUALIKAN** oleh parameter `--exclude=/var/cache/distfiles/*`. |
+| **`/var/cache/ccache-disk`**| **2,5 GB** | **SUDAH BERHASIL DIKECUALIKAN** oleh parameter `--exclude=/var/cache/ccache*`. |
+| **`/home/rep` (Bersih)** | **1,7 GB** | Seluruh setting desktop, dotfiles, skrip, dan konfigurasi akun `rep`. |
+| **`/etc` + `/boot`** | **~52 MB** | Konfigurasi sistem dan kernel Linux. |
+
+---
+
+### 📊 Berapa Ukuran Berkas Jika Tanpa `/home` dan Tanpa `distfiles`?
+
+1. **Tentang `distfiles` (4,0 GB)**:
+   * Pada perintah yang Anda jalankan, `distfiles` **sudah 100% dikecualikan** (`--exclude=/var/cache/distfiles/*`).
+   * Jika `distfiles` tidak dikecualikan, ukuran arsip Anda sebelumnya bisa membengkak hingga **> 9 GB**. Berkat perintah Anda, ukuran mentah 4 GB ini sudah terselamatkan!
+2. **Jika Direktori `/home` Dikecualikan Total (`--exclude=/home/*`)**:
+   * Data mentah yang dikurangi adalah data `/home/rep` sebesar **1,7 GB**.
+   * Setelah dikompresi dengan algoritma `zstd` (rasio kompresi ~1,6x s/d 1,8x untuk data konfigurasi dan dokumen teks/skrip), penghematan ukuran berkas terkompresi adalah sekitar **0,9 GB s/d 1,2 GB**.
+   * **Estimasi Ukuran Akhir**:
+     * Dengan `/home/rep` (berkas yang ada sekarang): **6,7 GB**.
+     * **Tanpa `/home` sama sekali**: Akan menjadi sekitar **5,5 GB s/d 5,8 GB**.
+
+---
+
+### 💡 Analisis Untung Rugi: Apakah Perlu Dibuat Ulang Tanpa `/home`?
+
+| Kriteria | Dengan `/home/rep` (6,7 GB - Sudah Ada di `dongkrak`) | Tanpa `/home` (~5,6 GB) |
+| :--- | :--- | :--- |
+| **Kapasitas Google Drive** | **Sangat Aman** (Hanya memakan 44% dari batas gratis 15 GB). | Hanya hemat ~1 GB (memakan 37% kuota). |
+| **Kelengkapan Konfigurasi** | **100% Sempurna & Siap Pakai**: Seluruh tema desktop, wallpaper, icon, setting aplikasi, SSH key, git config, dan `.bashrc` langsung aktif saat diekstrak di Colab atau PC baru. | **Hanya OS Kosong**: Seluruh lingkungan desktop dan akun pengguna pribadi hilang (harus setting ulang dari nol). |
+| **Waktu & Efisiensi** | **Langsung Siap Upload Sekarang**: Berkas 6,7 GB sudah ada di `/home/dongkrak/stage4-gentoo.tar.zst`. | Harus menunggu proses `tar` mengulang kompresi dari awal lagi selama ~15–20 menit. |
+
+> [!TIP]
+> **Rekomendasi Terbaik**:  
+> Selisih ukuran hanya sekitar **1 GB**, sedangkan batas kuota Google Drive Anda adalah **15 GB**. Menyimpan `/home/rep` jauh lebih berharga karena menyimpan seluruh "jiwa" dan konfigurasi personal sistem Anda. Berkas **6,7 GB yang sudah berada di `/home/dongkrak/stage4-gentoo.tar.zst` sudah sangat ideal dan siap untuk langsung di-upload ke Google Drive!**
