@@ -2343,6 +2343,58 @@ Berdasarkan pemindaian langsung pada partisi sistem Anda saat ini:
 | **Kelengkapan Konfigurasi** | **100% Sempurna & Siap Pakai**: Seluruh tema desktop, wallpaper, icon, setting aplikasi, SSH key, git config, dan `.bashrc` langsung aktif saat diekstrak di Colab atau PC baru. | **Hanya OS Kosong**: Seluruh lingkungan desktop dan akun pengguna pribadi hilang (harus setting ulang dari nol). |
 | **Waktu & Efisiensi** | **Langsung Siap Upload Sekarang**: Berkas 6,7 GB sudah ada di `/home/dongkrak/stage4-gentoo.tar.zst`. | Harus menunggu proses `tar` mengulang kompresi dari awal lagi selama ~15–20 menit. |
 
-> [!TIP]
 > **Rekomendasi Terbaik**:  
 > Selisih ukuran hanya sekitar **1 GB**, sedangkan batas kuota Google Drive Anda adalah **15 GB**. Menyimpan `/home/rep` jauh lebih berharga karena menyimpan seluruh "jiwa" dan konfigurasi personal sistem Anda. Berkas **6,7 GB yang sudah berada di `/home/dongkrak/stage4-gentoo.tar.zst` sudah sangat ideal dan siap untuk langsung di-upload ke Google Drive!**
+
+---
+
+## 64. Rahasia Merampingkan Stage 4 Gentoo Hingga Ekstrem (~2 GB Saja)
+
+### 💬 Pertanyaan Anda:
+> *"kalau pengen ramping banget"*
+
+### 🤖 Jawaban & Trik Bedah Sistem Ekstrem:
+
+Jika Anda menginginkan arsip Stage 4 yang **super ramping (*ultra-lightweight*)**, seukuran berkas film biasa (**hanya sekitar 2,0 GB s/d 2,5 GB**) agar proses upload dan download secepat kilat, berikut adalah rahasia "pemotongan lemak" sistem Gentoo:
+
+---
+
+#### 1. Titik-Titik "Lemak Raksasa" yang Bisa Dibuang Aman
+
+Berdasarkan audit langsung pada sistem Gentoo Anda:
+
+1. **`/usr/src` (Ukuran: 2,1 Gigabytes!) $\rightarrow$ SANGAT DISARANKAN DIKECUALIKAN**:
+   * Ini adalah sisa kompilasi kode sumber kernel Linux (`linux-6.12.111-gentoo`), berisi ratusan ribu berkas objek biner `.o` dan file sementara kompilasi kernel.
+   * **Mengapa Aman Dibuang?**: Kernel matang Anda sudah terpasang rapi di `/boot/` dan modul driver sudah aktif di `/lib/modules/`. Sistem Gentoo Anda tetap bisa boot 100% normal tanpa `/usr/src`!
+   * **Penghematan**: Langsung memangkas **2,1 GB data mentah**!
+2. **`/var/db/repos/gentoo` (Ukuran: 718 Megabytes) $\rightarrow$ BISA DIKECUALIKAN**:
+   * Ini adalah pohon ebuild portage lengkap.
+   * Saat diekstrak di Colab atau PC baru, Anda cukup mengetik satu perintah `emerge-webrsync` atau `git clone` untuk menariknya kembali dalam 30 detik.
+   * **Penghematan**: Memangkas **~718 MB**.
+3. **`/opt/google` & `/opt/vesktop` (Ukuran: ~680 Megabytes)**:
+   * Google Chrome dan Discord versi biner pihak ketiga.
+   * Bisa dikecualikan jika Anda ingin memasangnya belakangan setelah sistem jadi.
+4. **`/home/*` (Ukuran: 1,7 Gigabytes)**:
+   * Seluruh dokumen dan cache desktop pengguna.
+5. **Level Kompresi ZSTD Ditingkatkan ke `-19` (Default hanya Level 3)**:
+   * Menggunakan parameter pipa kompresi `zstd -19 -T0` (memakai semua core CPU untuk memampatkan biner sepadat mungkin).
+
+---
+
+#### 2. Perintah Satu Baris Stage 4 "Ultra Ramping" (~2,0 GB s/d 2,5 GB)
+
+Jika Anda ingin membuat versi ultra ramping ini:
+
+```bash
+doas tar --exclude=/proc/* --exclude=/sys/* --exclude=/dev/* --exclude=/run/* --exclude=/tmp/* --exclude=/mnt/* --exclude=/media/* --exclude=/lost+found --exclude=/var/tmp/* --exclude=/var/cache/distfiles/* --exclude=/var/cache/binpkgs/* --exclude=/var/cache/ccache* --exclude=/var/log/* --exclude=/usr/src/* --exclude=/var/db/repos/gentoo/* --exclude=/home/* --exclude=/root/.cache/* --exclude=/root/.ccache* -cvpf - / | zstd -19 -T0 -o /home/rep/stage4-ultra-ramping.tar.zst
+```
+
+---
+
+#### 3. Perbandingan Tingkatan Ukuran Stage 4 Gentoo
+
+| Varian Stage 4 | Komponen yang Diikutsertakan | Estimasi Ukuran Akhir | Cocok Untuk |
+| :--- | :--- | :--- | :--- |
+| **Stage 4 Komplit Personal** | Sistem Penuh + Akun `/home/rep` + Kernel Source | **6,7 GB** *(Berkas saat ini)* | Kloning instan 1:1 tanpa setting ulang desktop sama sekali. |
+| **Stage 4 Bersih Standar** | Sistem Penuh tanpa `/home` | **~5,7 GB** | Backup sistem OS murni. |
+| **Stage 4 Ultra Ramping** | Sistem Inti Paling Ramping (Tanpa `/usr/src`, repo ebuild, & home) dengan `zstd -19` | **Hanya ~2,0 GB s/d 2,5 GB!** | Upload super cepat, hemat kuota internet darurat, atau deployment minimalis ke cloud. |
