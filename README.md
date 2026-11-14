@@ -1916,3 +1916,11 @@ doas tar --zstd -cvpf /home/rep/stage4-gentoo.tar.zst --exclude=/proc/* --exclud
 - `--exclude=/home/rep/.ccache/*` (Folder cache ccache pengguna `rep`)
 - `--exclude=/root/.ccache/*` (Folder cache ccache akun root)
 - `--exclude=/home/rep/.cache/*` (Folder cache desktop & compiler runtime)
+
+---
+
+## 53. Pembersihan Berkas Parsial `stage4-gentoo.tar.zst`
+
+### Status Eksekusi Pembersihan
+- Berkas arsip parsial `/home/rep/stage4-gentoo.tar.zst` (berukuran ~685 MB) telah berhasil dihapus secara tuntas dari penyimpanan lokal.
+- Direktori `/home/rep/` kini telah kembali bersih dari berkas arsip `stage4*` dan siap digunakan untuk proses pengarsipan baru yang bebas ccache.
