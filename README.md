@@ -879,3 +879,37 @@ Semua proses hardware inilah yang memakan waktu lama.
 3. **Analogi**:
    * Install Gentoo di laptop = Membangun rumah dari pondasi batu bata dan memasang tiang listrik sendiri.
    * Gentoo di Docker Colab = Menyewa kamar apartemen yang bangunannya sudah jadi, Anda tinggal masuk dan langsung pakai.
+
+
+---
+
+## Sesi 22: Menghubungkan Terminal Gentoo Linux ke Shell Google Colab via SSH
+
+### 💬 Pertanyaan Pengguna:
+> *"bisa ga kita hubungkan sheell google collab dengan ssh di gentoo linux"*
+
+### 💡 Konsep Kerja:
+Google Colab berada di balik *firewall* Google (tidak punya IP publik langsung). Namun, kita bisa menggunakan terowongan aman (*reverse SSH tunnel*) sehingga terminal lokal Gentoo kita bisa langsung masuk dan mengontrol shell Google Colab.
+
+---
+
+### 🚀 Cara Paling Mudah & Cepat: Menggunakan `tmate` (Tanpa Daftar Akun)
+
+#### 1. Di Sel Google Colab:
+Jalankan perintah ini di Google Colab:
+```python
+# Pasang dan jalankan tmate instan di Colab
+!apt-get update -qq && apt-get install -y tmate
+!tmate -F
+```
+*Tunggu beberapa detik, Colab akan menampilkan baris perintah SSH, contohnya:*
+```text
+ssh eXampleRandomHash@sgp1.tmate.io
+```
+
+#### 2. Di Terminal Gentoo Linux Anda:
+Buka terminal Gentoo Anda, salin baris `ssh ...` yang muncul di Colab tadi, lalu tekan Enter:
+```bash
+ssh eXampleRandomHash@sgp1.tmate.io
+```
+**Hasilnya**: Anda langsung berada di dalam terminal Google Colab dengan kenyamanan terminal lokal Gentoo Anda sendiri!
