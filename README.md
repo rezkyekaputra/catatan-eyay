@@ -1971,3 +1971,32 @@ Berdasarkan pengecekan berkas pada sistem lokal dan rasio kompresi algoritma `zs
 3. **Perkiraan Hasil Ukuran Akhir**:
    - Berkas `stage4-gentoo.tar.zst` diperkirakan akan berukuran antara **3,5 GB sampai 5,0 GB saja**.
    - Ukuran ini sangat aman, hemat kuota, dan hanya memakan sepertiga dari kapasitas gratis Google Drive (15 GB).
+
+---
+
+## 56. Mengenal Istilah "Stage 5" dalam Filosofi & Ekosistem Gentoo Linux
+
+### Hirarki Resmi "Stage" di Gentoo Linux
+Secara resmi dari tim pengembang Gentoo Linux (*Gentoo Release Engineering*), tingkatan Stage dibagi sebagai berikut:
+
+| Tingkatan | Definisi | Status Resmi |
+| :--- | :--- | :--- |
+| **Stage 1** | Toolchain mentah (hanya compiler, binutils, dan glibc dasar) untuk kompilasi dari nol. | Dulu resmi (zaman awal Gentoo), kini diarsipkan. |
+| **Stage 2** | Toolchain lengkap + sistem dasar yang sudah di-bootstrap. | Dulu resmi, kini diarsipkan. |
+| **Stage 3** | Sistem minimal siap pakai yang mencakup toolchain dan manajer paket Portage fungsional. | **Standar Resmi Gentoo Saat Ini** (yang kita unduh di Colab). |
+| **Stage 4** | Snapshot penuh dari sistem yang sudah berjalan (mencakup DE/WM, aplikasi desktop, pustaka, `@world`, dan `/etc/portage`). | Standar Komunitas Terpopuler (*De Facto Standard*). |
+
+---
+
+### Apakah Ada yang Disebut "Stage 5"?
+Secara dokumentasi resmi Gentoo, **tidak ada definisi resmi untuk Stage 5**.
+
+Namun, di kalangan hacker, sysadmin, dan pengguna mahir Gentoo (*power users*), istilah **Stage 5** sering digunakan secara informal (*slang*) untuk menyebut:
+
+1. **Bootable Live ISO / Portable Appliance Image**:
+   - Jika Stage 4 adalah arsip `.tar.zst` yang harus diekstrak ke dalam partisi disk dan di-chroot, maka **"Stage 5"** adalah Stage 4 yang sudah diubah menjadi format berkas ISO bootable (`.iso`) atau raw disk image (`.img`) lengkap dengan bootloader GRUB dan initramfs.
+   - Bisa langsung di-*flash* ke flashdisk USB dan langsung di-boot di komputer mana pun tanpa perlu instalasi (*Plug & Play Live Gentoo*).
+2. **Gold Master / Golden Image (Cloud Deployment)**:
+   - Sistem Gentoo yang sudah di-*bake* (dibakar matang) lengkap dengan layanan produksi, database, dan konfigurasi server cloud, siap di-kloning instan ke ratusan VPS atau bare-metal server (mirip AMI di AWS atau Docker container image).
+3. **Air-Gapped / 100% Self-Contained System**:
+   - Sistem lengkap yang juga membawa seluruh pohon ebuild lokal dan arsip distfiles di dalamnya, sehingga bisa mengompilasi atau membangun paket baru tanpa membutuhkan koneksi internet sama sekali.
