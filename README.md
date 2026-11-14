@@ -2520,3 +2520,49 @@ Kembali ke akun `dongkrak` dan jalankan:
 librewolf
 ```
 Aplikasi LibreWolf akan langsung terbuka lancar di layar desktop akun `dongkrak`!
+
+---
+
+## 69. Analisis & Solusi Peringatan "Bind /etc/netns/vpn/resolv. -> /etc/resolv. failed" pada Layanan `net.wg0`
+
+### 💬 Laporan Pengguna:
+```text
+tux ~ # rc-service net.wg0 start
+net.wg0                   | * Bringing up interface wg0
+net.wg0                   | *   Caching network module dependencies
+net.wg0                   | *   Creating WireGuard interface wg [ ok ]
+net.wg0                   | *   Configuring WireGuard interface wg0 ...                                                               [ ok ]
+net.wg0                   | *   Running postup ...
+net.wg0                   |Bind /etc/netns/vpn/resolv. -> /etc/resolv. failed: No such file or directory
+net.wg0                   |Bind /etc/netns/vpn/resolv. -> /etc/resolv. failed: No such file or directory
+net.wg0                   |Bind /etc/netns/vpn/resolv. -> /etc/resolv. failed: No such file or directory
+net.wg0                   |Bind /etc/netns/vpn/resolv. -> /etc/resolv. failed: No such file or directory
+tux ~ #
+```
+
+### ⚙️ Hasil Investigasi Sistem:
+1. **Status Jaringan WireGuard Sebenarnya**:
+   * Antarmuka WireGuard `wg0` dan network namespace `vpn` sebenarnya **100% BERHASIL DIAKTIFKAN `[ ok ]`**.
+   * Tunnel VPN tetap berjalan normal.
+2. **Penyebab Munculnya Pesan Peringatan**:
+   * Fitur network namespace `iproute2` (`ip netns`) secara otomatis memeriksa isi direktori `/etc/netns/<nama-namespace>/`. Jika ada berkas di dalamnya, berkas tersebut akan di-*bind-mount* ke lokasi padanannya di `/etc/` saat namespace dipanggil.
+   * Pemeriksaan pada direktori [`/etc/netns/vpn/`](file:///etc/netns/vpn/) menemukan adanya **berkas sisa/salah ketik (*typo*)**:
+     - `/etc/netns/vpn/resolv.` $\rightarrow$ **Berkas typo** (terpotong tanpa ekstensi `conf`).
+     - `/etc/netns/vpn/resolv.conf` $\rightarrow$ Berkas DNS asli yang benar.
+   * Karena berkas `resolv.` ada di dalam folder tersebut, sistem mencoba mencari pasangannya di `/etc/resolv.`. Karena di sistem Linux tidak ada berkas bernama `/etc/resolv.`, `ip netns` mengeluarkan pesan peringatan *failed: No such file or directory* sebanyak 4 kali.
+
+---
+
+### 🚀 Perintah Perbaikan Bersih (Cukup Hapus Berkas Typo):
+
+Jalankan perintah ini di terminal root (`#`):
+
+```bash
+rm -f /etc/netns/vpn/resolv.
+```
+*(Atau jika menggunakan akun biasa dengan doas)*:
+```bash
+doas rm -f /etc/netns/vpn/resolv.
+```
+
+Setelah berkas salah ketik tersebut dihapus, saat Anda menjalankan ulang `rc-service net.wg0 restart`, seluruh proses akan berjalan mulus tanpa ada lagi pesan galat `Bind failed`!
