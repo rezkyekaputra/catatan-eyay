@@ -2647,3 +2647,55 @@ Setelah membedah struktur isi berkas arsip tanggal 2 November tersebut langsung 
 ### 💡 Kesimpulan:
 * Berkas **2,9 GB** tersebut sangat kecil karena saat dibuat pada tanggal 2 November, sistem Gentoo Anda **baru berupa instalasi minimalis (hanya 65 paket biner dasar dan belum memiliki akun pengguna sama sekali)**.
 * Berkas **6,7 GB** hari ini wajar jika lebih besar karena Anda telah memasang lebih dari **600 paket aplikasi, pustaka desktop, compiler, serta seluruh setting lingkungan kerja Anda** selama 2 minggu terakhir!
+
+---
+
+## 73. Cara Menyalin Berkas / Folder ke Akun `dongkrak` Tanpa Merubah Isi & Atribut (*Bit-by-Bit Exact*)
+
+### 💬 Pertanyaan Anda:
+> *"cara copy ke dongkrak tanpa merubah isi dll"*
+
+### ⚙️ Penjelasan Teknis:
+Di sistem Linux, perintah salin biasa (`cp`) secara bawaan akan mengubah stempel waktu (*modified timestamp*) menjadi waktu saat ini dan mengubah hak akses sesuai *umask*.
+
+Agar berkas tersalin **100% PERSIS (*bit-by-bit exact*)** tanpa merubah isi, checksum (SHA256), stempel waktu, maupun atribut berkas:
+
+---
+
+### 🚀 Pilihan Perintah Terminal:
+
+#### Opsi 1: Menggunakan Parameter Preservasi Penuh (`cp -p` atau `cp -a`)
+Gunakan opsi **`-p`** (*preserve*) untuk berkas tunggal (seperti `/gentoo-stage4.tar.zst`):
+
+```bash
+doas cp -p /gentoo-stage4.tar.zst /home/dongkrak/
+doas chown dongkrak:dongkrak /home/dongkrak/gentoo-stage4.tar.zst
+```
+
+* **Mengapa Isi Berkas Dijamin Tidak Berubah?**:
+  * Parameter `-p` mempertahankan stempel tanggal asli (**Nov 2 20:25**), mode perizinan (`644`), dan isi biner berkas 100% identik.
+  * Perintah `chown dongkrak:dongkrak` **HANYA** mengubah label metadata "siapa yang berhak mengupload/menghapus berkas" pada sistem file lokal, dan **sama sekali tidak mengubah isi internal berkas (checksum SHA256 tetap 100% sama persis)**.
+
+---
+
+#### Opsi 2: Menggunakan Tautan Keras (*Hardlink* `ln`) $\rightarrow$ Selesai 0,1 Detik & 0 Byte Ruang Tambahan
+Karena berkas sumber dan `/home/dongkrak/` berada pada partisi fisik yang sama (`/dev/root`):
+
+```bash
+doas ln /gentoo-stage4.tar.zst /home/dongkrak/gentoo-stage4.tar.zst
+```
+
+* **Keunggulan Hardlink**:
+  * Menghubungkan direktori `dongkrak` langsung ke blok data fisik yang sama di harddisk.
+  * **0 Byte Kuota Tambahan**: Tidak menyita 2,9 GB ruang harddisk baru.
+  * **Isi 100% Identik Mutlak**: Mustahil ada perbedaan isi karena keduanya menunjuk ke data fisik yang sama persis.
+
+---
+
+#### Opsi 3: Jika yang Disalin Berupa Folder / Direktori Penuh
+Gunakan opsi **`-a`** (*archive mode*):
+
+```bash
+doas cp -a <nama_folder_sumber> /home/dongkrak/
+```
+* Opsi `-a` secara otomatis menyalin secara rekursif, mempertahankan tautan simbolik (*symlinks*), atribut file, izin hak akses (`chmod`), dan stempel waktu seluruh berkas di dalam folder tersebut.
