@@ -1153,3 +1153,32 @@ Atau secara spesifik:
 colab ssh -s gpu-t4-s-usw4a1-2hkpzol0helfl
 ```
 Setelah masuk ke dalam Colab, ketik `nvidia-smi` untuk melihat informasi kartu grafis NVIDIA T4 GPU secara langsung.
+
+
+---
+
+## Sesi 32: Cara Masuk ke Sesi Tanda Tanya `[?]` pada Colab CLI
+
+### 💬 Status dari Pengguna:
+```text
+[rep-box]:~$ colab ssh -s gpu-t4-s-usw4a1-2hkpzol0helfl
+[colab] session 'gpu-t4-s-usw4a1-2hkpzol0helfl' not found. Run `colab sessions` to list active sessions.
+[rep-box]:~$ colab sessions
+[?] gpu-t4-s-usw4a1-2hkpzol0helfl | Hardware: T4 | Shape: Standard | Variant: GPU
+```
+
+### 🔍 Analisis Tanda `[?]`:
+* Tanda `[?]` menandakan bahwa sesi GPU ini dibuat langsung dari browser web Colab (belum memiliki nama alias lokal di CLI).
+* Opsi `-s` membutuhkan nama alias lokal (seperti `fb3d0c` sebelumnya). Jika sesi berstatus `[?]`, kita **tidak boleh menggunakan opsi `-s`**.
+* Sesuai aturan Colab CLI: jika hanya ada 1 sesi aktif, cukup jalankan **`colab ssh` polos tanpa opsi `-s`**. CLI akan otomatis menyambungkan ke sesi GPU `[?]` tersebut.
+
+---
+
+### 🚀 Perintah yang Benar:
+```bash
+colab ssh
+```
+Atau jika ingin membuat sesi baru yang bernama:
+```bash
+colab ssh --gpu T4 -s gpu-saya
+```
