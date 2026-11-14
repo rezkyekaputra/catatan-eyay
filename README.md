@@ -1746,3 +1746,30 @@ Kompiler tidak akan pernah menghasilkan instruksi yang tidak ada di Pentium Gold
 
 #### 3. Database Portage `@world` Terbaca Sempurna
 Perintah `emerge` di dalam Stage 4 akan melihat daftar paket yang sama persis dengan yang ada di laptop Anda. Tidak ada dependensi yang bentrok atau hilang karena pohon dependensi di `/var/db/pkg` identik secara mutlak.
+
+---
+
+## 46. Pertimbangan Menyertakan vs Mengecualikan Direktori `/home` pada Stage 4
+
+### Analisis Kebutuhan Direktori `/home`
+
+#### 1. Mengapa `/home` Biasanya Dikecualikan untuk Colab?
+- **Sistem Bersifat Root-Centric**: Seluruh toolchain kompilasi Gentoo (`gcc`, `clang`, `rustc`), pustaka bersama (`/usr/lib64`), konfigurasi build (`/etc/portage`), dan database paket (`/var/db/pkg`) **sepenuhnya berada di luar `/home`**.
+- **`emerge` Berjalan sebagai Root**: Seluruh proses kompilasi berjalan di bawah hak akses `root` dengan direktori kerja di `/root`, bukan `/home`.
+- **Ukuran Sangat Ramping**: Tanpa data pribadi pengguna di `/home`, berkas Stage 4 hanya berukuran sekitar **2 GB s/d 3 GB**, sehingga proses kompresi instan dan pengunggahan ke Google Drive sangat cepat.
+
+---
+
+### Dua Pilihan Perintah Satu Baris (One-Liner)
+
+#### Opsi 1: Tanpa `/home` (Sangat Disarankan untuk Build Server Colab)
+Gunakan opsi ini jika tujuan utama Colab adalah sebagai pabrik kompilasi (*build farm*):
+```bash
+doas tar --zstd -cvpf /home/rep/stage4-gentoo.tar.zst --exclude=/proc/* --exclude=/sys/* --exclude=/dev/* --exclude=/run/* --exclude=/tmp/* --exclude=/mnt/* --exclude=/media/* --exclude=/lost+found --exclude=/var/tmp/* --exclude=/var/cache/distfiles/* --exclude=/var/cache/binpkgs/* --exclude=/home/* --exclude=/root/.cache/* --exclude=/var/log/* /
+```
+
+#### Opsi 2: Menyertakan `/home` (Full Backup Termasuk Pengguna)
+Gunakan opsi ini jika Anda ingin semua berkas pengguna, dotfiles (`.bashrc`, `.config`), dan dokumen pribadi ikut terbawa ke Colab (dengan tetap membuang cache `.cache` agar tidak membuang kuota):
+```bash
+doas tar --zstd -cvpf /home/rep/stage4-gentoo.tar.zst --exclude=/proc/* --exclude=/sys/* --exclude=/dev/* --exclude=/run/* --exclude=/tmp/* --exclude=/mnt/* --exclude=/media/* --exclude=/lost+found --exclude=/var/tmp/* --exclude=/var/cache/distfiles/* --exclude=/var/cache/binpkgs/* --exclude=/home/*/.cache/* --exclude=/root/.cache/* --exclude=/var/log/* /
+```
