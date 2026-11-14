@@ -1090,3 +1090,37 @@ Host colab
    ```bash
    colab ssh --gpu T4
    ```
+
+
+---
+
+## Sesi 30: Mengatasi Isu "Already-active SSH session (HTTP 429)" pada Colab CLI
+
+### 💬 Pesan dari Terminal Pengguna:
+```text
+[colab] Already-active SSH session (HTTP 429): another `colab ssh` is connected to this runtime. Disconnect it and retry.
+```
+
+### 🔍 Penyebab:
+Google Colab membatasi satu runtime hanya boleh memiliki **1 sesi interaktif SSH aktif** dalam satu waktu. Sesi `fb3d0c` masih terikat dengan proses koneksi sebelumnya.
+
+---
+
+### 🛠️ Solusi:
+
+#### Pilihan 1: Buka Sesi Baru yang Bersih (Paling Mudah)
+Cukup beri nama sesi baru (misalnya `sesi-baru`), atau langsung minta GPU:
+```bash
+colab ssh -s sesi-baru
+```
+Atau untuk GPU T4:
+```bash
+colab ssh --gpu T4 -s sesi-gpu
+```
+
+#### Pilihan 2: Hentikan (*Stop*) Sesi Lama yang Nyangkut
+Hentikan sesi `fb3d0c` terlebih dahulu, lalu sambungkan kembali:
+```bash
+colab stop -s fb3d0c
+colab ssh -s fb3d0c
+```
