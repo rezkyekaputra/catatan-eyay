@@ -2623,3 +2623,27 @@ No server is available to handle this request.
      * Jika Anda sedang mengakses situs web tertentu (misal situs cloud, drive, atau web hosting tertentu) dan situs tersebut menggunakan HAProxy di pusat datanya, maka gangguan murni terjadi di pihak penyedia situs tersebut.
    * **Status Jaringan Komputer Anda**:
      * Koneksi internet langsung komputer Anda ke gateway luar saat ini berstatus **100% normal dan lancar (ping Google & Cloudflare stabil 22ms)**.
+
+---
+
+## 72. Bedah Teknis Arsip `/gentoo-stage4.tar.zst` (2 Nov 2026): Mengapa Ukurannya Jauh Lebih Kecil (2,9 GB)?
+
+### 💬 Pertanyaan Anda:
+> *"-rw-r--r-- 1 root root 3107380719 Nov 2 20:25 gentoo-stage4.tar.zst tapi kenapa ini sangat kecil"*
+
+### ⚙️ Hasil Audit Forensik Isi Berkas Arsip 2 November 2026:
+
+Setelah membedah struktur isi berkas arsip tanggal 2 November tersebut langsung menggunakan `tar` dan `python`:
+
+| Parameter Pembanding | Berkas Lama (2 Nov 2026)<br>`/gentoo-stage4.tar.zst` (**2,9 GB**) | Sistem Lengkap Hari Ini (15 Nov 2026)<br>`stage4-gentoo.tar.zst` (**6,7 GB**) |
+| :--- | :--- | :--- |
+| **Jumlah Paket Terpasang (`@world`)** | **HANYA 65 PAKET!** | **661 PAKET** (10 kali lipat lebih banyak paket!). |
+| **Kondisi Direktori `/home`** | **KOSONG MELOMPONG (`0 Byte`)**! Tidak ada akun `rep`, akun `dongkrak`, dotfiles, atau setting desktop. | **Lengkap Akun & Desktop**: Menyimpan seluruh konfigurasi desktop, shell, kunci SSH, repositori git, dan personalisasi Anda. |
+| **Total Ukuran Data Mentah Uncompressed** | **Hanya 7,62 GiB** | **18+ GiB** (setelah distfiles, ccache, dan cache dibersihkan). |
+| **Status Kesiapan Sistem** | Sistem dasar (*base system*) yang baru saja selesai diinstal dari Stage 3 mentah. | **Stage 4 Desktop Matang**: Sistem operasional harian yang sudah lengkap dengan GUI, browser, audio PipeWire, toolchain Rust, GCC 14, dan compiler LLVM. |
+
+---
+
+### 💡 Kesimpulan:
+* Berkas **2,9 GB** tersebut sangat kecil karena saat dibuat pada tanggal 2 November, sistem Gentoo Anda **baru berupa instalasi minimalis (hanya 65 paket biner dasar dan belum memiliki akun pengguna sama sekali)**.
+* Berkas **6,7 GB** hari ini wajar jika lebih besar karena Anda telah memasang lebih dari **600 paket aplikasi, pustaka desktop, compiler, serta seluruh setting lingkungan kerja Anda** selama 2 minggu terakhir!
