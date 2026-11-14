@@ -2481,3 +2481,42 @@ Setelah perintah di atas dijalankan:
    librewolf
    ```
 3. Atau buka melalui launcher aplikasi desktop Anda (Rofi, Dmenu, atau menu aplikasi desktop) $\rightarrow$ ikon **LibreWolf Browser** akan langsung muncul dan siap dijalankan dengan akselerasi penuh!
+
+---
+
+## 68. Perbaikan Izin Akses "Permission denied" pada `/usr/bin/librewolf` untuk Akun `dongkrak`
+
+### 💬 Galat yang Muncul:
+```bash
+dongkrak@tux ~ $ librewolf
+bash: /usr/bin/librewolf: Permission denied
+```
+
+### ⚙️ Penyebab Galat:
+* Saat menyalin berkas dari `/home/rep/librewolf-app/image/usr/bin/librewolf-bin` menggunakan parameter `cp -a`, izin berkas asli ikut terbawa utuh, yaitu `-rwx------` (hanya bisa dibaca dan dieksekusi oleh pengguna `rep`).
+* Akibatnya, saat akun `dongkrak` memanggil `librewolf`, sistem menolak izin eksekusi skrip tersebut (*Permission denied*).
+
+---
+
+### 🚀 Perintah Perbaikan Hak Akses (Jalankan sebagai Root atau dengan `doas`):
+
+Jalankan perintah ini di terminal:
+
+```bash
+doas chmod 755 /usr/bin/librewolf-bin && doas chown root:root /usr/bin/librewolf-bin && doas chown -R root:root /opt/librewolf && doas chmod -R 755 /opt/librewolf
+```
+*(Atau jika Anda sedang berada di sesi root prompt `#`, cukup hilangkan kata `doas`)*:
+
+```bash
+chmod 755 /usr/bin/librewolf-bin && chown root:root /usr/bin/librewolf-bin && chown -R root:root /opt/librewolf && chmod -R 755 /opt/librewolf
+```
+
+---
+
+### 🖥️ Pengujian:
+Setelah hak akses diperbaiki menjadi `755` (`rwxr-xr-x` publik):
+Kembali ke akun `dongkrak` dan jalankan:
+```bash
+librewolf
+```
+Aplikasi LibreWolf akan langsung terbuka lancar di layar desktop akun `dongkrak`!
