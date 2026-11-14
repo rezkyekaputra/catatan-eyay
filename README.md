@@ -1218,3 +1218,53 @@ echo "www-client/librewolf-bin ~amd64" >> /etc/portage/package.accept_keywords/l
 emerge --ask=n www-client/librewolf-bin
 ```
 *(Atau gunakan `emerge --buildpkg www-client/librewolf` jika ingin mengompilasi dari source code menjadi binpkg).*
+
+
+---
+
+## Sesi 34: Memasang Gentoo Linux via Stage3 & Chroot (Solusi `docker: command not found`)
+
+### 💬 Status dari Pengguna:
+```text
+/content# docker pull gentoo/stage3:nomultilib-openrc
+bash: docker: command not found
+```
+
+### 🔍 Analisis:
+* Google Colab tidak memiliki Docker daemon bawaan.
+* Solusi paling tangguh, cepat, dan murni Gentoo adalah **Metode Stage3 Tarball + Chroot**.
+* Metode ini tidak butuh aplikasi tambahan apa pun karena hanya menggunakan `wget`, `tar`, dan `chroot` bawaan Linux.
+
+---
+
+### 🚀 Perintah Lengkap (Langsung Jadi dalam 1 Menit):
+
+Salin dan jalankan rangkaian perintah ini di terminal Colab:
+
+```bash
+# 1. Siapkan folder Gentoo
+mkdir -p /content/gentoo && cd /content/gentoo
+
+# 2. Unduh Stage3 resmi Gentoo (~300 MB, selesai dalam 3 detik di jaringan Google)
+wget -O stage3.tar.xz https://bouncer.gentoo.org/fetch/root/all/releases/amd64/autobuilds/current-stage3-amd64-openrc/stage3-amd64-openrc-latest.tar.xz
+
+# 3. Ekstrak seluruh sistem Gentoo
+tar xpf stage3.tar.xz --xattrs-include='*.*' --numeric-owner
+
+# 4. Hubungkan perangkat keras sistem ke Gentoo
+mount --bind /proc /content/gentoo/proc
+mount --bind /sys /content/gentoo/sys
+mount --bind /dev /content/gentoo/dev
+mount --bind /dev/pts /content/gentoo/dev/pts
+cp -L /etc/resolv.conf /content/gentoo/etc/
+
+# 5. Masuk ke dalam Gentoo Linux (Chroot)
+chroot /content/gentoo /bin/bash
+```
+
+Begitu masuk, ketik:
+```bash
+source /etc/profile
+cat /etc/os-release
+```
+*(Anda sudah resmi berada di dalam Gentoo Linux murni dengan akses penuh ke alat `emerge`).*
