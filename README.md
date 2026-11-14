@@ -957,3 +957,40 @@ Hapus variabel `$TMUX` sebelum menjalankan `tmate`:
 ```bash
 unset TMUX && tmate -S /tmp/tmate.sock new-session -d && tmate -S /tmp/tmate.sock wait tmate-ready && tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'
 ```
+
+
+---
+
+## Sesi 25: Pemecahan Masalah Tmate Colab Hanging & Panduan Mematikan Dark Mode Google Chrome
+
+### 💬 Pertanyaan Pengguna:
+> *"bisa ga kamu setting kan google chrome agar tema dark nya ga aktif dan kembali ke tema defaualt"*  
+> *"/content# unset TMUX && tmate ... lama ya"*
+
+---
+
+### 1. Kenapa `tmate wait tmate-ready` Terasa Lama di Colab?
+* **Penyebab**: Perintah `wait tmate-ready` menunggu server tmate merespons koneksi terowongan. Jaringan Colab terkadang mengalami latensi ke server tmate luar negeri.
+* **Solusi Cepat**:
+  1. Di terminal Colab, tekan **`Ctrl` + `C`** untuk memutus proses tunggu.
+  2. Ketik langsung perintah display:
+     ```bash
+     tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'
+     ```
+  3. Jika alamat `ssh ...` sudah tercetak, berarti koneksi sudah siap dipakai!
+
+---
+
+### 2. Cara Mengembalikan Google Chrome ke Tema Terang / Default
+
+Ada 3 kemungkinan penyebab Google Chrome berada dalam mode gelap di Linux:
+
+1. **Pengaturan Tampilan (*Appearance Settings*)**:
+   * Buka Chrome $\rightarrow$ Akses alamat: `chrome://settings/appearance`
+   * Pada bagian **Mode / Appearance**, ganti dari **Dark** ke **Light** (Terang).
+2. **Fitur Paksa Mode Gelap (*Force Dark Mode Flags*)**:
+   * Jika semua halaman web otomatis berubah hitam, akses: `chrome://flags/#enable-force-dark`
+   * Ubah pengaturannya dari **Enabled** kembali ke **Default** (atau **Disabled**).
+   * Klik tombol **Relaunch** di pojok kanan bawah.
+3. **Mengikuti Tema Sistem Linux (GTK)**:
+   * Chrome secara default mengikuti preferensi sistem desktop Linux (`prefer-dark`). Memilih mode **Light** secara manual di `chrome://settings/appearance` akan mengabaikan tema gelap sistem Linux.
