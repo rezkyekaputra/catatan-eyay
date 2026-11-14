@@ -1306,3 +1306,103 @@ cp -L /etc/resolv.conf /content/gentoo/etc/
 chroot /content/gentoo /bin/bash
 source /etc/profile
 ```
+
+
+---
+
+## Sesi 36: Panduan Langkah Demi Langkah Memasang & Membuat Paket Biner LibreWolf di Gentoo Colab
+
+### 💬 Pertanyaan Pengguna:
+> *"cara install librewolf nya"*
+
+---
+
+### 🛠️ Langkah di Dalam Shell Gentoo (Chroot):
+
+#### 1. Sinkronkan Kamus Paket (*Portage Tree*)
+```bash
+emerge-webrsync
+```
+*(Mengunduh seluruh daftar resep ebuild resmi Gentoo).*
+
+#### 2. Buka Izin Kata Kunci (*Unmask*) & Lisensi
+```bash
+mkdir -p /etc/portage/package.accept_keywords /etc/portage/package.license
+echo "www-client/librewolf-bin ~amd64" >> /etc/portage/package.accept_keywords/librewolf
+echo "www-client/librewolf-bin MPL-2.0 GPL-2 LGPL-2.1" >> /etc/portage/package.license/librewolf
+```
+
+#### 3. Pasang & Buat Paket Biner (*Binary Package*)
+Gunakan flag `--buildpkg` (`-b`) agar Colab otomatis membuat berkas biner `.gpkg.tar` yang siap dipindahkan ke laptop/PC lokal Anda:
+```bash
+emerge --ask=n --buildpkg www-client/librewolf-bin
+```
+*(Jika ingin kompilasi penuh dari source code: ganti `librewolf-bin` menjadi `librewolf`).*
+
+#### 4. Lokasi Berkas Biner Hasilnya:
+Berkas hasil kompilasi akan tersimpan di folder:
+`/content/gentoo/var/cache/binpkgs/www-client/`
+Berkas ini dapat diunduh ke komputer lokal Gentoo Anda dan dipasang secara instan (5 detik) menggunakan:
+`emerge -K librewolf-*.gpkg.tar`
+
+
+---
+
+## Sesi 37: Konfigurasi `make.conf` Presisi Colab untuk Target CPU Intel Pentium Gold G5500
+
+### 💬 Pertanyaan Pengguna:
+> *"cara install librewolf sesuai dengan make.conf di gentoo linux saya"*
+
+### 🔍 Analisis Kritis Perangkat Keras:
+* **CPU PC Lokal**: `Intel(R) Pentium(R) Gold G5500 CPU @ 3.80GHz` (Arsitektur Coffee Lake / Skylake core).
+* **Instruksi CPU**: Mendukung `SSE4.1, SSE4.2, AES-NI`, tetapi **TIDAK MENDUKUNG AVX / AVX2**.
+* **PERINGATAN KRITIS**: Di Colab, kita **TIDAK BOLEH** menggunakan `-march=native`! Jika memakai `-march=native`, Colab (yang menggunakan Intel Xeon / AMD EPYC) akan menyisipkan instruksi AVX2, sehingga saat paket biner LibreWolf dijalankan di Pentium G5500 Anda akan langsung crash: `Illegal instruction (core dumped)`.
+* **Solusi Flag Kompiler**: Gunakan `-march=skylake -mno-avx -mno-avx2 -mno-fma`. Ini memaksimalkan performa arsitektur Pentium Gold G5500 tanpa instruksi terlarang.
+
+---
+
+### 🛠️ Langkah di Terminal Gentoo Colab (Chroot):
+
+Salin dan tempelkan blok ini di dalam terminal Gentoo Colab:
+
+```bash
+cat << 'EOF' > /etc/portage/make.conf
+COMMON_FLAGS="-march=skylake -mno-avx -mno-avx2 -mno-fma -O2 -pipe -fno-plt -fomit-frame-pointer -fno-semantic-interposition -mtls-dialect=gnu2"
+CFLAGS="${COMMON_FLAGS}"
+CXXFLAGS="${COMMON_FLAGS}"
+FCFLAGS="${COMMON_FLAGS}"
+FFLAGS="${COMMON_FLAGS}"
+LDFLAGS="-Wl,-z,pack-relative-relocs -Wl,-O2 -Wl,--as-needed -Wl,--hash-style=gnu -Wl,-z,relro -Wl,--sort-common"
+
+LC_MESSAGES=C.UTF-8
+L10N="en en-US id"
+
+USE="pulseaudio multilib-symlinks native-symlinks X truetype pam dbus xml elogind unicode lz4 udev zstd threads -debug -examples \
+-wayland -systemd -openmp -spirv -vulkan -llvm -vala -introspection -minimal -test-rust \
+-smartcard -libtirpc -cet -gdbm -nls -ipv6 -acl -xattr -cups -gnome -kde -gtk -qt5 -qt6 \
+-doc -man -handbook -apm -bluetooth -seccomp -vdpau -alsa -jack -wifi -savedconfig -aqua \
+-css -a52 -cjk -qt4 -ldap -3dfx -clamav -coreaudio -ios -ipod -ieee1394"
+
+ABI_X86="64"
+ELIBC="glibc"
+KERNEL="linux"
+INPUT_DEVICES="libinput"
+VIDEO_CARDS="intel"
+CPU_FLAGS_X86="aes mmx mmxext pclmul popcnt rdrand sse sse2 sse3 sse4_1 sse4_2 ssse3"
+
+FEATURES="buildpkg binpkg-multi-instance parallel-install nodoc noinfo noman -xattr -news"
+BINPKG_FORMAT="gpkg"
+MAKEOPTS="-j$(nproc)"
+EMERGE_DEFAULT_OPTS="--jobs=$(nproc) --load-average=$(nproc).0 --keep-going=y --verbose"
+EOF
+```
+
+Setelah `make.conf` terpasang, jalankan:
+```bash
+emerge-webrsync
+mkdir -p /etc/portage/package.accept_keywords /etc/portage/package.license
+echo "www-client/librewolf ~amd64" >> /etc/portage/package.accept_keywords/librewolf
+echo "www-client/librewolf MPL-2.0 GPL-2 LGPL-2.1" >> /etc/portage/package.license/librewolf
+
+emerge --buildpkg www-client/librewolf
+```
