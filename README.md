@@ -2246,3 +2246,53 @@ Agar server 24/7 gratis Anda aman selamanya dan tidak pernah diblokir:
 3. **Waspadai Aturan *Idle Instance Reclaim***:
    * Pada akun Always Free murni, jika VM Anda sama sekali tidak dipakai (CPU di bawah 20% selama 7 hari berturut-turut), Oracle berhak mematikan VM untuk menghemat kapasitas.
    * **Solusi**: Cukup pasang script/cron job ringan yang membuat CPU bekerja sesekali agar terhindar dari pembersihan otomatis.
+
+---
+
+## 62. Prosedur Pemindahan / Penyalinan Berkas `stage4-gentoo.tar.zst` ke Akun `dongkrak`
+
+### 💬 Pertanyaan Anda:
+> *"saya ingin mengcopy stage4-gentoo.tar.zst ke dongkrak agar di upload gimana perintah nya"*
+
+### ⚙️ Temuan Audit Sistem:
+1. **Status Berkas**: Berkas arsip `/home/rep/stage4-gentoo.tar.zst` telah **100% SELESAI dibuat secara sempurna**.
+2. **Ukuran Berkas**: Berukuran **6,7 GB** (dalam batas sangat aman, tidak ada bloatware ccache, dan valid diekstrak).
+3. **Kepemilikan Asal**: Berkas saat ini dimiliki oleh pengguna `root:root` karena dibuat dengan perintah `doas tar`.
+4. **Kapasitas Penyimpanan**: Sisa ruang kosong pada partisi `/` saat ini adalah **16 GB**.
+
+---
+
+### 🚀 Pilihan Perintah Terminal (Pilih Salah Satu):
+
+#### Opsi 1: Menggunakan Tautan Keras (*Hardlink* `ln`) $\rightarrow$ SANGAT DIREKOMENDASIKAN (Hemat Disk & Instan 1 Detik)
+Karena kedua direktori berada pada partisi fisik yang sama (`/dev/root`), menggunakan *hardlink* membuat berkas langsung muncul di `/home/dongkrak/` **tanpa memakan kuota disk tambahan sama sekali (0 Byte tambahan)** dan selesai dalam hitungan 0,1 detik:
+
+```bash
+doas ln /home/rep/stage4-gentoo.tar.zst /home/dongkrak/stage4-gentoo.tar.zst
+doas chown dongkrak:dongkrak /home/dongkrak/stage4-gentoo.tar.zst
+```
+* **Keuntungan**:
+  * Tidak menyita 6,7 GB ruang baru (sisa ruang tetap 16 GB).
+  * Jika akun `dongkrak` nanti menghapus berkasnya setelah berhasil di-upload ke Google Drive, berkas asli di `/home/rep/` **tetap aman dan tidak ikut terhapus**!
+
+---
+
+#### Opsi 2: Salin Fisik Penuh (*Copy* `cp`)
+Jika Anda benar-benar ingin menduplikasi berkas fisik menjadi 2 berkas terpisah:
+
+```bash
+doas cp /home/rep/stage4-gentoo.tar.zst /home/dongkrak/
+doas chown dongkrak:dongkrak /home/dongkrak/stage4-gentoo.tar.zst
+```
+* **Catatan**: Membutuhkan waktu sekitar 30–60 detik untuk menulis 6,7 GB data baru, dan sisa kapasitas disk Anda akan berkurang menjadi ~9,3 GB.
+
+---
+
+#### Opsi 3: Pindah Langsung (*Move* `mv`)
+Jika Anda ingin memindahkan berkas secara permanen ke direktori `dongkrak` tanpa meninggalkan duplikat di `rep`:
+
+```bash
+doas mv /home/rep/stage4-gentoo.tar.zst /home/dongkrak/
+doas chown dongkrak:dongkrak /home/dongkrak/stage4-gentoo.tar.zst
+```
+* **Catatan**: Berkas langsung berpindah instan (1 detik) ke `/home/dongkrak/` dan tidak lagi berada di `/home/rep/`.
