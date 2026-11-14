@@ -566,3 +566,27 @@ git -C /home/rep/catatan-eyay push origin main
 
 * Sesi dilanjutkan kembali. Status repository lokal [`catatan-eyay`](file:///home/rep/catatan-eyay) dan GitHub tetap bersih (*clean*) dan tersinkronisasi penuh.
 * Mode *Full Autopilot (Autopush)* tetap aktif dan siap untuk materi/tugas berikutnya.
+
+
+---
+
+## Sesi 12: Audit Bahasa Pemrograman di Gentoo Linux Ini
+
+### 💬 Pertanyaan Pengguna:
+> *"berapa aplikasi di gentoo linux ini untuk bahasa pemrograman"*
+
+### 📊 Hasil Pengecekan Sistem:
+1. **Bahasa Pemrograman yang Sudah Terpasang & Aktif (11 Bahasa)**:
+   * **C & C++**: GCC 14.3.1 (`gcc`, `g++`) & LLVM Clang 19.1.7 (`clang`, `clang++`)
+   * **Python**: Python 3.14.7 & 3.12.14 (`python3`)
+   * **Rust**: Rust 1.92.0 (`rustc`, `cargo`)
+   * **Go (Golang)**: Go 1.27.2 (`go`)
+   * **JavaScript / Node.js**: Node.js v20.18.2 & NPM (`node`, `npm`), Duktape
+   * **Ruby**: Ruby 2.3.8p459 via RVM (`ruby`, `gem`)
+   * **Perl**: Perl 5.44.0 (`perl`)
+   * **Lua**: Lua 5.3.6 (`lua`)
+   * **Tcl/Tk**: Tcl 8.6 (`tclsh`)
+   * **Assembly**: Yasm 1.3.0 (`yasm`) & GNU Assembler (`as`)
+   * **Shell Scripting**: GNU Bash (`bash`, `sh`)
+2. **Ketersediaan di Repositori Portage Gentoo**:
+   * Terdapat **139 bahasa pemrograman** yang tersedia di repositori `/var/db/repos/gentoo/dev-lang/` (seperti PHP, Java, Kotlin, Zig, Nim, Haskell, Elixir, dll) yang siap dipasang kapan saja jika dibutuhkan.
