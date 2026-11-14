@@ -913,3 +913,26 @@ Buka terminal Gentoo Anda, salin baris `ssh ...` yang muncul di Colab tadi, lalu
 ssh eXampleRandomHash@sgp1.tmate.io
 ```
 **Hasilnya**: Anda langsung berada di dalam terminal Google Colab dengan kenyamanan terminal lokal Gentoo Anda sendiri!
+
+
+---
+
+## Sesi 23: Verifikasi Instalasi Tmate di Colab & Mendapatkan Kunci SSH
+
+### 💬 Status dari Pengguna:
+> *Log instalasi tmate selesai: `Setting up tmate (2.4.0-2) ...`*
+
+### 🔍 Analisis:
+* Paket `tmate` berhasil terpasang sempurna di Google Colab.
+* Pesan peringatan GPG dan `ldconfig.real` adalah hal lumrah di lingkungan Ubuntu Colab dan tidak memengaruhi fungsi.
+
+---
+
+### 🚀 Perintah Menjalankan Tmate & Mengambil String SSH:
+Jalankan perintah ini di Google Colab:
+```bash
+tmate -S /tmp/tmate.sock new-session -d
+tmate -S /tmp/tmate.sock wait tmate-ready
+tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'
+```
+*Perintah ini akan mencetak satu baris perintah SSH yang siap disalin ke terminal Gentoo.*
