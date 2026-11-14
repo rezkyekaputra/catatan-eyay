@@ -2566,3 +2566,30 @@ doas rm -f /etc/netns/vpn/resolv.
 ```
 
 Setelah berkas salah ketik tersebut dihapus, saat Anda menjalankan ulang `rc-service net.wg0 restart`, seluruh proses akan berjalan mulus tanpa ada lagi pesan galat `Bind failed`!
+
+---
+
+## 70. Estimasi Waktu Penyelesaian Kompresi Zstandard & Klarifikasi Arti "Read: 9.10 GiB ==> 46%"
+
+### 💬 Pertanyaan Anda:
+> *"Read:  9.10 GiB  ==> 46% berapa lama lagi"*
+
+### ⚙️ Klarifikasi Teknis Tampilan Zstandard:
+1. **Arti Angka `==> 46%`**:
+   * Angka `==> 46%` **BUKANLAH persentase kemajuan (*progress*) waktu kompresi**.
+   * Ketika program `zstd` menerima input dari pipa terminal (*pipe stdin* dari perintah `tar`), `zstd` tidak mengetahui total ukuran berkas yang akan dikirim sampai pipa ditutup (*EOF*).
+   * Oleh karena itu, format tampilan `Read: 9.10 GiB ==> 46%` adalah **Rasio Kompresi (*Compression Ratio*)**:
+     Artinya, 9,10 GiB data mentah yang telah dibaca berhasil dimampatkan menjadi **46% dari ukuran aslinya** (sekitar 4,4 GB).
+2. **Total Data Riil yang Dibaca**:
+   * Selain berkas sistem inti (~7,2 GB), ditemukan adanya berkas arsip lama di direktori utama: [`/gentoo-stage4.tar.zst`](file:///gentoo-stage4.tar.zst) sebesar **2,9 GB** yang ikut terbaca.
+   * Total data keseluruhan yang akan dibaca adalah sekitar **10,1 GB**.
+
+---
+
+### ⏳ Berapa Lama Lagi Akan Selesai?
+* Karena sistem saat ini **sudah membaca 9,10 GiB dari total ~10,1 GiB**, proses pembacaan data sebenarnya sudah mencapai **hampir 90% selesai**!
+* Sisa data yang belum dikompresi hanya tinggal sekitar **1,0 GB lagi**.
+* **Estimasi Waktu Selesai**:
+  $$\mathbf{Sekitar\ 3\ s/d\ 5\ Menit\ Lagi!}$$
+  *(Diperkirakan tuntas sekitar pukul **01:48 s/d 01:50 WIB**)*.
+* Begitu selesai, perintah otomatis akan mengubah kepemilikan berkas ke `dongkrak:dongkrak` dan berkas siap di-upload ke Google Drive!
