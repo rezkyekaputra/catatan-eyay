@@ -1124,3 +1124,32 @@ Hentikan sesi `fb3d0c` terlebih dahulu, lalu sambungkan kembali:
 colab stop -s fb3d0c
 colab ssh -s fb3d0c
 ```
+
+
+---
+
+## Sesi 31: Menyambungkan Terminal ke Runtime NVIDIA T4 GPU Colab
+
+### 💬 Status dari Pengguna:
+```text
+[rep-box]:~$ colab sessions
+[?] gpu-t4-s-usw4a1-2hkpzol0helfl | Hardware: T4 | Shape: Standard | Variant: GPU
+```
+
+### 🔍 Analisis:
+* Sesi CPU lama sudah tertutup secara bersih.
+* Saat ini hanya ada **1 sesi tunggal yang sedang aktif**, dan sesi tersebut menggunakan akselerator **NVIDIA T4 GPU**.
+* Sesuai dokumentasi resmi Colab CLI: perintah polos `colab ssh` akan otomatis memilih satu-satunya sesi aktif tersebut dan membuka shell di direktori `/content`.
+
+---
+
+### 🚀 Perintah Masuk ke Shell GPU:
+Cukup jalankan:
+```bash
+colab ssh
+```
+Atau secara spesifik:
+```bash
+colab ssh -s gpu-t4-s-usw4a1-2hkpzol0helfl
+```
+Setelah masuk ke dalam Colab, ketik `nvidia-smi` untuk melihat informasi kartu grafis NVIDIA T4 GPU secara langsung.
