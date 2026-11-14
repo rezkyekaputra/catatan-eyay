@@ -1815,3 +1815,12 @@ Setelah proses `tar` berhenti, hapus sisa berkas arsip yang belum selesai agar r
 rm -f /home/rep/stage4*.tar.zst
 ```
 *(Atau jika memerlukan akses doas: `doas rm -f /home/rep/stage4*.tar.zst`)*
+
+---
+
+## 49. Konfirmasi Penghentian Proses Tar & Pembersihan Berkas Parsial
+
+### Status Pembersihan Sistem Lokal
+- Pengguna telah berhasil menghentikan proses pengarsipan sebelumnya menggunakan kombinasi tombol `Ctrl + C`.
+- Berkas parsial `/home/rep/stage4-gentoo2-colab.tar.zst` (sebesar ~1,3 GB) telah dihapus dan dibersihkan sepenuhnya dari sistem penyimpanan.
+- Direktori `/home/rep/` kini kembali bersih 100% dan siap untuk menjalankan pengarsipan Stage 4 baru khusus akun `rep`.
