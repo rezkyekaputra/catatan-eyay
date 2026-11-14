@@ -2595,3 +2595,31 @@ Setelah berkas salah ketik tersebut dihapus, saat Anda menjalankan ulang `rc-ser
   * Lokasi: [`/home/dongkrak/stage4-ultra-ramping.tar.zst`](file:///home/dongkrak/stage4-ultra-ramping.tar.zst)
   * Ukuran akhir: **4,8 GB** (sukses terpangkas jauh lebih kecil dari versi awal).
   * Hak milik: Sudah otomatis diubah menjadi `dongkrak:dongkrak` dan **SIAP DI-UPLOAD SEKARANG**!
+
+---
+
+## 71. Analisis Galat "503 Service Unavailable: No server is available to handle this request"
+
+### 💬 Laporan Pengguna:
+```text
+503 Service Unavailable
+No server is available to handle this request.
+```
+
+### ⚙️ Penyebab Teknis & Karakteristik Galat:
+1. **Identitas Asal Pesan**:
+   * Kalimat persis *"503 Service Unavailable: No server is available to handle this request"* adalah format baku (*default response template*) dari aplikasi penyeimbang beban jaringan **HAProxy** (atau reverse proxy sejenis).
+   * Pesan ini muncul bukan dari komputer lokal Anda, melainkan dikirim oleh sebuah server perantara (*proxy gateway*) yang memberitahukan bahwa server tujuan di belakangnya (*backend server*) sedang **mati (*down*)**, **tidak merespons**, atau **kelebihan beban (*overloaded*)**.
+
+2. **Dua Kemungkinan Skenario Terjadinya**:
+   * **Skenario A (Terkait WireGuard VPN `net.wg0`)**:
+     * Jika Anda baru saja mengaktifkan WireGuard (`rc-service net.wg0 start`) dan browser/aplikasi Anda diarahkan melewati IP tunnel server tersebut (`147.135.15.16`), server VPN tersebut menggunakan HAProxy dan backend koneksinya sedang bermasalah.
+     * **Solusi Uji Coba**: Coba matikan sementara layanan VPN dengan perintah:
+       ```bash
+       rc-service net.wg0 stop
+       ```
+       Lalu refresh halaman web di peramban Anda untuk mengecek apakah situs tersebut bisa diakses secara langsung tanpa VPN.
+   * **Skenario B (Website yang Sedang Dituju Mengalami Gangguan)**:
+     * Jika Anda sedang mengakses situs web tertentu (misal situs cloud, drive, atau web hosting tertentu) dan situs tersebut menggunakan HAProxy di pusat datanya, maka gangguan murni terjadi di pihak penyedia situs tersebut.
+   * **Status Jaringan Komputer Anda**:
+     * Koneksi internet langsung komputer Anda ke gateway luar saat ini berstatus **100% normal dan lancar (ping Google & Cloudflare stabil 22ms)**.
