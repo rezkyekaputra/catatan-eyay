@@ -667,3 +667,41 @@ git -C /home/rep/catatan-eyay push origin main
 
 5. **Optimasi Frontend & Kecepatan Muat (Asset Optimization)**:
    * **`uglifier`** & **`sassc`**: Memadatkan (*minify*) berkas JavaScript dan CSS agar ukuran download halaman menjadi jauh lebih kecil.
+
+
+---
+
+## Sesi 16: Arsitektur Website Mutakhir: Menggabungkan Ruby + WebAssembly (Clang/LLVM) + Fortran (GCC)
+
+### 💬 Pertanyaan Pengguna:
+> *"kalau untuk wasm clang llvm dan wasm dan juga fortran dari gcc, apa bisa membuat website dengan ruby juga"*
+
+### 🔍 Hasil Verifikasi Sistem Komputer:
+* **GNU Fortran**: Tersedia di sistem (`/usr/bin/gfortran` v14.3.1).
+* **LLVM Clang**: Tersedia di sistem (`/usr/lib/llvm/19/bin/clang` v19.1.7).
+* **Target WebAssembly**: Clang mendukung penuh target `wasm32` dan `wasm64`.
+
+---
+
+### 🏛️ Bagaimana Ketiganya Bekerja Bersama Membangun Website (*Polyglot Architecture*)?
+
+```text
+[ Browser Klien ]
+   │  ▲
+   │  │ (1) Browser mengunduh HTML + WebAssembly (.wasm) buatan Clang/LLVM
+   ▼  │ (2) Eksekusi kalkulasi grafis/logika berat di sisi browser berkecepatan C
+[ Web Server Ruby (Sinatra/Puma) ]
+   │  ▲
+   │  │ (3) Ruby memanggil modul Fortran via gem 'ffi'
+   ▼  │ (4) Komputasi matematika/numerik intensif secepat kilat
+[ Modul Fortran (libhitung.so via gfortran) ]
+```
+
+1. **Ruby (Web Framework & Glue)**:
+   * Menangani request HTTP, routing halaman, database, dan penyajian aset.
+2. **Fortran (Backend Heavy Computation)**:
+   * Kode Fortran dikompilasi menjadi pustaka bersama (*shared library* `.so`) menggunakan `gfortran -shared -fPIC`.
+   * Ruby memanggil fungsi Fortran secara langsung di memori menggunakan gem **`ffi`** yang sudah terpasang.
+3. **WebAssembly via Clang/LLVM (Frontend High Performance)**:
+   * Kode C/C++ dikompilasi ke format biner `.wasm` menggunakan `clang --target=wasm32`.
+   * Berkas `.wasm` disajikan oleh server Ruby ke browser klien untuk menjalankan logika berat di sisi klien secepat aplikasi desktop.
