@@ -1641,3 +1641,41 @@ Hasil pengecekan silang (*cross-audit*) antara sistem lokal pengguna dan lingkun
 1. **Pasti Bisa dan Berjalan Mulus**: Biner LibreWolf hasil kompilasi Colab saat ini **dijamin dapat memuat dan berjalan tanpa kendala**.
 2. **Mandiri (Self-Contained Mozilla Engine)**: Mesin inti LibreWolf (`libxul.so`, pustaka rendering, JavaScript engine SpiderMonkey, dll.) dibundel langsung ke dalam direktori aplikasi LibreWolf itu sendiri, sehingga tidak bergantung pada perbedaan pustaka minor di luar sistem grafis standar.
 3. **Peran Stage 4 untuk Masa Depan**: Stage 4 tetap merupakan langkah pamungkas yang sangat bagus jika Anda ingin mengompilasi paket-paket sistem yang lebih sensitif (seperti Blender, driver Mesa kustom, atau toolchain LLVM) di mana kesamaan 1:1 seluruh database `@world` diperlukan.
+
+---
+
+## 43. Rencana Deployment Lingkungan Kedua: Klon Identik Stage 4 di Colab
+
+### Arsitektur Dual-Environment (Dua Lingkungan Terisolasi)
+Untuk memastikan proses kompilasi LibreWolf yang sedang berlangsung di Colab tidak terganggu, sistem Colab akan dibagi menjadi dua lingkungan (*chroot environments*) independen berdampingan:
+
+1. **Lingkungan 1 (`/content/gentoo`)**:
+   - Berbasis Stage 3 OpenRC + Gentoo Binhost.
+   - Bertindak sebagai pabrik kompilasi (*build server*) untuk LibreWolf PGO + Clang.
+2. **Lingkungan 2 (`/content/gentoo-stage4`)**:
+   - Berbasis berkas `stage4-gentoo.tar.zst` yang diunggah pengguna ke Google Drive.
+   - Klon kembar 1:1 yang identik sepenuhnya dengan sistem Gentoo lokal pengguna (versi pustaka, ebuild, dan konfigurasi persis sama).
+
+---
+
+### Prosedur Verifikasi Integritas Stage 4 Sebelum Ekstraksi
+Begitu pengguna selesai mengunggah `stage4-gentoo.tar.zst` ke Google Drive, AI Assistant akan mengeksekusi tahapan audit berikut:
+
+1. **Mounting Google Drive**:
+   ```bash
+   colab drivemount -s <session_id> /content/drive
+   ```
+2. **Uji Validitas & Integritas Berkas**:
+   - Memeriksa ukuran berkas dan header format kompresi `zstd`.
+   - Menguji keterbacaan arsip tanpa mengekstrak:
+     ```bash
+     tar --zstd -tvf /content/drive/MyDrive/stage4-gentoo.tar.zst | head -n 30
+     ```
+   - Memastikan berkas-berkas vital sistem tersedia utuh:
+     - `/etc/portage/make.conf` dan `/etc/portage/package.use/`
+     - Database paket lokal `/var/db/pkg/`
+     - Pustaka sistem `/usr/lib64/` dan berkas biner `/usr/bin/`
+3. **Ekstraksi Terisolasi & Pemasangan Bind Mounts**:
+   - Membuat direktori baru `/content/gentoo-stage4`.
+   - Mengekstrak arsip dengan `tar --zstd -xpf ... -C /content/gentoo-stage4`.
+   - Menghubungkan pseudo-filesystem Linux (`/proc`, `/sys`, `/dev`, `/run`) ke lingkungan kedua tanpa mengganggu lingkungan pertama.
