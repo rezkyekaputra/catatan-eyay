@@ -994,3 +994,19 @@ Ada 3 kemungkinan penyebab Google Chrome berada dalam mode gelap di Linux:
    * Klik tombol **Relaunch** di pojok kanan bawah.
 3. **Mengikuti Tema Sistem Linux (GTK)**:
    * Chrome secara default mengikuti preferensi sistem desktop Linux (`prefer-dark`). Memilih mode **Light** secara manual di `chrome://settings/appearance` akan mengabaikan tema gelap sistem Linux.
+
+
+---
+
+## Sesi 26: Eksplorasi Fitur Resmi Bawaan Colab CLI SSH
+
+### 💬 Input dari Pengguna:
+> *Dialog resmi Google Colab: "Gunakan subperintah ssh bawaan Colab CLI untuk terhubung ke runtime Anda."*
+
+### 💡 Penjelasan:
+Google Colab menyediakan fitur integrasi SSH resmi berbasis **Colab CLI** dan konfigurasi OpenSSH (`~/.ssh/config`). Ini adalah metode paling stabil yang didukung langsung oleh Google.
+
+---
+
+### 📋 Tindakan:
+Menunggu teks perintah di dalam kotak tombol `content_copy` (perintah di bawah "Shell interaktif langsung" dan isi `~/.ssh/config`) untuk dipasang dan dikonfigurasi di lingkungan Gentoo Linux lokal.
