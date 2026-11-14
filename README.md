@@ -1596,3 +1596,24 @@ export PS1="(gentoo-stage4-colab) $PS1"
 ```
 
 Setelah masuk, sistem Colab telah menjadi lingkungan Gentoo lokal Anda secara sempurna dan siap dijadikan pabrik kompilasi (*build farm*).
+
+---
+
+## 41. Perintah Satu Baris (One-Liner) Pembuatan Stage 4 Gentoo Linux
+
+### Perintah Lengkap Satu Baris
+Berikut adalah perintah lengkap pembuatan Stage 4 yang disatukan menjadi satu baris (*one-liner*) siap copy-paste:
+
+```bash
+doas tar --zstd -cvpf /home/rep/stage4-gentoo.tar.zst --exclude=/proc/* --exclude=/sys/* --exclude=/dev/* --exclude=/run/* --exclude=/tmp/* --exclude=/mnt/* --exclude=/media/* --exclude=/lost+found --exclude=/var/tmp/* --exclude=/var/cache/distfiles/* --exclude=/var/cache/binpkgs/* --exclude=/home/* --exclude=/root/.cache/* --exclude=/var/log/* /
+```
+
+> [!IMPORTANT]
+> Perhatikan tanda spasi dan garis miring (` /`) di bagian paling akhir perintah. Garis miring tersebut adalah penentu direktori sumber (root `/`) yang akan diarsipkan oleh `tar`. Jangan sampai tertinggal agar `tar` tidak menampilkan pesan error `Cowardly refusing to create an empty archive`.
+
+### Mengecek Ukuran & Hasil Arsip
+Setelah proses pembuatan selesai, jalankan:
+```bash
+ls -lh /home/rep/stage4-gentoo.tar.zst
+```
+Arsip ini siap diunggah ke Google Drive atau langsung ke Google Colab sebagai klon 1:1 sistem Anda.
