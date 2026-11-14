@@ -1924,3 +1924,29 @@ doas tar --zstd -cvpf /home/rep/stage4-gentoo.tar.zst --exclude=/proc/* --exclud
 ### Status Eksekusi Pembersihan
 - Berkas arsip parsial `/home/rep/stage4-gentoo.tar.zst` (berukuran ~685 MB) telah berhasil dihapus secara tuntas dari penyimpanan lokal.
 - Direktori `/home/rep/` kini telah kembali bersih dari berkas arsip `stage4*` dan siap digunakan untuk proses pengarsipan baru yang bebas ccache.
+
+---
+
+## 54. Temuan Audit Alamat Ccache: `/var/cache/ccache-disk` (Ukuran 2,5 GB)
+
+### Hasil Investigasi Alamat Cache Sistem
+Pengecekan mendalam terhadap konfigurasi `/etc/portage/make.conf` dan direktori `/var/cache/` membuahkan hasil yang sangat krusial:
+
+1. **Alamat Asli Ccache Portage**:
+   - Di `/etc/portage/make.conf`, direktori cache didefinisikan sebagai:
+     ```ini
+     CCACHE_DIR="/var/cache/ccache-disk"
+     ```
+   - Berkas di `/var/cache/ccache-disk/ccache.log` saja berukuran **2,5 Gigabytes** ditambah puluhan ribu berkas objek biner lainnya.
+2. **Penyebab Tarball Membengkak Sebelumnya**:
+   - Karena perintah sebelumnya hanya mengecualikan `/var/cache/ccache/*`, direktori `/var/cache/ccache-disk/` sempat lolos dan masuk ke dalam arsip tar.
+3. **Penyempurnaan Pola Wildcard**:
+   - Menggunakan pola `--exclude=/var/cache/ccache*` (tanpa tanda garis miring sebelum tanda bintang). Pola ini secara otomatis menyaring dan memblokir baik `/var/cache/ccache`, `/var/cache/ccache-disk`, maupun variasi nama lainnya secara 100% tuntas.
+
+---
+
+### Perintah Definitif Sempurna Satu Baris (One-Liner)
+
+```bash
+doas tar --zstd -cvpf /home/rep/stage4-gentoo.tar.zst --exclude=/proc/* --exclude=/sys/* --exclude=/dev/* --exclude=/run/* --exclude=/tmp/* --exclude=/mnt/* --exclude=/media/* --exclude=/lost+found --exclude=/var/tmp/* --exclude=/var/cache/distfiles/* --exclude=/var/cache/binpkgs/* --exclude=/var/cache/ccache* --exclude=/home/dongkrak --exclude=/home/larry --exclude=/home/nidun --exclude=/home/sapi --exclude=/home/rep/.cache/* --exclude=/home/rep/.ccache* --exclude=/home/rep/stage4*.tar.zst --exclude=/root/.cache/* --exclude=/root/.ccache* --exclude=/var/log/* /
+```
