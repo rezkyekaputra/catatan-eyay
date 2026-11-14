@@ -1894,3 +1894,25 @@ Untuk proses kompilasi performa tinggi di Colab, **tanpa ccache (`FEATURES="-cca
    - Sebagai pabrik kompilasi (*build farm*), kita menginginkan hasil biner yang 100% murni (*deterministic*) dari kode sumber tanpa ada residu objek kompilasi lama.
 3. **Ccache Hanya Berguna untuk Re-build Berulang**:
    - Ccache hanya mempercepat kompilasi jika paket yang **sama persis** dikompilasi berulang-ulang (misalnya untuk pengembang kernel). Untuk membuat paket biner rilis pertama kali, ccache tidak memberikan percepatan karena statusnya masih *cache miss 100%*.
+
+---
+
+## 52. Perintah Satu Baris Stage 4 Definitif: Khusus `/home/rep` & Tanpa Ccache
+
+### Perintah Lengkap Satu Baris (Siap Dijalankan)
+Berikut adalah perintah satu baris definitif yang telah diperbarui dengan:
+1. Awalan `doas` untuk hak akses root penuh.
+2. Menyertakan akun pribadi Anda (`/home/rep`).
+3. Mengecualikan akun pengguna lain (`dongkrak`, `larry`, `nidun`, `sapi`).
+4. **Mengecualikan seluruh direktori ccache** (`/var/cache/ccache/*`, `/home/rep/.ccache/*`, `/root/.ccache/*`).
+5. Mengecualikan seluruh cache runtime dan berkas arsip itu sendiri (`stage4-gentoo.tar.zst`).
+
+```bash
+doas tar --zstd -cvpf /home/rep/stage4-gentoo.tar.zst --exclude=/proc/* --exclude=/sys/* --exclude=/dev/* --exclude=/run/* --exclude=/tmp/* --exclude=/mnt/* --exclude=/media/* --exclude=/lost+found --exclude=/var/tmp/* --exclude=/var/cache/distfiles/* --exclude=/var/cache/binpkgs/* --exclude=/var/cache/ccache/* --exclude=/home/dongkrak --exclude=/home/larry --exclude=/home/nidun --exclude=/home/sapi --exclude=/home/rep/.cache/* --exclude=/home/rep/.ccache/* --exclude=/home/rep/stage4-gentoo.tar.zst --exclude=/root/.cache/* --exclude=/root/.ccache/* --exclude=/var/log/* /
+```
+
+### Yang Dikecualikan Terkait Ccache:
+- `--exclude=/var/cache/ccache/*` (Folder cache global Portage ccache)
+- `--exclude=/home/rep/.ccache/*` (Folder cache ccache pengguna `rep`)
+- `--exclude=/root/.ccache/*` (Folder cache ccache akun root)
+- `--exclude=/home/rep/.cache/*` (Folder cache desktop & compiler runtime)
