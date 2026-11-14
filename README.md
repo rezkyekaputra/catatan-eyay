@@ -1182,3 +1182,39 @@ Atau jika ingin membuat sesi baru yang bernama:
 ```bash
 colab ssh --gpu T4 -s gpu-saya
 ```
+
+
+---
+
+## Sesi 33: Panduan Memasang Gentoo Linux & Emerge LibreWolf di Google Colab
+
+### 💬 Permintaan Pengguna:
+> *"sekarang pasang gentoo nya colab sudah terhubung"*
+
+### 🚀 Langkah Praktik di Terminal Google Colab:
+
+#### 1. Jalankan Kontainer Gentoo Linux Resmi
+Ketik di terminal Colab:
+```bash
+docker pull gentoo/stage3:nomultilib-openrc
+docker run -d --name gentoo-box --privileged gentoo/stage3:nomultilib-openrc sleep infinity
+```
+
+#### 2. Masuk ke Shell Gentoo
+```bash
+docker exec -it gentoo-box /bin/bash
+```
+*(Kini Anda sudah berada 100% di dalam sistem operasi Gentoo Linux).*
+
+#### 3. Sinkronkan Portage Tree Gentoo
+```bash
+emerge-webrsync
+```
+
+#### 4. Pasang LibreWolf di Gentoo Colab
+```bash
+mkdir -p /etc/portage/package.accept_keywords
+echo "www-client/librewolf-bin ~amd64" >> /etc/portage/package.accept_keywords/librewolf
+emerge --ask=n www-client/librewolf-bin
+```
+*(Atau gunakan `emerge --buildpkg www-client/librewolf` jika ingin mengompilasi dari source code menjadi binpkg).*
