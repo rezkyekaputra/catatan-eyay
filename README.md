@@ -635,3 +635,35 @@ git -C /home/rep/catatan-eyay push origin main
    * Menjamin ekstensi C lawas dapat dikompilasi mulus oleh GCC 14.3.1.
 5. **Uji FFI**:
    * `require 'ffi'` aktif normal dan siap digunakan.
+
+
+---
+
+## Sesi 15: Daftar Gems Terbaik untuk Menjaga Kualitas Website (Quality Assurance & Performance)
+
+### 💬 Pertanyaan Pengguna:
+> *"gem apa aja yang untuk kualitas website"*
+
+### 💎 Kategori Gems Kualitas Website:
+
+1. **Keamanan (Security)**:
+   * **`brakeman`**: Analisis statis untuk mendeteksi celah keamanan (SQL Injection, XSS, CSRF) pada kode.
+   * **`bundler-audit`**: Memindai seluruh gem yang dipasang untuk mendeteksi adanya celah keamanan publik (*CVE vulnerabilities*).
+   * **`rack-protection`**: Melindungi website dari serangan umum web (klik bajak, session hijacking).
+
+2. **Kinerja & Pengukuran Kecepatan (Performance & Profiling)**:
+   * **`puma`**: Web server multi-threaded berkinerja tinggi.
+   * **`rack-mini-profiler`**: Menampilkan panel kecil di pojok halaman untuk melihat durasi render dan waktu query SQL.
+   * **`redis`** / **`dalli`**: Penyimpanan cache dalam memori untuk mempercepat respon website.
+
+3. **Pengujian Otomatis & Keandalan (Testing & QA)**:
+   * **`rspec`**: Framework pengujian otomatis (*unit & integration test*) paling populer di Ruby.
+   * **`capybara`**: Pengujian E2E (*End-to-End*) untuk menyimulasikan interaksi klik dan form pengunjung browser.
+   * **`simplecov`**: Mengukur persentase kode yang telah teruji (*code coverage*).
+
+4. **Kerapian & Standar Kode (Code Cleanliness & Linting)**:
+   * **`rubocop`**: Penilai kode otomatis (*linter*) untuk memastikan kepatuhan terhadap *Ruby Style Guide*.
+   * **`flay`** / **`flog`**: Mendeteksi duplikasi kode dan kode yang terlalu rumit.
+
+5. **Optimasi Frontend & Kecepatan Muat (Asset Optimization)**:
+   * **`uglifier`** & **`sassc`**: Memadatkan (*minify*) berkas JavaScript dan CSS agar ukuran download halaman menjadi jauh lebih kecil.
