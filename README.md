@@ -936,3 +936,24 @@ tmate -S /tmp/tmate.sock wait tmate-ready
 tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'
 ```
 *Perintah ini akan mencetak satu baris perintah SSH yang siap disalin ke terminal Gentoo.*
+
+
+---
+
+## Sesi 24: Mengatasi Isu "sessions should be nested with care" pada Tmate Colab
+
+### 💬 Error dari Terminal Colab:
+```text
+sessions should be nested with care, unset $TMUX to force
+```
+
+### 🔍 Penyebab:
+Terminal bawaan web Google Colab berjalan di atas **tmux**. Karena `tmate` adalah varian dari `tmux`, ia mendeteksi variabel lingkungan `$TMUX` dan menolak berjalan di dalam sesi tmux lain untuk mencegah konflik tampilan.
+
+---
+
+### 🛠️ Solusi:
+Hapus variabel `$TMUX` sebelum menjalankan `tmate`:
+```bash
+unset TMUX && tmate -S /tmp/tmate.sock new-session -d && tmate -S /tmp/tmate.sock wait tmate-ready && tmate -S /tmp/tmate.sock display -p '#{tmate_ssh}'
+```
