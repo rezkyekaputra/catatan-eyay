@@ -705,3 +705,35 @@ git -C /home/rep/catatan-eyay push origin main
 3. **WebAssembly via Clang/LLVM (Frontend High Performance)**:
    * Kode C/C++ dikompilasi ke format biner `.wasm` menggunakan `clang --target=wasm32`.
    * Berkas `.wasm` disajikan oleh server Ruby ke browser klien untuk menjalankan logika berat di sisi klien secepat aplikasi desktop.
+
+
+---
+
+## Sesi 17: Integrasi Tingkat Lanjut Lainnya di Gentoo Ini (Rust, Go, AI Lokal Ollama, & Lua)
+
+### 💬 Pertanyaan Pengguna:
+> *"adalagi"*
+
+### 🚀 Teknologi Tambahan yang Tersedia di Komputer Ini:
+
+1. **Rust + Ruby (Aman Memori & Kecepatan Ekstrem)**:
+   * **Biner**: `/usr/bin/rustc` & `/usr/bin/cargo` (v1.92.0).
+   * **Fungsi**: Menulis modul backend yang sangat aman dari *memory leak* (bebas crash), lalu dihubungkan ke Ruby via C-ABI / FFI.
+
+2. **Go (Golang) + Ruby (Real-time & Concurrency)**:
+   * **Biner**: `/usr/bin/go` (v1.27.2).
+   * **Fungsi**:
+     - Go bisa dikompilasi menjadi pustaka C (`go build -buildmode=c-shared`) untuk dipanggil oleh Ruby.
+     - Atau Go bertindak sebagai microservice real-time (WebSocket / gRPC) yang berdampingan dengan website Ruby.
+
+3. **Integrasi AI Lokal (Ollama) + Web Ruby**:
+   * **Biner**: `/usr/bin/ollama` (sudah terpasang di Gentoo ini).
+   * **Fungsi**: Website Ruby Anda bisa langsung memiliki fitur Chatbot AI cerdas atau *summarizer* teks lokal menggunakan model AI lokal tanpa perlu bayar API OpenAI/luar.
+
+4. **Lua (Embedded Sandbox Scripting)**:
+   * **Biner**: `/usr/bin/lua` (v5.3.6).
+   * **Fungsi**: Memungkinkan pengunjung atau admin website menjalankan skrip logika kustom di dalam website secara aman tanpa risiko membobol server.
+
+5. **Kompilasi Super Cepat dengan Mold Linker**:
+   * **Biner**: `mold` v2.41.0.
+   * **Fungsi**: Linker tercepat di dunia yang memangkas waktu kompilasi ekstensi C/C++/Rust/Wasm hingga 10–50x lebih cepat.
