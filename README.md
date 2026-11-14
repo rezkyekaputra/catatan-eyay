@@ -1506,3 +1506,93 @@ Sesuai permintaan untuk mengompilasi LibreWolf **100% dari kode sumber** (bukan 
    - Script `/content/gentoo/root/build_librewolf.sh` telah diluncurkan di background (`nohup chroot ... &`, PID: 9201 / 9311).
    - Seluruh log kompilasi dicatat secara real-time di `/content/build.log`.
    - Setelah kompilasi selesai, paket biner kustom akan otomatis tercipta di `/content/gentoo/var/cache/binpkgs/www-client/librewolf/` dan siap diunduh ke mesin lokal.
+
+---
+
+## 40. Panduan Pembuatan & Deployment Stage 4 Gentoo Linux ke Google Colab
+
+### Mengapa Menggunakan Stage 4?
+**Stage 4** adalah snapshot/arsip penuh dari sistem Gentoo Linux yang sudah berjalan di mesin lokal (mencakup seluruh paket terpasang di `/var/db/pkg`, isi `@world`, library di `/usr/lib64`, konfigurasi `/etc/portage`, dan status toolchain).
+
+Dengan mengunggah Stage 4 ke Google Colab:
+1. **100% Identik (Biner & ABI)**: Colab menjadi klon kembar 1:1 dari PC/laptop lokal Anda.
+2. **Nol Konfigurasi Ulang**: Tidak perlu mengatur `make.conf`, `package.use`, `package.mask`, atau repositori overlay secara manual lagi di Colab.
+3. **Kompatibilitas Mutlak**: Setiap paket yang dikompilasi di Colab (`emerge --buildpkg`) dijamin langsung cocok saat dipasang di mesin lokal tanpa ada masalah library hilang (*missing soname*) atau bentrok versi.
+
+---
+
+### Langkah 1: Membuat Arsip Stage 4 di Mesin Lokal
+
+Buka terminal di mesin Gentoo lokal dan jalankan perintah berikut (menggunakan `tar` dan kompresi cepat `zstd`):
+
+```bash
+# Buat arsip Stage 4 dengan mengecualikan berkas runtime, cache, dan data pribadi
+doas tar --zstd -cvpf /home/rep/stage4-gentoo.tar.zst \
+  --exclude=/proc/* \
+  --exclude=/sys/* \
+  --exclude=/dev/* \
+  --exclude=/run/* \
+  --exclude=/tmp/* \
+  --exclude=/mnt/* \
+  --exclude=/media/* \
+  --exclude=/lost+found \
+  --exclude=/var/tmp/* \
+  --exclude=/var/cache/distfiles/* \
+  --exclude=/var/cache/binpkgs/* \
+  --exclude=/home/* \
+  --exclude=/root/.cache/* \
+  --exclude=/var/log/* \
+  /
+```
+
+> [!TIP]
+> Mengecualikan `/home/*` dan `/var/cache/distfiles/*` membuat ukuran Stage 4 sangat ramping (biasanya hanya 2 GB s/d 5 GB) dan proses kompresi selesai hanya dalam beberapa menit.
+
+---
+
+### Langkah 2: Mengunggah Stage 4 ke Google Colab
+
+#### Metode A: Melalui Google Drive (Sangat Disarankan untuk File Besar)
+1. Unggah berkas `/home/rep/stage4-gentoo.tar.zst` ke Google Drive Anda.
+2. Di sesi Colab, mount Google Drive dan salin ke storage lokal VM:
+   ```bash
+   colab drivemount /content/drive
+   # atau di python / terminal Colab:
+   from google.colab import drive
+   drive.mount('/content/drive')
+   cp /content/drive/MyDrive/stage4-gentoo.tar.zst /content/
+   ```
+
+#### Metode B: Melalui CLI (`colab upload`)
+Jika koneksi internet upstream Anda cepat:
+```bash
+colab upload -s <session_id> /home/rep/stage4-gentoo.tar.zst /content/stage4-gentoo.tar.zst
+```
+
+---
+
+### Langkah 3: Ekstraksi & Aktivasi Chroot di Colab
+
+Setelah berkas berada di `/content/stage4-gentoo.tar.zst` pada Google Colab:
+
+```bash
+# 1. Buat direktori dan ekstrak Stage 4
+mkdir -p /content/gentoo
+tar --zstd -xpf /content/stage4-gentoo.tar.zst -C /content/gentoo
+
+# 2. Pasang bind mounts standar Linux/Gentoo
+mount --types proc /proc /content/gentoo/proc
+mount --rbind /sys /content/gentoo/sys
+mount --make-rslave /content/gentoo/sys
+mount --rbind /dev /content/gentoo/dev
+mount --make-rslave /content/gentoo/dev
+mount --bind /run /content/gentoo/run
+cp --dereference /etc/resolv.conf /content/gentoo/etc/
+
+# 3. Masuk ke lingkungan sistem klon identik
+chroot /content/gentoo /bin/bash
+source /etc/profile
+export PS1="(gentoo-stage4-colab) $PS1"
+```
+
+Setelah masuk, sistem Colab telah menjadi lingkungan Gentoo lokal Anda secara sempurna dan siap dijadikan pabrik kompilasi (*build farm*).
