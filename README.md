@@ -2150,3 +2150,50 @@ Jika Anda ingin mencoba menghidupkannya sekarang juga:
 2. Klik tombol hijau **`< > Code`** di sebelah kanan atas daftar berkas.
 3. Klik tab **Codespaces**, lalu tekan tombol **"Create codespace on main"**.
 4. Dalam hitungan detik, browser Anda akan memuat editor VS Code lengkap dengan terminal Linux Ubuntu yang siap pakai!
+
+---
+
+## 60. Solusi & Pilihan Virtual Machine (VM / VPS) yang Menyala 24/7 (Nonstop)
+
+### 💬 Pertanyaan Anda:
+> *"kalau untuk 24/7"*
+
+### 🤖 Jawaban & Analisis Lengkap:
+
+Jika kebutuhan Anda adalah memiliki server atau Virtual Machine (VM) yang **wajib hidup terus-menerus 24 jam sehari, 7 hari seminggu (24/7/365)** tanpa pernah tidur (*non-stop*), berikut adalah opsi-opsi terbaik berdasarkan kategori biaya dan kemudahan:
+
+---
+
+#### 1. Jalur 100% Gratis Selamanya 24/7 (Resmi dari Raksasa Cloud)
+
+| Penyedia | Spesifikasi 24/7 Gratis | Fitur Unggulan | Syarat Verifikasi |
+| :--- | :--- | :--- | :--- |
+| **Oracle Cloud (OCI) Always Free** | **4 Core CPU (ARM) + 24 GB RAM + 200 GB NVMe** (Bisa dipecah 4 VM) ATAU 2 VM AMD micro (1 GB RAM) | • Menyala 24/7 selamanya tanpa bayar sepeser pun.<br>• Mendapat IP Publik statis gratis & akses root SSH.<br>• Bandwidth gratis hingga 10 TB/bulan. | Wajib Kartu Debit/Kredit Online (Bank Jago, Jenius BTPN, BCA/BNI Debit Online) hanya untuk verifikasi identitas (hold $1 lalu direfund). |
+| **Google Cloud (GCP) Always Free** | **1 VM `e2-micro`** (2 vCPU burstable, 1 GB RAM, 30 GB disk) di Region AS | • Menyala 24/7 selamanya (744 jam/bulan gratis).<br>• IP Publik statis gratis. | Wajib Kartu Kredit/Debit. |
+
+> [!NOTE]
+> **Mengapa Oracle Cloud OCI Disebut Raja VM Gratis?**  
+> Alokasi 4 OCPU ARM dan RAM 24 GB gratis selamanya dari Oracle adalah penawaran gratis paling besar dalam sejarah komputasi awan. Server ini sangat bertenaga untuk menjalankan VPN WireGuard pribadi, server web, database, hingga bot Telegram secara nonstop bertahun-tahun.
+
+---
+
+#### 2. Jalur Tanpa Kartu Kredit: VPS Sangat Murah (Bayar Pakai QRIS / Bank Lokal)
+Jika Anda **tidak memiliki kartu kredit** tetapi tetap butuh VPS 24/7:
+
+1. **Provider Luar Negeri Promo Murah Meriah (RackNerd / CloudCone)**:
+   * Sering merilis paket promo mulai dari **$10 s/d $14 PER TAHUN** (artinya hanya sekitar **Rp 13.000 s/d Rp 18.000 per bulan**!).
+   * Dapat 1 vCPU, 1 GB RAM, 20 GB SSD, IP Publik statis 24/7.
+   * Metode bayar: PayPal, Virtual Debit Card, atau Kripto.
+2. **Provider Lokal Indonesia (Biznet Gio / IDCloudHost / DomaiNesia)**:
+   * Biaya mulai dari **Rp 30.000 s/d Rp 50.000 per bulan**.
+   * Sangat praktis karena bisa dibayar langsung menggunakan **QRIS, GoPay, ShopeePay, DANA, atau Transfer ATM Bank Lokal** tanpa kartu kredit apa pun.
+
+---
+
+#### 3. Jalur Mandiri di Rumah (Homeserver / Mini PC / Laptop Bekas 24/7)
+Ini adalah trik favorit para pengguna Gentoo dan pecinta Linux:
+* **Perangkat**: Memanfaatkan laptop bekas yang layarnya rusak, TV Box Android (di-flash Armbian), atau PC mini hemat daya.
+* **Biaya Listrik**: Konsumsi daya hanya sekitar 5 hingga 15 Watt (tagihan listrik PLN hanya bertambah sekitar **Rp 10.000 s/d Rp 15.000 per bulan**).
+* **Cara Diakses dari Luar Internet Tanpa IP Publik**:
+  1. Pasang **Cloudflare Tunnel (100% Gratis)**: Website atau port lokal Anda bisa langsung diakses publik dari seluruh dunia melalui domain internet Anda secara aman tanpa perlu *port-forwarding* router.
+  2. Pasang **Tailscale (100% Gratis)**: Anda bisa melakukan SSH ke mesin rumah dari ponsel atau komputer mana pun di dunia seperti berada di jaringan LAN yang sama.
