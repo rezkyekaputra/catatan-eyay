@@ -737,3 +737,40 @@ git -C /home/rep/catatan-eyay push origin main
 5. **Kompilasi Super Cepat dengan Mold Linker**:
    * **Biner**: `mold` v2.41.0.
    * **Fungsi**: Linker tercepat di dunia yang memangkas waktu kompilasi ekstensi C/C++/Rust/Wasm hingga 10–50x lebih cepat.
+
+
+---
+
+## Sesi 18: Menghubungkan Google Colab (GPU Gratis) dengan AI dan Sistem Lokal
+
+### 💬 Pertanyaan Pengguna:
+> *"saya ada google collab apa bisa kamu settingkan agar dapat berjalan bersama ai"*
+
+### 💡 Konsep Arsitektur: Google Colab Sebagai Backend GPU AI
+1. **Kelebihan Google Colab**: Menyediakan kartu grafis **NVIDIA T4 GPU (16 GB VRAM) gratis**.
+2. **Skenario Integrasi**:
+   * Google Colab menjalankan model AI besar (Ollama / Llama / Hugging Face).
+   * Colab membuka jalur terowongan publik aman (*Cloudflare Tunnel* / *ngrok*).
+   * Komputer lokal Gentoo Anda (dan website Ruby/skrip Python) mengirimkan permintaan komputasi ke URL Colab tersebut untuk diproses menggunakan GPU cloud secara gratis.
+
+---
+
+### 📝 Skrip Siap Pakai di Google Colab (Notebook Cell):
+```python
+# 1. Pasang Cloudflare Tunnel (Tunnel gratis tanpa perlu registrasi)
+!curl -fsSL https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb -o cloudflared.deb
+!dpkg -i cloudflared.deb
+
+# 2. Pasang & Jalankan Ollama di Colab
+!curl -fsSL https://ollama.ai/install.sh | sh
+import subprocess, time
+subprocess.Popen(["ollama", "serve"])
+time.sleep(3)
+
+# 3. Unduh Model AI (misal: Llama 3 atau Qwen)
+!ollama pull llama3:8b
+
+# 4. Buka Tunnel ke Publik
+!cloudflared tunnel --url http://localhost:11434
+```
+*Output dari baris 4 akan memberikan URL publik (misal: `https://xxx.trycloudflare.com`) yang bisa langsung dipanggil oleh komputer lokal Anda.*
