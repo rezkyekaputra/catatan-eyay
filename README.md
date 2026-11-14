@@ -1790,3 +1790,28 @@ doas tar --zstd -cvpf /home/rep/stage4-gentoo.tar.zst --exclude=/proc/* --exclud
 2. **Akun Lain Ditinggalkan**: Akun `dongkrak`, `larry`, `nidun`, dan `sapi` tidak akan ikut terbawa, menjaga privasi dan menghemat ruang disk.
 3. **Cache Dibuang**: Cache browser dan thumbnail di `/home/rep/.cache/*` dilewati sehingga ukuran berkas tetap padat dan cepat diunggah.
 4. **Bebas Rekursif**: File arsip `/home/rep/stage4-gentoo.tar.zst` otomatis dikecualikan agar tidak terjadi pembacaan arsip di dalam arsip.
+
+---
+
+## 48. Cara Menghentikan Proses Tar Berjalan & Membersihkan Berkas Arsip
+
+### Langkah 1: Menghentikan Proses Tar yang Sedang Berjalan
+1. **Cara Paling Mudah**:
+   Buka terminal tempat proses `tar` tersebut sedang berjalan, lalu tekan:
+   ```
+   Ctrl + C
+   ```
+2. **Atau Melalui Terminal Baru**:
+   Jika terminal tersebut tertutup atau ingin dimatikan paksa dari terminal lain:
+   ```bash
+   doas killall tar zstd
+   ```
+
+---
+
+### Langkah 2: Menghapus Berkas Arsip yang Terlanjur Dibuat
+Setelah proses `tar` berhenti, hapus sisa berkas arsip yang belum selesai agar ruang penyimpanan kembali bersih:
+```bash
+rm -f /home/rep/stage4*.tar.zst
+```
+*(Atau jika memerlukan akses doas: `doas rm -f /home/rep/stage4*.tar.zst`)*
