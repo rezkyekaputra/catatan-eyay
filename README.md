@@ -1037,3 +1037,24 @@ Host colab
    * Integrasi menggunakan kunci SSH Ed25519 yang sudah dibuat sebelumnya.
 3. **Cara Kerja Autentikasi**:
    * Menghubungkan terminal lokal ke Colab melalui jalur resmi Google WebSockets tanpa perantara pihak ketiga.
+
+
+---
+
+## Sesi 28: Memperbaiki Penyimpanan Token Otentikasi Colab CLI (Keyring Backend)
+
+### 💬 Status dari Pengguna:
+> *"cek sudah ssh colab"*
+
+### 🔍 Temuan di Log Sistem (`colab.log`):
+* Pengguna telah berhasil menyetujui otorisasi akun Google (`Request to fetch token completed with status 200`).
+* **Kendala**: Sistem Linux Gentoo tidak memiliki desktop GUI keyring (KWallet/GNOME Keyring), sehingga token gagal disimpan permanen dan Colab CLI meminta login ulang.
+
+---
+
+### 🛠️ Solusi yang Telah Diterapkan:
+* Memasang pustaka `keyrings.alt` ke dalam virtual environment Colab:
+  ```bash
+  ~/.local/share/colab-venv/bin/pip install keyrings.alt
+  ```
+* Backend aktif: `keyrings.alt.file.PlaintextKeyring`. Token OAuth2 kini dapat disimpan permanen di sistem file lokal tanpa perlu meminta login berulang kali.
