@@ -4560,3 +4560,39 @@ Inilah alasan mengapa alur kerja kita dirancang dengan strategi preservasi data:
 Sistem Gentoo chroot di Google Colab saat ini berada dalam kondisi **100% prima, konsisten, dan fungsional**. Seluruh dependensi inti (GCC 14, Python 3.12 terintegrasi SQLite, dan pustaka sistem) terverifikasi berjalan sempurna tanpa galat.
 
 ---
+
+## 117. Analisis & Identifikasi Komponen yang Dapat Dipangkas (*Slimming Down / Pruning Audit*) pada Sistem Gentoo
+
+### 💬 Pertanyaan Pengguna:
+> *"ada yang bisa dipangkas?"*
+
+---
+
+### 📊 Kondisi Ukuran Sistem Gentoo Saat Ini:
+* **Total Ukuran Sistem Root**: **8,6 GB**
+* **Target Arsitektur**: PC Fisik Intel Pentium Gold G5500 (IGPU Intel UHD 610, RAM 16 GB, HDD/SSD)
+
+---
+
+### ✂️ Daftar Komponen yang Dapat Dipangkas (Potensi Penghematan: ~2,5 hingga 3,5 GB):
+
+| No | Komponen / Direktori | Ukuran Saat Ini | Analisis Kebutuhan pada Intel Pentium G5500 | Potensi Penghematan |
+| :--- | :--- | :--- | :--- | :--- |
+| **1** | **Firmware Non-Intel** (`/usr/lib/firmware/`) | **1,9 GB** | Berisi firmware GPU & chip yang tidak ada di PC Anda:<br>• Qualcomm (`qcom`): 483 MB<br>• Nvidia (`nvidia`): 154 MB<br>• Netronome (Server NIC): 141 MB<br>• AMD Radeon (`amdgpu`): 110 MB<br>• Mellanox (InfiniBand): 107 MB<br>• MediaTek, Marvell, Atheros WiFi: ~250 MB<br>*PC Anda hanya butuh `intel/` (359 MB) dan `i915/` (28 MB).* | **~1,4 GB** ⚡ |
+| **2** | **Dokumentasi & Locale Asing** (`/usr/share/`) | **192 MB** | • `doc/` (72 MB): Catatan rilis/manual teks<br>• `man/` (54 MB): Manual pages CLI<br>• `locale/` (66 MB): Terjemahan bahasa asing non-ID/EN (Rusia, Arab, Mandarin, Jerman, dll.) | **~190 MB** ⚡ |
+| **3** | **Duplikasi Python 3.14** (`/usr/lib/python3.14`) | **292 MB** | Sistem sudah distandardisasi ke Python 3.12 yang stabil dengan SQLite3 & SSL. Python 3.14 eksperimental dapat dipangkas. | **~290 MB** ⚡ |
+| **4** | **Pohon Ebuild Portage** (`/var/db/repos/gentoo`) | **761 MB** | Seluruh pohon ebuild Gentoo dari rsync. Dapat dikonversi ke format SquashFS terkompresi atau disinkronkan sesuai kebutuhan instalasi. | **~500 MB** ⚡ |
+| **5** | **Compiler Go & Rust-bin** (`/usr/lib/go`, `/opt/rust-bin`) | **822 MB** | • Go compiler (`/usr/lib/go`): 250 MB<br>• Rust binary (`/opt/rust-bin-1.92.0`): 572 MB<br>*(Bisa dipangkas jika Anda tidak sedang membangun software berbasis Go/Rust).* | **~250 – 820 MB** |
+| **6** | **Aplikasi Opsional / Duplikat** (`/opt/`, `/usr/share/`) | **~860 MB** | • Google Chrome (`/opt/google`): 443 MB *(opsional jika sudah pakai LibreWolf)*<br>• Blender 3D (`blender`): ~200+ MB *(opsional di Pentium G5500)*<br>• Vesktop Discord (`/opt/vesktop`): 328 MB | **~200 – 860 MB** |
+
+---
+
+### 🎯 Rekomendasi Pemangkasan Aman & Terarah:
+1. **Prioritas 1 (Sangat Aman & Berdampak Besar)**:
+   - Pangkas **Firmware Non-Intel** (menghemat **~1,4 GB** langsung).
+   - Bersihkan **Dokumentasi & Locale asing** (menghemat **~190 MB**).
+   - *Total penghematan aman: **~1,6 GB**, ukuran root menyusut dari 8,6 GB menjadi **~7,0 GB**!*
+2. **Prioritas 2 (Pilihan Aplikasi)**:
+   - Tentukan apakah aplikasi berat seperti `Google Chrome` (443 MB), `Blender` (200 MB), atau `Go compiler` (250 MB) masih ingin disimpan di PC fisik Anda atau tidak.
+
+---
