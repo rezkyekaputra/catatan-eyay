@@ -3782,3 +3782,53 @@ Seluruh konfigurasi Portage di `/etc/portage/` telah diracik ulang secara presis
 #### 4. Audit Konsistensi Sistem
 * **`revdep-rebuild --pretend`**: `Your system is consistent` (0 pustaka rusak).
 * **Ukuran Sistem & Paket**: Tetap sangat ramping di **3,3 GB** dengan **531 paket**.
+
+---
+
+## 101. Integrasi Penuh Kompresi Modern LZ4 & Zstandard (Zstd) pada Ekosistem Sistem
+
+### 💬 Permintaan Pengguna:
+> *"lz4 dan zstd"* (Aktivasi dan optimalisasi dukungan algoritma kompresi LZ4 dan Zstandard di seluruh sistem)
+
+---
+
+### ⚙️ Analisis & Eksekusi di Google Colab (`685924`):
+
+#### 1. Peran Strategis LZ4 & Zstd pada Sistem Gentoo
+* **LZ4**: Algoritma kompresi tercepat di dunia (*decompression speed* > 3–4 GB/s per core). Sangat ideal untuk modul kernel (`kmod`), transfer data instan (`rsync`), dan pembacaan arsip tanpa membebani CPU.
+* **Zstandard (Zstd)**: Algoritma modern besutan Yann Collet yang menawarkan rasio kompresi tinggi setara gzip/bzip2 namun dengan kecepatan dekompresi jauh lebih instan.
+* **Tindakan**: Menghapus flag `-lz4` dari `make.conf` dan mengaktifkan `lz4` serta `zstd` secara global di dalam `USE`:
+  ```ini
+  USE="X opengl vaapi lz4 zstd pulseaudio dbus elogind unicode truetype pam xml ..."
+  ```
+
+#### 2. Rebuild Paket Sistem Inti yang Mendukung Kompresi
+Dijalankan `emerge --buildpkg` untuk 4 paket vital sistem:
+1. **`sys-apps/kmod-34`**:
+   - Fitur terverifikasi via `kmod --version`:
+     ```text
+     kmod version 34
+     +ZSTD +XZ +ZLIB +LZ4
+     ```
+   - **Manfaat**: Pemuatan modul kernel (baik berformat `.ko.zst` maupun `.ko.lz4`) dapat didekompresi secara instan saat sistem melakukan proses *booting*.
+2. **`net-misc/rsync-3.5.1`**:
+   - Fitur terverifikasi via `rsync --version`:
+     ```text
+     Compress list: zstd lz4 zlib none
+     ```
+   - **Manfaat**: Sinkronisasi dan transfer berkas lokal/jaringan kini mendukung opsi kompresi real-time super cepat (`--compress-choice=zstd` atau `--compress-choice=lz4`).
+3. **`app-arch/libarchive-3.8.3`**:
+   - Pustaka arsip sistem kini dapat membaca, mengekstrak, dan membuat arsip `.tar.lz4` dan `.tar.zst` secara *native*.
+4. **`sys-apps/file-5.48`**:
+   - Deteksi jenis berkas kini mampu menganalisis *stream* data terkompresi Zstd secara langsung.
+
+#### 3. Paket Biner Mandiri Siap Pakai (`GPKG`)
+Seluruh biner hasil kompilasi telah tersimpan rapi di `/var/cache/binpkgs/`:
+- `sys-apps/kmod-34-2.gpkg.tar`
+- `net-misc/rsync-3.5.1-2.gpkg.tar`
+- `app-arch/libarchive-3.8.3-2.gpkg.tar`
+- `sys-apps/file-5.48-2.gpkg.tar`
+
+#### 4. Audit Konsistensi Sistem
+- **`revdep-rebuild --pretend`**: `Your system is consistent` (0 broken shared libraries).
+- **Total Ukuran & Paket**: Tetap stabil di **3,3 GB** dengan **531 paket**.
