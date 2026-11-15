@@ -3026,3 +3026,34 @@ Perintah uji konsistensi dinamis `revdep-rebuild --pretend` dijalankan di dalam 
 Your system is consistent
 ```
 **Hasil**: Sistem **100% konsisten, stabil, dan bebas dari broken libraries**.
+
+---
+
+## 82. Audit Rinci Komponen Tambahan yang Aman Dirampingkan di Stage 4 (Potensi Tambahan ~1,35 GB)
+
+### 💬 Permintaan Pengguna:
+> *"cek lagi secara detail apa saja yang bisa di bersihkan secara aman"*
+
+---
+
+### ⚙️ Hasil Pemindaian Mendalam (*Deep Scan*) Sistem Stage 4 (`/content/gentoo-stage4`):
+
+Setelah sistem menyusut ke 5,4 GB, audit tingkat lanjut menemukan beberapa komponen besar yang **sama sekali tidak dibutuhkan untuk lingkungan kompilasi LibreWolf**:
+
+| No | Komponen / Berkas | Lokasi Direktori | Ukuran | Alasan & Status Keamanan |
+| :---: | :--- | :--- | :--- | :--- |
+| **1** | **Koleksi Font Iosevka** | `/usr/share/fonts/iosevka/Iosevka.ttc` | **380 MB** | **100% Aman**: Kompiler (`gcc`, `clang`, `rustc`) tidak membutuhkan berkas visual font untuk mengompilasi kode program. |
+| **2** | **Kompiler Bahasa Go** | `/usr/lib/go/` | **250 MB** | **Aman**: LibreWolf 100% dibangun menggunakan C, C++, Rust, dan Python. Toolchain Golang tidak disentuh. |
+| **3** | **Biner Antigravity CLI** | `/usr/bin/agy` | **203 MB** | **Aman**: Biner CLI lokal ini tidak digunakan di dalam proses build Portage. |
+| **4** | **Aplikasi 3D Blender 4.5** | `/usr/bin/blender-4.5` (108 MB)<br>`/usr/share/blender/` (90 MB) | **198 MB** | **Aman**: Paket modeling 3D tidak memiliki dependensi balik terhadap peramban LibreWolf. |
+| **5** | **Static Libraries (`*.a`)** | Berkas arsip pustaka statis di `/usr/lib*` | **185 MB** | **Aman**: Sistem Linux modern menggunakan pustaka bersama dinamis (`.so`). |
+| **6** | **Kernel Boot Lokal & EFI** | `/boot/` (43 MB)<br>`/efi/` (24 MB)<br>`/usr/lib/modules/` (18 MB) | **85 MB** | **Aman di Colab**: Di Colab, chroot berjalan di atas kernel VM Google Cloud. Kernel dan modul biner lokal tidak pernah di-load. |
+| **7** | **Kecerdasan Buatan Ollama** | `/usr/bin/ollama` (29 MB)<br>`/usr/lib/ollama/` (12 MB) | **41 MB** | **Aman**: Backend LLM lokal tidak berkaitan dengan engine Mozilla. |
+
+---
+
+### 📊 Simulasi Akumulasi Perampingan:
+* **Ukuran Saat Ini**: **5,4 GB**
+* **Potensi Pembersihan Tahap 2**: **~1,35 GB**
+* **Hasil Akhir Setelah Pembersihan Tahap 2**: **~4,0 GB saja!**
+* **Ukuran Arsip Tarball Kompresi (`zstd -19`)**: Diperkirakan menyusut drastis ke **~1,1 s/d 1,2 GB** (hanya butuh waktu beberapa detik untuk diunggah/diunduh).
