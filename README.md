@@ -5105,3 +5105,59 @@ Sesuai arahan pengguna, repositori berikut dipertahankan sepenuhnya:
 * **Total Paket di `@world`**: Menyusut menjadi **47 paket** murni kebutuhan esensial.
 
 ---
+
+## 129. Penjelasan Teknis: Kesetaraan Penuh Default Python 3.12 Menggantikan Python 3.14
+
+### 💬 Pertanyaan Pengguna:
+> *"apakah python 12 akan sama settingan nya secara default saat seperti python 14 terinstall secara default?"*
+
+---
+
+### 🎯 Jawaban Singkat:
+**YA, 100% PERSIS DAN IDENTIK.**  
+Seluruh pengaturan, pemanggilan perintah, integrasi modul, dan perilaku sistem untuk Python 3.12 telah diatur agar berfungsi persis sebagaimana Python 3.14 sebelumnya, bahkan dengan stabilitas dan kompatibilitas dependensi yang jauh lebih unggul (*battle-tested* di ekosistem Linux).
+
+---
+
+### 🔍 6 Pilar Pembuktian Teknis Kesetaraan Default Python 3.12:
+
+1. **Pemanggilan Perintah CLI (`python` & `python3`)**:
+   - Di Gentoo Linux, perintah biner di `/usr/bin/python` dan `/usr/bin/python3` menggunakan wrapper `python-exec2c`.
+   - Konfigurasi preferensi global di [`/etc/python-exec/python-exec.conf`](file:///etc/python-exec/python-exec.conf) telah dikunci ke `python3.12`.
+   - **Hasil**: Ketika pengguna atau skrip shell menjalankan perintah `python`, `python3`, atau skrip dengan shebang `#!/usr/bin/env python`, sistem secara otomatis mengarahkan eksekusi ke interpreter Python 3.12.14.
+
+2. **Pengelola Paket Portage (`emerge`)**:
+   - Tiga komponen inti Portage telah dikompilasi ulang dengan target `python3_12`:
+     - `sys-apps/portage-3.0.82.2`
+     - `app-portage/gentoolkit-0.8.1`
+     - `app-portage/gemato-20.15`
+   - Output resmi Portage:
+     ```text
+     Portage 3.0.82.2 (python 3.12.14-final-0, default/linux/amd64/23.0, gcc-14, glibc-2.43-r4)
+     ```
+     Portage kini berjalan mandiri di atas Python 3.12 tanpa membutuhkan Python 3.14.
+
+3. **Target Kompilasi Global di [`make.conf`](file:///etc/portage/make.conf)**:
+   - Pengaturan variabel target bahasa telah dikunci secara permanen:
+     ```bash
+     PYTHON_TARGETS="python3_12"
+     PYTHON_SINGLE_TARGET="python3_12"
+     ```
+   - Setiap paket baru yang di-install di masa mendatang via `emerge` akan otomatis membangun modulnya murni untuk Python 3.12.
+
+4. **Direktori Runtime & Modul (`site-packages`)**:
+   - Seluruh modul terpasang di direktori resmi `/usr/lib/python3.12/site-packages/`.
+   - Modul esensial seperti `requests`, `urllib3`, `yaml`, `jinja2`, `markupsafe`, `PIL` (Pillow), `docutils`, `pygments`, `setuptools`, `wheel`, dll., terverifikasi aktif dan dapat di-import langsung tanpa konfigurasi tambahan (`PYTHONPATH`).
+
+5. **Dukungan Pustaka Standar Lengkap (C-Extensions)**:
+   - Biner `dev-lang/python:3.12.14` telah dibangun dengan seluruh flag pustaka standar:
+     - `sqlite3` (database internal)
+     - `ssl` (OpenSSL TLS/HTTPS)
+     - `readline` & `ncurses` (antarmuka CLI interaktif)
+     - `xml` & `expat` (parser markup)
+     - `threads` (multithreading POSIX)
+
+6. **Wrapper Biner Aplikasi Python (`python-exec`)**:
+   - Aplikasi CLI berbasis Python (seperti [`/usr/bin/pulsemixer`](file:///usr/bin/pulsemixer), `pygmentize`, `rst2html`, `meson`) memiliki symlink wrapper resmi di `/usr/lib/python-exec/python3.12/` yang menjamin semua perkakas CLI berjalan mulus.
+
+---
