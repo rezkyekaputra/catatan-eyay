@@ -6200,5 +6200,39 @@ Skrip secara eksplisit **menghapus bersih (*rm -f*)** sisa berkas lama sebelum p
 | **Hardlink & Izin Akses** | 1 link, permission terbatas | **2 links** (`-rw-rw-rw-`), shared inode `/home/rep` & `/home/dongkrak` |
 | **Isi Direktori `/home`** | Direktori kosong | Direktori kosong terverifikasi murni |
 
+---
 
+## 154. Pembuktian Ilmiah Hard Link Filesystem ext4: Inode 2529475 Identik Antara `/home/rep` dan `/home/dongkrak`
 
+### 💬 Pertanyaan Pengguna:
+> *"jadi yang di ln ke dongkrak sama persis dong"*
+
+---
+
+### 🔬 1. Pembuktian Inode Fisik Harddisk: 100% Identik Sampai ke Bit Terakhir!
+
+**Ya, sama persis 100% tanpa ada perbedaan satu bit pun!**
+
+Di sistem berkas Linux (*ext4*), perintah `ln` (tanpa opsi `-s`) menghasilkan **Hard Link**, bukan salinan (*copy*) dan bukan *shortcut* (*symlink*). 
+
+Kita buktikan secara langsung dengan membaca nomor inode fisik harddisk menggunakan `ls -li`:
+
+```bash
+tux /home/rep # ls -li /home/rep/stage4-skylake-optimal.tar.zst /home/dongkrak/stage4-skylake-optimal.tar.zst
+2529475 -rw-rw-rw- 2 rep rep 2662023982 Nov 15 16:51 /home/dongkrak/stage4-skylake-optimal.tar.zst
+2529475 -rw-rw-rw- 2 rep rep 2662023982 Nov 15 16:51 /home/rep/stage4-skylake-optimal.tar.zst
+```
+
+---
+
+### 📊 2. Bedah Teknis Hasil Uji Inode:
+1. **Nomor Inode Identik (`2529475`)**:
+   - Baik di path `/home/rep/` maupun `/home/dongkrak/`, keduanya memiliki nomor inode yang sama persis yaitu **`2529475`**.
+   - Ini membuktikan bahwa kedua berkas menunjuk ke **blok sektor fisik magnetik yang sama persis** di piringan harddisk Toshiba Anda.
+2. **Angka Tautan (*Link Count*) = `2`**:
+   - Kolom kedua bernilai `2`, yang menandakan bahwa 1 fisik berkas tersebut memiliki 2 nama entri direktori di sistem.
+3. **Efisiensi Ruang Disk 100% (Hemat 2,5 GB)**:
+   - Data sebesar 2,48 GiB (2.662.023.982 bytes) **hanya tersimpan 1 kali saja** di harddisk.
+   - Tidak memakan kuota ganda (tidak membuang 5 GB disk space).
+4. **Fleksibilitas Akses Pengguna**:
+   - Baik saat Anda login sebagai user `rep` atau user `dongkrak`, Anda bisa langsung mengakses, memverifikasi, maupun mengekstrak master Stage 4 ini dari direktori masing-masing tanpa terkena kendala permission.
