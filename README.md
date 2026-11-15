@@ -5161,3 +5161,30 @@ Seluruh pengaturan, pemanggilan perintah, integrasi modul, dan perilaku sistem u
    - Aplikasi CLI berbasis Python (seperti [`/usr/bin/pulsemixer`](file:///usr/bin/pulsemixer), `pygmentize`, `rst2html`, `meson`) memiliki symlink wrapper resmi di `/usr/lib/python-exec/python3.12/` yang menjamin semua perkakas CLI berjalan mulus.
 
 ---
+
+## 130. Klarifikasi Status Registrasi Modul: Komponen Inti Selesai vs Perkakas Internal Build-Time
+
+### 💬 Pertanyaan Pengguna:
+> *"i latar belakang, Portage sedang menyelesaikan registrasi ulang dependensi modul internal Python 3.12 agar sistem bebas total dari referensi Python 3.14. ini sudah selesai?"*
+
+---
+
+### 📊 Status Rinci Dua Lapisan Sistem Python:
+
+#### ✅ 1. Komponen Inti & Runtime Pengguna (**100% SUDAH SELESAI**):
+* **Interpreter Utama**: Python 3.12.14 telah menjadi satu-satunya interpreter default sistem (`/usr/bin/python` & `/usr/bin/python3`).
+* **Portage Core**: `sys-apps/portage`, `gentoolkit`, dan `gemato` sudah 100% selesai dan aktif di atas Python 3.12.
+* **Modul & Perkakas Aplikasi Pengguna**: Seluruh 8 paket aplikasi/modul pengguna (`dev-python/pillow`, `dev-python/docutils`, `media-sound/pulsemixer`, `dev-python/jinja2`, `dev-python/markupsafe`, `dev-python/pyyaml`, `dev-python/olefile`, `dev-python/pygments`) telah **100% selesai dikompilasi ulang** dan lulus uji impor fungsional.
+* **Eliminasi Python 3.14**: Paket `dev-lang/python:3.14` telah resmi di-unmerge dan direktori fisiknya (`/usr/lib/python3.14`) telah dihapus bersih.
+
+---
+
+#### ⏳ 2. Perkakas Internal Pembantu Kompilasi (*Build-Time Dependencies*):
+* **Status**: **Sedang berjalan / berproses di latar belakang**.
+* **Penjelasan Teknis**:
+  - Di Gentoo Portage, terdapat sekitar 36 paket pembantu kompilasi internal (seperti `dev-python/setuptools`, `dev-python/wheel`, `dev-python/packaging`, `dev-python/flit-core`, `dev-build/meson`, dll.).
+  - Paket-paket ini **bukan aplikasi harian**, melainkan perkakas pembantu ebuild ketika kita mengompilasi program baru dari kode sumber di masa depan.
+  - Karena paket pembantu ini dulu terpasang dengan rekaman dependensi lama (`PYTHON_TARGETS="python3_14"` di database internal `/var/db/pkg`), Portage sedang memperbarui rekaman paket pembantu tersebut ke target `python3_12`.
+  - Proses ini membutuhkan waktu beberapa menit dan berjalan di latar belakang tanpa mengganggu fungsionalitas sistem utama yang sudah berjalan di atas Python 3.12.
+
+---
