@@ -5648,6 +5648,100 @@ Berdasarkan log audit jaringan Colab CLI dan API Google Colab:
 
 ---
 
+## 142. Panduan Lengkap Ekstraksi Master Stage 4 & Pengujian Langsung via Chroot di `/opt/test`
+
+### 💬 Permintaan Pengguna:
+> 1. *"ke /opt chroot dulu kali ya untuk cek lagi"*
+> 2. *"saya buat /opt/test"*
+
+---
+
+### 📂 1. Konfirmasi Direktori Target:
+Direktori pengujian telah berhasil dibuat oleh pengguna:
+* **Lokasi**: [`/opt/test`](file:///opt/test)
+* **Atribut**: `drwxr-xr-x 2 root root`
+* **Kapasitas Disk Tersedia**: **9,6 GB**  
+  *(Cukup untuk menampung ekstraksi $\sim$4,1 GB dengan sisa aman $\sim$5,5 GB).*
+
+---
+
+### 🚀 2. Langkah 1: Ekstraksi Master Stage 4 (Jalankan sebagai Root):
+Karena arsip sistem memuat berkas dengan kepemilikan khusus (`root`, `portage`, `messagebus`, `pipewire`), proses ekstraksi **wajib dilakukan sebagai root** agar seluruh atribut UID/GID, izin eksekusi, dan symlink terjaga 100%:
+
+```bash
+# Jalankan sebagai root (atau dengan sudo / doas)
+tar -I zstd -xpvf /home/rep/stage4-skylake-optimal.tar.zst -C /opt/test
+```
+* **Parameter Penting**:
+  - `-p`: Preservasi izin berkas (*permissions*) & atribut kepemilikan UNIX.
+  - `-x`: Ekstraksi berkas.
+  - `-v`: Menampilkan berkas yang sedang diekstrak.
+  - `-I zstd`: Dekompresi langsung menggunakan mesin Zstandard.
+
+---
+
+### 🔗 3. Langkah 2: Mount Virtual Filesystem & Masuk ke Lingkungan Chroot:
+Setelah proses ekstraksi selesai, kaitkan filesystem virtual dari sistem *host* agar perangkat keras, GPU, dan kernel terdeteksi di dalam chroot:
+
+```bash
+# 1. Mount sistem virtual
+mount --bind /dev /opt/test/dev
+mount --bind /dev/pts /opt/test/dev/pts
+mount --bind /proc /opt/test/proc
+mount --bind /sys /opt/test/sys
+
+# 2. Salin DNS resolv.conf agar koneksi internet berfungsi di dalam chroot
+cp -L /etc/resolv.conf /opt/test/etc/
+
+# 3. Masuk ke dalam chroot
+chroot /opt/test /bin/bash
+
+# 4. Muat environment Gentoo
+source /etc/profile
+export PS1="(chroot-test) \u@\h \w \$ "
+```
+
+---
+
+### 🧪 4. Langkah 3: Perintah Diagnostik & Pengujian Inti:
+Jalankan perintah berikut di dalam sesi `(chroot-test)` untuk memvalidasi seluruh fungsi:
+
+1. **Uji Python 3.12 (Bebas total dari Python 3.14)**:
+   ```bash
+   python3 --version
+   python3 -c "import PIL, yaml, jinja2, docutils; print('Python 3.12 Modules: OK!')"
+   ```
+2. **Uji Portage & Repositori Ramping**:
+   ```bash
+   portageq get_repos /
+   # Output harus: custom1 gentoo
+   ```
+3. **Uji Driver Grafis Mesa & GPU Intel UHD 630**:
+   ```bash
+   glxinfo | grep -E "OpenGL vendor|OpenGL renderer"
+   vainfo
+   ```
+4. **Uji Ketersediaan Utilitas Esensial**:
+   ```bash
+   which wvdial usb_modeswitch pulsemixer jwm
+   ```
+
+---
+
+### 🧹 5. Langkah 4: Cara Keluar & Unmount Bersih:
+Setelah selesai melakukan pengujian:
+```bash
+# Keluar dari chroot
+exit
+
+# Lepas kaitan sistem virtual (Unmount bersih)
+umount /opt/test/sys /opt/test/proc /opt/test/dev/pts /opt/test/dev
+```
+*(Jika suatu saat Anda ingin menghapus direktori pengujian dan mengembalikan 4,1 GB ruang disk: `rm -rf /opt/test`).*
+
+---
+
+
 
 
 
