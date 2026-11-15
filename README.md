@@ -3465,3 +3465,39 @@ Simulasi peralihan `PYTHON_TARGETS="python3_12"` dan `PYTHON_SINGLE_TARGET="pyth
 ### 💡 Rekomendasi Mutlak:
 **SANGAT DISARANKAN MEMPERTAHANKAN PYTHON 3.14.**
 Sistem Gentoo Anda saat ini telah berhasil bermigrasi penuh ke ekosistem Python 3.14. Melakukan *rollback* atau downgrade kembali ke Python 3.12 hanya akan menimbulkan *circular dependency* dan merusak kestabilan 54 paket sistem inti yang sudah berjalan harmonis.
+
+---
+
+## 94. Laporan Kapasitas Penyimpanan Partisi Gentoo: Mesin Fisik Lokal vs Lingkungan Google Colab
+
+### 💬 Pertanyaan Anda:
+> *"sekarang berapa gb partinsi gentoo"*
+
+---
+
+### ⚙️ Rincian Status Partisi & Ukuran Sistem Saat Ini:
+
+#### 1. Pada Mesin Fisik Lokal Laptop/PC Anda:
+Berdasarkan pembacaan tabel partisi sistem (`df -h`):
+* **Partisi Utama Gentoo (`/dev/root` mounted on `/`)**:
+  - **Total Kapasitas**: **98 Gigabytes**
+  - **Ruang Terpakai (*Used*)**: **83 Gigabytes**
+  - **Sisa Ruang Kosong (*Available*)**: **11 Gigabytes** (Tingkat keterisian **89%**)
+* **Partisi EFI (`/dev/sda1` mounted on `/efi`)**:
+  - **Total Kapasitas**: **511 Megabytes**
+  - **Terpakai**: **33 Megabytes**
+  - **Sisa Ruang**: **479 Megabytes**
+
+> [!NOTE]
+> **Mengapa Ruang Lokal Terpakai 83 GB?**
+> Hal ini terutama disebabkan oleh berkas-berkas arsip cadangan besar yang disimpan di [`/home/dongkrak/`](file:///home/dongkrak/) (`stage4-gentoo.tar.zst` 6,7 GB, `stage4-ultra-ramping.tar.zst` 4,8 GB, `gentoo-stage4.tar.zst` 2,9 GB), file arsip di root [`/gentoo-stage4.tar.zst`](file:///gentoo-stage4.tar.zst), serta cache build Portage di `/var/cache/ccache-disk/` dan `/var/cache/distfiles/`.
+
+---
+
+#### 2. Pada Lingkungan Klon Google Colab (Stage 4 Bersih):
+* **Total Ukuran Sistem Gentoo Klon (`/content/gentoo-stage4`)**:
+  - **Hanya 3,2 Gigabytes!** (Hasil perampingan ekstrem, bebas bloat, bebas 72 paket yatim).
+* **Partisi Virtual Disk Colab (`/content`)**:
+  - **Total Kapasitas**: **108 Gigabytes**
+  - **Terpakai**: **6,2 Gigabytes** (termasuk berkas arsip mentah dan chroot)
+  - **Sisa Ruang Kosong**: **102 Gigabytes** (Sangat lega, **94% kosong** untuk pabrik kompilasi).
