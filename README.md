@@ -4969,3 +4969,54 @@ Berdasarkan analisis ketergantungan balik (*reverse dependencies*) dan kesesuaia
    - Menghapus paket yang tidak diinginkan sekarang mencegah Portage mengkompilasi ulang modul/binding Python yang tidak perlu, sehingga proses finalisasi Python 3.12 jauh lebih cepat dan bersih.
 
 ---
+
+## 126. Eksekusi Pemangkasan Paket Terpilih & Rebuild Modul ke Python 3.12
+
+### 💬 Permintaan Pengguna:
+> *"net-dialup/wvdial + sys-apps/usb_modeswitch ini jangan di uninstall yang lain boleh"*
+
+---
+
+### ⚙️ 1. Rincian Eksekusi Pemangkasan Sistem
+
+Sesuai instruksi pengguna:
+1. **Paket yang Tetap Dipertahankan (Dilindungi)**:
+   - `net-dialup/wvdial`
+   - `sys-apps/usb_modeswitch`
+   - Keduanya tetap berada di dalam `@world` untuk mendukung operasional modem GSM USB / PPP dial-up.
+
+2. **Eksekusi Unmerge Resmi 7 Paket Kandidat**:
+   - Menghapus dari `@world` via `emerge --deselect`:
+     - `sci-ml/ollama` (Biner 29 MB)
+     - `dev-lang/go` (Compiler & runtime 250 MB)
+     - `media-fonts/iosevka` (Pustaka font masif 380 MB)
+     - `net-libs/nodejs` (Biner & runtime 41 MB)
+     - `net-print/cups` (Print daemon & menu desktop)
+     - `dev-util/ccache` (Compiler cache)
+     - `dev-debug/gdb` (Debugger GDB)
+   - Menjalankan unmerge bersih via `emerge --unmerge`:
+     Semua paket di atas berhasil di-unmerge tanpa konflik dependensi.
+
+3. **Pembersihan Berkas Sisa & Pembaruan Sistem**:
+   - Menghapus direktori residu: `/usr/lib/go`, `/usr/share/fonts/iosevka`, `/etc/cups`, `/var/spool/cups`.
+   - Menghapus entri menu desktop yatim (`cups.desktop`).
+   - Memperbarui database cache font sistem (`fc-cache -f`).
+   - **Hasil Ukuran Sistem**: Menyusut dari **5,8 GB** menjadi **5,1 GB** ($\sim$700 MB terpangkas seketika).
+
+---
+
+### 🐍 2. Finalisasi Modul Python 3.12
+
+* **Audit Modul Inti**: Pustaka inti Portage (`portage`, `gemato`, `requests`, `urllib3`, `setuptools`, `wheel`, `flit_core`, `certifi`, `idna`, `charset_normalizer`) terverifikasi 100% aktif dan berjalan di atas Python 3.12.
+* **Kompilasi Ulang 8 Paket ke Target `python3_12`**:
+  Memulai proses build dengan opsi `--buildpkg --oneshot`:
+  - `dev-python/pygments-2.21.0`
+  - `dev-python/pyyaml-6.0.3`
+  - `dev-python/markupsafe-3.0.3`
+  - `dev-python/olefile-0.47`
+  - `dev-python/jinja2-3.1.6`
+  - `dev-python/pillow-12.3.0`
+  - `dev-python/docutils-0.23`
+  - `media-sound/pulsemixer-1.5.1-r2`
+
+---
