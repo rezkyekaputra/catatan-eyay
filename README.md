@@ -2819,3 +2819,37 @@ Ikuti petunjuk tautan otorisasi yang muncul di terminal untuk menghubungkan Goog
   cp -L /etc/resolv.conf /content/gentoo-stage4/etc/resolv.conf
   ```
 - Verifikasi konfigurasi `make.conf` lokal dan kompatibilitas paket di dalam chroot.
+
+---
+
+## 77. Penjelasan Struktur Direktori: Perbedaan Folder LibreWolf vs Lingkungan Stage 4 di Colab & Lokal
+
+### 💬 Pertanyaan Anda:
+> *"apakah ini berbeda folder nya dengan yang librewolf?"*
+
+---
+
+### ⚙️ Analisis Struktur Direktori:
+
+**JAWABANNYA: YA, FOLDERNYA BERBEDA DAN TERISOLASI SECARA RAPI.**
+
+Berikut adalah rincian peta letak direktori baik di Google Colab maupun di komputer fisik lokal:
+
+#### 1. Di Google Colab (Cloud Build Node `685924`):
+* **`/content/stage4.tar.zst`**: Berkas arsip mentah hasil download dari Google Drive Anda (3,11 GB).
+* **`/content/gentoo-stage4/`**: Direktori tempat arsip diekstrak dan dijadikan lingkungan **Twin Chroot 1:1** sistem Gentoo Anda.
+  * Di dalamnya berisi **624 paket terpasang** asli dari PC Anda.
+  * Membawa repositori overlay `bentoo` (`/var/db/repos/bentoo/www-client/librewolf`).
+  * Konfigurasi `make.conf` telah disetel aman khusus Intel Pentium Gold G5500 (`-march=skylake -mno-avx -mno-avx2 -mno-fma`).
+* *Catatan*: Sesi Colab semalam yang menggunakan folder `/content/gentoo` (Stage 3 minimal) sudah bersih dan terpisah total.
+
+#### 2. Di Komputer Fisik Gentoo Lokal:
+* **Aplikasi LibreWolf yang Sedang Digunakan Saat Ini**:
+  * Direktori instalasi biner: [`/opt/librewolf/`](file:///opt/librewolf/)
+  * Perintah eksekusi sistem: [`/usr/bin/librewolf-bin`](file:///usr/bin/librewolf-bin) (symlink ke [`/usr/bin/librewolf`](file:///usr/bin/librewolf))
+  * Data profil & setelan akun: [`~/.librewolf/`](file:///home/dongkrak/.librewolf/)
+* **Berkas Arsip Stage 4**:
+  * [`/home/dongkrak/gentoo-stage4.tar.zst`](file:///home/dongkrak/gentoo-stage4.tar.zst) (2,9 GB)
+  * [`/home/dongkrak/stage4-ultra-ramping.tar.zst`](file:///home/dongkrak/stage4-ultra-ramping.tar.zst) (4,8 GB)
+* **Paket Biner Hasil Kompilasi Colab Nanti**:
+  * Ketika LibreWolf selesai dikompilasi di Colab, paket binernya (`.gpkg.tar`) akan diunduh dan dipasang secara resmi via Portage ke: `/var/cache/binpkgs/www-client/librewolf/`.
