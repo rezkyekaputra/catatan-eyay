@@ -2727,3 +2727,46 @@ doas cp -a <nama_folder_sumber> /home/dongkrak/
 #### 4. Status Google Colab:
 * Sesi Colab semalam telah selesai masa berlakunya (*expired/pruned* setelah 8 jam), yang merupakan siklus normal pada VM gratis Google Colab.
 * Kita siap membuat sesi baru kapan saja via `colab new` begitu salah satu berkas Stage 4 di atas selesai Anda upload ke Google Drive!
+
+---
+
+## 75. Pembuatan Sesi Colab Baru (`685924`) & Opsi Pengambilan Arsip Stage 4 dari Google Drive
+
+### 💬 Pertanyaan Anda:
+> *"stage 4 sudah saya upload coba cek"*  
+> *"ketemu?"*
+
+### ⚙️ Analisis Teknis & Status Sesi:
+1. **Aktivasi Sesi Colab Baru**:
+   * Sesi Colab baru telah sukses dibuat dengan ID: **`685924`**.
+   * Spesifikasi mesin: 2 vCPU Intel Xeon, RAM 12 GB, Disk 100 GB NVMe, siap digunakan sebagai *build farm*.
+2. **Karakteristik Otorisasi Google Drive**:
+   * Sistem Google Drive mengharuskan adanya persetujuan akses keamanan pengguna (*OAuth consent / user approval*) agar sebuah mesin virtual Colab diizinkan membaca berkas pribadi di Google Drive Anda.
+
+---
+
+### 🚀 3 Opsi Mudah Mengakses Berkas yang Sudah Di-upload:
+
+#### Opsi A: Berikan Link Share Google Drive (Paling Cepat & Instan 30 Detik)
+1. Buka Google Drive di browser Anda.
+2. Klik kanan pada berkas Stage 4 yang sudah Anda upload $\rightarrow$ Pilih **"Bagikan" (*Share*)** $\rightarrow$ Ubah setelan menjadi **"Siapa saja yang memiliki link" (*Anyone with the link*)**.
+3. Salin tautan (*Copy link*) dan tempelkan (*paste*) di chat ini.
+4. Saya akan langsung mengunduh berkas tersebut ke Colab menggunakan `gdown` dengan kecepatan server Google (**100+ MB/detik, selesai dalam ~30 detik!**).
+
+---
+
+#### Opsi B: Mount Google Drive via Antarmuka Web Colab
+1. Buka tautan sesi notebook Anda:  
+   [Buka Sesi Colab 685924](https://colab.research.google.com/notebooks/empty.ipynb?dbu=%2Ftun%2Fm%2Fm-s-usw1b3-32nupgc2r1q8#datalabBackendUrl=https://colab.research.google.com/tun/m/m-s-usw1b3-32nupgc2r1q8)
+2. Pada panel kiri, klik ikon **Folder (Files)** $\rightarrow$ Klik ikon **Mount Drive** (ikon Google Drive).
+3. Klik tombol **"Connect to Google Drive"**.
+4. Begitu terhubung, seluruh isi Drive Anda di `/content/drive/MyDrive/` otomatis terbaca oleh saya!
+
+---
+
+#### Opsi C: Jalankan Mount dari Terminal Interaktif Anda
+Jalankan perintah ini di terminal lokal Anda (sebagai user `rep`):
+```bash
+colab drivemount -s 685924 /content/drive
+```
+Ikuti petunjuk tautan otorisasi yang muncul di terminal untuk menghubungkan Google Drive.
