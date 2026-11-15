@@ -3253,3 +3253,46 @@ eselect repository enable <nama_repo>   # Mengaktifkan repositori
    Your system is consistent
    ```
    Sistem berada dalam kondisi **100% konsisten, stabil, dan bersih mutlak**.
+
+---
+
+## 88. Audit Menyeluruh Paket `@world` Terpasang & Pemetaan Potensi Uninstall untuk Sistem Ultra Minimalis
+
+### 💬 Permintaan Pengguna:
+> *"cek aplikasi yang terinstall dan lihat ada ga potensi untuk di uninstall"*
+
+---
+
+### ⚙️ Hasil Audit Database Paket `@world` (56 Paket Terdaftar):
+
+Analisis mendalam terhadap paket-paket yang tercatat di `/var/lib/portage/world` mengelompokkan paket ke dalam beberapa kategori potensi:
+
+#### 1. Kelompok A: Sinkronisasi Database Residu (100% Wajib Dibersihkan)
+Paket-paket ini berkas fisiknya telah kita hapus pada sesi perampingan sebelumnya, namun catatan metadatanya masih tertinggal di manajer paket:
+* `media-gfx/blender` (Software 3D Blender)
+* `www-client/google-chrome` (Browser Chrome)
+* `media-fonts/iosevka` (Font Iosevka)
+* `sys-kernel/linux-firmware` (Firmware 1,9 GB)
+* **Tindakan**: Cukup jalankan `emerge --unmerge` agar database Portage sinkron dan bersih 100%.
+
+#### 2. Kelompok B: Paket yang Bertentangan dengan Desain Sistem Anda
+* `sys-boot/efibootmgr`: Alat konfigurasi bootloader UEFI NVRAM. Karena sistem Anda **berdesain Non-EFI**, paket ini 100% mubazir.
+* `net-dialup/wvdial`: Utilitas dial-up modem kabel kuno (PPP).
+* `sys-apps/usb_modeswitch`: Pengubah mode modem dongle USB (3G/4G).
+
+#### 3. Kelompok C: Pustaka Khusus Rendering Blender
+* `media-libs/opencolorio` (Manajemen warna 3D)
+* `media-libs/openimageio` (Format gambar render)
+* `media-libs/opensubdiv` (Subdivision visual)
+* **Keterangan**: Ketiga library ini hanya dibutuhkan oleh Blender. Jika Blender tidak digunakan, ketiganya aman di-unmerge.
+
+#### 4. Kelompok D: Perkakas Dev / Debugging Berat Opsional
+* `dev-debug/gdb`: GNU Debugger (~25 MB).
+* `dev-debug/strace`: Pelacak syscall kernel.
+* `net-libs/nodejs`: Runtime JavaScript backend (~45 MB).
+
+#### 5. Kelompok E: Paket Inti yang WAJIB DIPERTAHANKAN (Fondasi Sistem):
+* **Desktop & Grafis**: `x11-wm/jwm`, `x11-base/xorg-server`, `x11-misc/picom`, `x11-misc/rofi`, `x11-misc/xfe`, `media-libs/mesa` (custom1), `media-libs/libva-intel-driver`.
+* **Tata Suara**: `media-video/pipewire`, `wireplumber`, `pulsemixer`.
+* **Kompiler & Build**: `gcc`, `mold`, `ccache`, `git`, `gentoolkit`.
+* **Konektivitas & Keamanan**: `wireguard-tools`, `wpa_supplicant`, `dhcpcd`, `openssh`, `doas`.
