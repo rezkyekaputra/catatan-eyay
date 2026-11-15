@@ -3329,3 +3329,34 @@ Di dalam sistem Stage 4 (`/content/gentoo-stage4`), terdeteksi ada **2 VERSI GCC
 * Di komputer fisik Anda saat ini, Anda **hanya memiliki 1 versi**, yaitu **GCC 14**.
 * Di arsip Stage 4 tanggal 2 November ini, GCC 15 masih sempat tertinggal.
 * **Kesimpulan**: Karena yang digunakan aktif adalah **GCC 14**, maka **GCC 15 (213 MB) aman 100% untuk di-unmerge**, yang akan membebaskan ruang disk sebesar ~213 MB tanpa resiko apa pun!
+
+---
+
+## 90. Eksekusi Unmerge GCC 15: Pembersihan Slot Idle 213 MB & Standardisasi Tunggal ke GCC 14.3.1
+
+### 💬 Permintaan Pengguna:
+> *"ya"* (Persetujuan unmerge GCC 15)
+
+---
+
+### ⚙️ Tindakan yang Dilakukan:
+
+1. **Unmerge Paket `sys-devel/gcc:15`**:
+   - Menjalankan `emerge --unmerge sys-devel/gcc:15` di dalam chroot.
+   - Menghapus biner `sys-devel/gcc-15.3.0` beserta modul internalnya.
+2. **Pembersihan Residu Berkas Fisik**:
+   - Membersihkan `/usr/lib/gcc/x86_64-pc-linux-gnu/15` (**-52 MB**).
+   - Membersihkan `/usr/libexec/gcc/x86_64-pc-linux-gnu/15` (**-161 MB**).
+   - **Total Ruang Dibebaskan: ~213 MB**.
+3. **Verifikasi Profil Kompiler**:
+   - `gcc-config -l` kini hanya menampilkan 1 profil aktif:
+     ```text
+     [1] x86_64-pc-linux-gnu-14 *
+     ```
+   - Kompiler aktif: `gcc (Gentoo 14.3.1_p20260604 p6) 14.3.1`.
+4. **Verifikasi Integritas Sistem (*Revdep-Rebuild*)**:
+   ```text
+   * Checking dynamic linking consistency
+   Your system is consistent
+   ```
+   **Hasil**: Sistem **100% konsisten**, stabil, dan kini versi toolchain Stage 4 identik 1:1 dengan mesin fisik lokal Anda.
