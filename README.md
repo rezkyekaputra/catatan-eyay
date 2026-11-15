@@ -3296,3 +3296,36 @@ Paket-paket ini berkas fisiknya telah kita hapus pada sesi perampingan sebelumny
 * **Tata Suara**: `media-video/pipewire`, `wireplumber`, `pulsemixer`.
 * **Kompiler & Build**: `gcc`, `mold`, `ccache`, `git`, `gentoolkit`.
 * **Konektivitas & Keamanan**: `wireguard-tools`, `wpa_supplicant`, `dhcpcd`, `openssh`, `doas`.
+
+---
+
+## 89. Audit Kompiler GCC di Stage 4: Ditemukan 2 Versi (GCC 14 & GCC 15) dengan Potensi Penghematan 213 MB
+
+### 💬 Pertanyaan Anda:
+> *"versi gcc ada berapa"*
+
+---
+
+### ⚙️ Hasil Pengecekan Versi GCC (`gcc-config -l` & `qlist -Iv sys-devel/gcc`):
+
+Di dalam sistem Stage 4 (`/content/gentoo-stage4`), terdeteksi ada **2 VERSI GCC TERPASANG BERDAMPINGAN (DUAL SLOTS)**:
+
+1. **GCC 14 (Versi Stabil & Aktif Bawaan)**:
+   * **Paket**: `sys-devel/gcc-14.3.1_p20260604` (Slot `14`)
+   * **Status**: **AKTIF DIGUNAKAN SISTEM** (`[1] x86_64-pc-linux-gnu-14 *`).
+   * Seluruh pustaka sistem, kernel, dan aplikasi Gentoo saat ini dikompilasi menggunakan GCC 14.
+
+2. **GCC 15 (Versi Eksperimental Idle / Tidak Aktif)**:
+   * **Paket**: `sys-devel/gcc-15.3.0` (Slot `15`)
+   * **Status**: **IDLE / TIDAK AKTIF** (`[2] x86_64-pc-linux-gnu-15`).
+   * **Ukuran Disk yang Disita**:
+     - Pustaka internal: `/usr/lib/gcc/x86_64-pc-linux-gnu/15` (**52 MB**)
+     - Biner kompiler (`cc1`, `cc1plus`, `f951`, `lto1`): `/usr/libexec/gcc/.../15` (**161 MB**)
+     - **Total: ~213 MB**.
+
+---
+
+### 🔍 Perbandingan dengan Mesin Lokal Anda Saat Ini:
+* Di komputer fisik Anda saat ini, Anda **hanya memiliki 1 versi**, yaitu **GCC 14**.
+* Di arsip Stage 4 tanggal 2 November ini, GCC 15 masih sempat tertinggal.
+* **Kesimpulan**: Karena yang digunakan aktif adalah **GCC 14**, maka **GCC 15 (213 MB) aman 100% untuk di-unmerge**, yang akan membebaskan ruang disk sebesar ~213 MB tanpa resiko apa pun!
