@@ -5188,3 +5188,30 @@ Seluruh pengaturan, pemanggilan perintah, integrasi modul, dan perilaku sistem u
   - Proses ini membutuhkan waktu beberapa menit dan berjalan di latar belakang tanpa mengganggu fungsionalitas sistem utama yang sudah berjalan di atas Python 3.12.
 
 ---
+
+## 131. Audit Lanjutan: Identifikasi Potensi Pemangkasan ~900 MB (Rust Compiler, Cache, Boost Headers, & Dev Tools)
+
+### 💬 Permintaan Pengguna:
+> *"adalagi yang bisa dihapus? dan di uninstall?"*
+
+---
+
+### 🔍 Hasil Audit Forensik Direktori & Paket Sistem:
+Setelah sistem Stage 4 menyusut ke **4,9 GB** (dan `@world` menjadi 47 paket), audit mendalam terhadap direktori berukuran besar menemukan potensi pemangkasan lanjutan sebesar **~900 MB**:
+
+| No | Komponen / Paket | Ukuran | Status Dependensi (*Reverse Deps*) | Alasan & Rekomendasi |
+| :--- | :--- | :--- | :--- | :--- |
+| **1** | **Compiler Rust** (`/opt/rust-bin-1.92.0`) | **572 MB** ⚡ | BDEPEND (Hanya alat kompilasi, bukan runtime) | **Sangat Direkomendasikan**. Rust adalah bahasa AOT (*Ahead-Of-Time*). Paket seperti `librsvg` dan `mesa` telah dikompilasi menjadi biner `.so` mandiri. Di PC Pentium G5500, Anda tidak perlu mengompilasi program Rust lokal sehingga kompiler 572 MB ini aman dihapus. |
+| **2** | **Cache Unduhan & Paket Biner**<br>• `/var/cache/distfiles` (89 MB)<br>• `/var/cache/binpkgs` (31 MB) | **120 MB** ⚡ | Berkas arsip sementara | **Sangat Direkomendasikan**. Berisi tarball source code dan arsip biner lama hasil kompilasi. Tidak memiliki fungsi runtime sama sekali dan 100% aman dibersihkan sebelum pembuatan arsip akhir. |
+| **3** | **Header Template C++ Boost** (`/usr/include/boost`) | **184 MB** | Header source code | **Direkomendasikan**. Pustaka runtime biner Boost (`/usr/lib64/libboost*.so`) tetap dipertahankan untuk `wvdial`, tetapi folder header di `/usr/include/boost` hanya digunakan jika Anda mengompilasi software C++ baru dari source code. |
+| **4** | **Linker Mold** (`sys-devel/mold`) | **~25 MB** | Alternatif linker | **Opsional**. Mold adalah linker alternatif ultra-cepat untuk pengembang. GCC bawaan sudah memiliki linker standar (`ld.bfd`). |
+| **5** | **Alat Debugging & Utilitas CLI Minor**<br>• `dev-debug/strace` (~5 MB)<br>• `app-portage/genlop` (~1 MB)<br>• `dev-lang/lua` (~2 MB) | **~10 MB** | Perkakas CLI | **Opsional**. Bisa di-unmerge jika sistem murni difokuskan sebagai desktop harian super-minimalis. |
+
+---
+
+### 💡 Dampak ke Ukuran Akhir Stage 4:
+* Jika opsi 1, 2, dan 3 dieksekusi: Menghemat **~876 MB**.
+* Ukuran direktori sistem akan menyusut dari **4,9 GB** menjadi **~4,0 GB**!
+* Ukuran arsip `.tar.zst` final diproyeksikan berada di angka **~1,0 – 1,2 GB** (sangat ringan untuk diunduh dan dipasang ke PC fisik Pentium Gold G5500 Anda).
+
+---
