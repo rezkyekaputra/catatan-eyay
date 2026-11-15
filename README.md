@@ -6972,3 +6972,36 @@ Segera setelah melihat kendala tersebut, proses unggah resmi telah **langsung di
 * **Progres Terkini**: Berkas [`stage4-skylake-optimal.tar.zst`](file:///home/rep/stage4-skylake-optimal.tar.zst) (2,48 GiB) sedang aktif mengalir ke server Kaggle dengan laju $\sim$1 MB/s.
 * **Instruksi Pengguna**: Pengguna **tidak perlu mengetikkan ulang perintah di terminal** agar tidak terjadi benturan proses pengunggahan ganda (*duplicate upload*). Biarkan sistem menyelesaikan proses pengiriman ini hingga tuntas.
 
+---
+
+## 168. Penghentian Proses Latar Belakang & Penyerahan Kendali Eksekusi Mandiri ke Pengguna
+
+### 💬 Permintaan Pengguna:
+> *"biar saya yang upload sendiri"*
+
+---
+
+### 🛑 1. Tindakan Cepat: Proses Background Telah Dihentikan Total
+Sesuai permintaan pengguna, proses pengunggahan latar belakang (`task-4917`) telah **seketika dibatalkan dan dihentikan total**:
+* **Status Task**: `CANCELLED / KILLED`.
+* **Verifikasi Proses Linux**: Tidak ada proses `kaggle` yang tertinggal (`ps aux | grep kaggle` $\rightarrow$ bersih).
+* **Kondisi Jaringan**: Bandwidth internet 100% bebas tanpa hambatan untuk terminal pengguna.
+
+---
+
+### 📁 2. Kondisi Direktori Staging Siap Pakai:
+Direktori [`/home/rep/gentoo-stage4-dataset/`](file:///home/rep/gentoo-stage4-dataset/) tetap dalam kondisi utuh dan sempurna:
+* `stage4-skylake-optimal.tar.zst` (2,48 GiB)
+* `dataset-metadata.json` (`rezkyekaputra/gentoo-stage4-skylake-optimal`)
+
+---
+
+### 💻 3. Perintah Eksekusi di Terminal Pengguna:
+Karena prompt terminal Anda saat ini sudah berada di dalam `~/gentoo-stage4-dataset$`, Anda cukup mengetikkan:
+
+```bash
+kaggle datasets create -p .
+```
+*(Jangan lupa tanda titik `.` di akhir perintah)*. Anda akan dapat melihat langsung *progress bar* persentase pengunggahan di layar terminal Anda!
+
+
