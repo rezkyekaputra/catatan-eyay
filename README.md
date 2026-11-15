@@ -2770,3 +2770,52 @@ Jalankan perintah ini di terminal lokal Anda (sebagai user `rep`):
 colab drivemount -s 685924 /content/drive
 ```
 Ikuti petunjuk tautan otorisasi yang muncul di terminal untuk menghubungkan Google Drive.
+
+---
+
+## 76. Ingesti Stage 4 dari Google Drive ke Google Colab (`685924`), Instalasi Zstandard, & Pembentukan Lingkungan Twin Chroot
+
+### 💬 Tautan Google Drive dari Pengguna:
+> `https://drive.google.com/file/d/1-p96dJlyV75ZOiCnf8NmptHl-gX5jw4O/view?usp=sharing` (File ID: `1-p96dJlyV75ZOiCnf8NmptHl-gX5jw4O`)
+
+---
+
+### ⚙️ Kronologi & Eksekusi di Google Colab (`685924`):
+
+#### 1. Pengunduhan Berkas Arsip via `gdown`
+- **Metode**: Pengunduhan langsung tautan publik Google Drive menggunakan `gdown`.
+- **Kecepatan**: Jaringan internal datacenter Google mencapai **100–118 MB/detik**.
+- **Durasi**: Selesai dalam waktu hanya **38 detik** untuk berkas berukuran **3,11 GB** (2,9 GiB).
+- **Lokasi Berkas di Colab**: `/content/stage4.tar.zst` (`-rw-r--r-- 1 root root 2.9G`).
+
+#### 2. Penyediaan Perkakas Dekompresi Zstandard (`zstd`)
+- Mesin default Google Colab belum dilengkapi biner `zstd` bawaan.
+- Dilakukan instalasi otomatis:
+  ```bash
+  apt-get update -qq && apt-get install -y -qq zstd
+  ```
+- **Versi Terpasang**: `Zstandard CLI (64-bit) v1.5.5`.
+
+#### 3. Audit Awal Header & Struktur Arsip
+- Perintah audit header: `tar -I zstd -tf /content/stage4.tar.zst | head -n 30`
+- **Hasil**: Terverifikasi arsip berisi struktur lengkap root Linux:
+  - `./sys/`, `sbin/`, `opt/rust-bin-1.92.0/`, dan direktori sistem lainnya.
+- **Kapasitas Disk Tersedia**: Dari total 108 GB partisi `/content`, tersedia **105 GB (sisa 97%)**—sangat leluasa untuk menampung ekstraksi dan direktori kompilasi.
+
+#### 4. Ekstraksi & Pemasangan Mounts Chroot (`/content/gentoo-stage4`):
+- Pembuatan direktori target: `/content/gentoo-stage4`
+- Ekstraksi arsip penuh:
+  ```bash
+  tar -I zstd -xpf /content/stage4.tar.zst -C /content/gentoo-stage4
+  ```
+- Pemasangan bind mount virtual filesystem:
+  ```bash
+  mount --bind /proc /content/gentoo-stage4/proc
+  mount --rbind /sys /content/gentoo-stage4/sys
+  mount --make-rslave /content/gentoo-stage4/sys
+  mount --rbind /dev /content/gentoo-stage4/dev
+  mount --make-rslave /content/gentoo-stage4/dev
+  mount --bind /run /content/gentoo-stage4/run
+  cp -L /etc/resolv.conf /content/gentoo-stage4/etc/resolv.conf
+  ```
+- Verifikasi konfigurasi `make.conf` lokal dan kompatibilitas paket di dalam chroot.
