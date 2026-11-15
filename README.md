@@ -5305,3 +5305,28 @@ Sebelum proses pembungkusan arsip dilakukan, seluruh direktori dinamis dan cache
   - `-p`: Preservasi perizinan berkas UNIX, kepemilikan UID/GID, tautan simbolik (*symlinks*), dan atribut sistem.
 
 ---
+
+## 134. Persiapan Transfer Master Arsip ke Komputer Lokal Pengguna
+
+### 💬 Permintaan Pengguna:
+> *"tolong nanti di masukan ke local saya ya file stage4-skylake-optimal.tar.zst nya"*
+
+---
+
+### 💾 1. Audit Kapasitas Penyimpanan Lokal:
+* **Lokasi Target**: [`/home/rep/stage4-skylake-optimal.tar.zst`](file:///home/rep/stage4-skylake-optimal.tar.zst)
+* **Kapasitas Disk Lokal (`df -h /home/rep`)**:
+  - Ruang Tersedia: **11 GB**
+  - Estimasi Ukuran Arsip: **~1,0 – 1,1 GB**
+  - **Status**: Kapasitas disk lokal sangat mencukupi (tersisa lega $\sim$10 GB setelah transfer).
+
+---
+
+### 🚀 2. Prosedur Unduh & Verifikasi Integritas:
+1. Mengunduh arsip secara langsung dari container Colab ke mesin lokal via Colab CLI:
+   ```bash
+   colab download -s cpu-builder stage4-skylake-optimal.tar.zst /home/rep/stage4-skylake-optimal.tar.zst
+   ```
+2. Menghitung dan memvalidasi kecocokan checksum SHA256 remote vs lokal untuk menjamin berkas 100% utuh tanpa korupsi transfer data.
+
+---
