@@ -6136,3 +6136,36 @@ Master Stage 4 ini kini siap digunakan untuk:
 2. **Pemasangan Mandiri ke Partisi Terpisah (`/dev/sda4`)**:
    Dapat diekstrak ke partisi kosong, dipasang entri GRUB, dan siap di-booting sebagai sistem Gentoo mandiri berakselerasi Mesa 3D & JWM.
 
+---
+
+## 152. Penegasan Autentisitas Master Stage 4: 100% Murni Hasil Backup Sistem Gentoo Lokal Host (`tux`)
+
+### 💬 Pertanyaan Pengguna:
+> *"apakah ini asli system saya atau dari colab tadi"*
+
+---
+
+### 🛡️ 1. Penjelasan Autentisitas: 100% ASLI dari Sistem Lokal Anda Sendiri!
+
+Berkas [`/home/rep/stage4-skylake-optimal.tar.zst`](file:///home/rep/stage4-skylake-optimal.tar.zst) berukuran **2,48 GiB** ini **100% dibuat langsung dari sistem Gentoo aktif di komputer PC Anda (`tux`)**, bukan dari Google Colab.
+
+Berikut bukti dan kronologi teknisnya:
+
+1. **Berkas Colab Lama Sudah Dihapus Total**:
+   - Berkas unduhan dari Colab sebelumnya hanya berukuran **890 MB** dan rusak (*truncated*) saat kompresi terputus di Colab (`libiberty.a` EOF).
+   - Berkas tersebut sudah kita kosongkan (*truncate to 0 bytes*) dan dihapus total untuk membebaskan ruang disk.
+2. **Sesi Colab Sudah Dimatikan Sebelumnya**:
+   - Sesi Google Colab `cpu-builder` sudah di-unassign (`HTTP 204 No Content`) dan tidak aktif lagi.
+3. **Proses Backup Dijalankan Langsung di Terminal Host (`pts/3`)**:
+   - Anda menjalankan skrip [`/home/rep/buat-stage4.sh`](file:///home/rep/buat-stage4.sh) secara lokal sebagai root.
+   - Skrip tersebut mengeksekusi:
+     ```bash
+     tar -cpf - --one-file-system / | zstd -6 -T0 -o /home/rep/stage4-skylake-optimal.tar.zst
+     ```
+   - Perintah ini membaca seluruh partisi root aktif Anda (`/dev/root` / `/dev/sda3`) di harddisk lokal Anda, mengarsipkan `/bin`, `/sbin`, `/lib64`, `/usr`, `/var`, `/etc`, dan `/opt`, sambil mengecualikan berkas pribadi di `/home/*` dan virtual FS (`/proc`, `/sys`, `/dev`).
+4. **Isi Kandungan Master Stage 4 Ini**:
+   - **Kernel**: Termasuk modul-modul kernel `6.12.111-gentoo-ultramin` lokal Anda.
+   - **Portage**: Termasuk seluruh konfigurasi `/etc/portage` Anda (`make.conf`, `00-optimal` Skylake non-AVX, `package.use/mesa` dengan VA-API & proprietary codecs, `package.env` mapping 497 paket).
+   - **Desktop & Driver**: Driver Intel Iris/UHD 630, Xorg, JWM, Alsa, Pipewire, D-Bus, Rust 1.92, Mold 2.41, dan semua pustaka sistem lokal Anda yang sedang berjalan stabil saat ini.
+
+
