@@ -4802,3 +4802,33 @@ Agar ketika Anda melakukan pembaruan sistem di masa depan (`emerge -uDN @world` 
 Aplikasi browser seperti Google Chrome telah dibersihkan dari sistem Colab ini. Di komputer fisik lokal Anda, Anda telah menggunakan **LibreWolf** di [`/opt/librewolf/`](file:///opt/librewolf/) yang siap diintegrasikan atau dipasang saat sistem dipindahkan ke PC Anda.
 
 ---
+
+## 123. Audit Status Python 3.14 & Identifikasi Komponen Lanjutan yang Siap Dipangkas
+
+### 💬 Pertanyaan Pengguna:
+> *"harus hapus apa lagi"*  
+> *"pytjon 14 masih terinstall?"*
+
+---
+
+### 🔍 1. Status Python 3.14 di Sistem:
+* **Status**: **Masih terpasang**.
+* **Alasan Teknis (*Root Cause*)**:
+  - Di sistem Gentoo ini, paket inti pengelola paket Portage (`sys-apps/portage`, `app-portage/gentoolkit`, dan `app-portage/gemato`) awalnya dikompilasi dengan target `PYTHON_TARGETS="python3_14"`.
+  - Jika file Python 3.14 langsung dihapus tanpa memindahkan Portage ke Python 3.12, perintah `emerge` akan kehilangan pustaka intinya.
+* **Solusi Bersih (*Clean Solution*)**:
+  - Kompilasi ulang 3 paket tersebut (`portage`, `gentoolkit`, `gemato`) secara instan ke target `python3_12` (hanya butuh ~1-2 menit).
+  - Begitu selesai, `dev-lang/python:3.14` dapat resmi di-**`unmerge`** dan direktori `/usr/lib/python3.14` dihapus total $\rightarrow$ **Hemat ~290 MB**.
+
+---
+
+### ✂️ 2. Komponen Lain yang Masih Harus / Layak Dipangkas:
+
+| No | Komponen / Paket | Ukuran | Alasan & Status Ketergantungan | Potensi Penghematan |
+| :--- | :--- | :--- | :--- | :--- |
+| **1** | **Sisa Pustaka Grafis 3D Blender**<br>• `media-libs/opencolorio`<br>• `media-libs/openimageio`<br>• `media-libs/opensubdiv` | **~150 MB** | Paket-paket ini merupakan dependensi khusus Blender 3D. Verifikasi `emerge --depclean --pretend` menunjukkan paket ini memiliki **0 reverse-dependency** dan aman di-unmerge resmi. | **~150 MB** ⚡ |
+| **2** | **Python 3.14 & Pustakanya** (`dev-lang/python:3.14`) | **~290 MB** | Menuntaskan migrasi penuh ke Python 3.12 stabil dengan integrasi SQLite3. | **~290 MB** ⚡ |
+| **3** | **Kompilator yang Tidak Digunakan (Opsional)**<br>• `/opt/rust-bin-1.92.0` (572 MB)<br>• `dev-lang/go` (250 MB) | **~820 MB** | Jika Anda tidak sedang melakukan pengembangan / kompilasi software berbasis Rust atau Go di PC Pentium G5500. | **~250 – 820 MB** |
+| **4** | **Pohon Repositori Portage** (`/var/db/repos/gentoo`) | **761 MB** | Kumpulan resep ebuild mentah. Bisa di-exclude dari arsip Stage 4 dan disinkronkan kembali via Git shallow / `emerge-webrsync`. | **~760 MB** |
+
+---
