@@ -5460,4 +5460,73 @@ Jika pengguna menginginkan sistem yang semakin minimalis dan ramping:
 
 ---
 
+## 138. Audit Komparasi Menyeluruh `/etc/portage/` Lokal vs Colab, Sinkronisasi Presisi, & Terminasi Sesi Colab
+
+### 💬 Permintaan Pengguna:
+> 1. *"kamu lihat di /etc/portage/ root saya lalu samakan dengan yang ada di colab sekarang dan audit detail"*
+> 2. *"sudahi session colab nya dan hapus saja"*
+
+---
+
+### 🔍 1. Hasil Audit Komparasi Rinci `/etc/portage/` (Lokal Host vs Colab):
+
+Setelah melakukan audit berkas demi berkas antara direktori `/etc/portage/` di sistem lokal pengguna dengan `/content/gentoo-stage4/etc/portage/` di Colab, ditemukan perbedaan arsitektur krusial berikut:
+
+| Komponen Konfigurasi | Sistem Lokal (Host) | Sistem Colab (Chroot Stage 4) | Penyelarasan / Rekonsiliasi yang Diterapkan |
+| :--- | :--- | :--- | :--- |
+| **`COMMON_FLAGS` (`make.conf`)** | `-march=native -O2 ...` | `-march=skylake -mno-avx -mno-avx2 -mno-fma -O2 ...` | **Wajib Skylake Non-AVX di Colab**. Host Colab menggunakan CPU server (Xeon/EPYC ber-AVX-512), sehingga jika memakai `native`, biner akan crash di Pentium Gold G5500. Colab mempertahankan isolasi non-AVX. |
+| **Target Python (`make.conf`)** | `python3_14` | `python3_12` | **Tetap Python 3.12**. Colab telah dibersihkan total dari dependensi Python 3.14 sesuai instruksi pengguna sebelumnya. |
+| **LDFLAGS & Fitur Sistem** | Ada `-Wl,-z,pack-relative-relocs -Wl,--sort-common`, `PORTAGE_NICENESS="15"`, `ionice` | Sederhana, tanpa niceness/ionice | **Disinkronkan ke Colab**. Seluruh parameter LDFLAGS canggih, optimasi I/O disk HDD, dan mask dokumentasi diinjeksikan ke Colab. |
+| **`package.use/00-optimal`** | **Tersedia (36 baris)**: VA-API decode GPU Intel (Mesa & FFmpeg), PGO (bash, xz), Brotli/Zstd (curl, urllib3), OpenMP (eigen, openblas) | **Belum ada** | **Disalin utuh ke Colab**. Fondasi akselerasi grafis Intel QuickSync dan optimasi performa shell resmi aktif. |
+| **`package.use/mesa`** | Mengaktifkan `vaapi proprietary-codecs` | `-proprietary-codecs -vulkan` | **Disinkronkan**. Flag `vaapi proprietary-codecs` diaktifkan agar GPU Intel UHD 630 langsung meng-handle video YouTube/HTML5. |
+| **`package.use/librewolf` & `browser`** | Mengaktifkan APNG (`libpng`), Harfbuzz GLib, Cairo GLib | Hanya `browser` | **Disinkronkan**. Menjamin rendering font dan animasi PNG pada browser LibreWolf berjalan sempurna. |
+| **`package.mask/gcc` & `python`** | Mengunci `>=sys-devel/gcc-15.0` dan `python:3.13` | Hanya `gcc:16` | **Disinkronkan & Ditingkatkan**. Menambahkan mask `>=sys-devel/gcc-15.0` (mencegah GCC 15 masuk) serta `python:3.13`, `python:3.14`, `python:3.15` (mengunci hanya Python 3.12). |
+| **`package.env` (Pemetaan 497 Paket)** | **Tersedia (577 baris)**: Memetakan seluruh paket sistem ke 9 profil tingkat lanjut (`env/*.conf`) | Hanya 8 baris lawas (mesa, blender, ollama) | **Disinkronkan ke Colab**. Seluruh 577 baris pemetaan disalin, dengan konversi otomatis flag `-march=native` menjadi `-march=skylake -mno-avx -mno-avx2 -mno-fma` pada seluruh berkas di `env/*.conf`. |
+| **`repos.conf`** | Memuat `gentoo-zh` dan `bentoo` | Hanya `gentoo` dan `custom1` | **Tetap Ramping**. Mempertahankan aturan pengguna: hanya repositori `gentoo` dan `custom1` yang diizinkan aktif di Colab. |
+
+---
+
+### 📦 2. Eksekusi Pengunggahan & Penerapan Konfigurasi ke Colab:
+1. Struktur `/etc/portage` yang telah diaudit dan diselaraskan secara presisi dikemas menjadi arsip ringkas `sync-portage.tar.gz` (49 KB).
+2. Diunggah langsung ke Colab via:
+   ```bash
+   colab upload -s cpu-builder sync-portage.tar.gz /content/sync-portage.tar.gz
+   ```
+3. Direktori lama di-backup ke `/content/gentoo-stage4/etc/portage.bak-sync/`, lalu diekstrak bersih ke `/content/gentoo-stage4/etc/portage/`.
+
+---
+
+### 🛑 3. Penutupan Resmi & Penghapusan Sesi Colab:
+Sesuai instruksi pengguna untuk menyudahi dan menghapus sesi Colab:
+1. **Perintah Penghentian Sesi**:
+   ```bash
+   colab stop -s cpu-builder
+   ```
+   * **Hasil**:
+     ```text
+     [colab] Stopping session 'cpu-builder'...
+     [colab] Session terminated.
+     ```
+2. **Verifikasi Status Server**:
+   ```text
+   [colab] No active sessions found on server.
+   ```
+   *(Seluruh komputasi cloud Colab telah resmi mati total, VM dilepaskan, dan tidak ada biaya / kuota compute-units yang terpakai lagi).*
+3. **Pembersihan Proses Lokal**:
+   - Menutup proses proxy dan ssh latar belakang lokal (PID 40408, 40409, 40410).
+
+---
+
+### 🏆 4. Status Master Arsip Stage 4 di Komputer Lokal:
+* **Berkas**: [`/home/rep/stage4-skylake-optimal.tar.zst`](file:///home/rep/stage4-skylake-optimal.tar.zst)
+* **Ukuran Berkas**: **890 MB**
+* **Checksum SHA256**:
+  ```text
+  caec659ed4c060b62e03fa7ba2d63a95762a434f70798ee7ccacdb54fec446fd
+  ```
+* **Status**: **100% AMAN, VALID, & TERSIMPAN DI DISK LOKAL** (Kapasitas disk lokal tersisa 9,6 GB).
+
+---
+
+
 
