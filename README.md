@@ -4832,3 +4832,59 @@ Aplikasi browser seperti Google Chrome telah dibersihkan dari sistem Colab ini. 
 | **4** | **Pohon Repositori Portage** (`/var/db/repos/gentoo`) | **761 MB** | Kumpulan resep ebuild mentah. Bisa di-exclude dari arsip Stage 4 dan disinkronkan kembali via Git shallow / `emerge-webrsync`. | **~760 MB** |
 
 ---
+
+## 124. Sukses Penuh Migrasi Portage ke Python 3.12, Unmerge Python 3.14, & Pembersihan Pustaka 3D
+
+### 💬 Permintaan Pengguna:
+> *"ya"* (Setuju eksekusi pembersihan Python 3.14 dan pustaka sisa)
+
+---
+
+### ⚙️ Rincian Eksekusi Teknis:
+
+#### 1. Rebuild Paket Inti Portage ke Target `python3_12`:
+* Paket yang berhasil dikompilasi ulang dengan `PYTHON_TARGETS="python3_12"`:
+  - `sys-apps/portage-3.0.82.2`
+  - `app-portage/gentoolkit-0.8.1`
+  - `app-portage/gemato-20.15`
+* **Hasil Verifikasi**:
+  ```text
+  Portage 3.0.82.2 (python 3.12.14-final-0, default/linux/amd64/23.0, gcc-14, glibc-2.43-r4)
+  ```
+  Portage kini 100% berjalan mandiri di atas Python 3.12.14 dengan integrasi `sqlite3` dan `ssl`.
+
+---
+
+#### 2. Unmerge Resmi & Eliminasi Total Python 3.14:
+* Menjalankan penghapusan resmi paket:
+  ```bash
+  emerge --unmerge dev-lang/python:3.14
+  ```
+* Menghapus seluruh berkas direktori runtime dan biner:
+  - `/usr/lib/python3.14/` $\rightarrow$ **Terhapus total**
+  - `/usr/bin/python3.14*` $\rightarrow$ **Terhapus total**
+  - `/usr/lib/python-exec/python3.14/` $\rightarrow$ **Terhapus total**
+* Mengunci konfigurasi preferensi global `/etc/python-exec/python-exec.conf` murni ke `python3.12`.
+
+---
+
+#### 3. Unmerge Sisa Pustaka Grafis 3D Blender:
+* Menjalankan unmerge resmi pada pustaka tanpa ketergantungan (*0 reverse-deps*):
+  - `media-libs/opencolorio-2.4.2` $\rightarrow$ **Unmerged (Sukses)**
+  - `media-libs/openimageio-3.0.8.1-r2` $\rightarrow$ **Unmerged (Sukses)**
+  - `media-libs/opensubdiv-3.6.1-r1` $\rightarrow$ **Unmerged (Sukses)**
+
+---
+
+### 📊 Kondisi Sistem & Ruang Penyimpanan Pasca-Pembersihan:
+* **Ukuran Sistem Saat Ini**: **5,6 GB** (Menyusut lagi dari 6,1 GB, total terpangkas **3,0 GB** dari ukuran awal 8,6 GB!).
+* **Pemeriksaan Dependensi Sistem (`emerge --depclean`)**:
+  ```text
+  Packages in world: 54
+  Number to remove: 0
+  ```
+  Sistem 100% konsisten, sehat, dan tidak memiliki paket yatim (*orphaned packages*).
+* **Uji Kompilator Skylake Non-AVX**:
+  Output: `PORTAGE + PYTHON 3.12 + SKYLAKE COMPILER 100% VERIFIED!`
+
+---
