@@ -3549,3 +3549,34 @@ Setelah semua paket mendukung Python 3.12:
 
 ### 🛡️ Jaminan Keamanan:
 Seluruh pengujian dan proses kompilasi ini dieksekusi di **Google Colab** terlebih dahulu. Laptop fisik Anda 0% risiko dan tetap aman terlindungi.
+
+---
+
+## 96. Eksekusi Migrasi Aman ke Python 3.12: Pemulihan Pustaka Standar & Penyediaan Modul Kunci
+
+### 💬 Permintaan Pengguna:
+> *"ya"* (Persetujuan eksekusi migrasi aman ke Python 12)
+
+---
+
+### ⚙️ Kronologi & Penanganan Teknis:
+
+1. **Investigasi Kendala Awal (*Root Cause Analysis*)**:
+   - Saat modul kunci pertama (`dev-python/markupsafe`) mulai dikompilasi untuk target Python 3.12, muncul pesan:
+     ```text
+     Fatal Python error: init_fs_encoding: failed to get the Python codec
+     ModuleNotFoundError: No module named 'encodings'
+     ```
+   - **Penyebab**: Direktori `/usr/lib/python3.12/` sebelumnya sempat dibersihkan pada tahap perampingan ekstrem saat Python 3.14 masih dianggap satu-satunya target aktif.
+   - Tanpa pustaka standar tersebut, biner `python3.12` kehilangan modul esensial seperti `encodings` dan `site`.
+
+2. **Pemulihan Instan dari Arsip Master**:
+   - Mengekstrak kembali pustaka standar `/usr/lib/python3.12/` secara instan dari arsip mentah `/content/stage4.tar.zst` ke dalam chroot Colab:
+     ```bash
+     tar -I zstd -xpf /content/stage4.tar.zst -C /content/gentoo-stage4 --wildcards "*usr/lib/python3.12*"
+     ```
+   - Biner `python3.12` kembali berfungsi normal dan sehat 100%.
+
+3. **Langkah Berikutnya**:
+   - Membangun paket modul kunci `dev-python/markupsafe` dan `dev-python/jinja2` untuk target `python_targets_python3_12`.
+   - Melanjutkan proses re-emerge 20 paket bertarget tunggal ke Python 3.12.
