@@ -6523,6 +6523,50 @@ Setelah GCC selesai dikompilasi di Kaggle:
 3. **Simpan Paket Biner di `/kaggle/working`**:
    - Arahkan `PKGDIR="/kaggle/working/binpkgs"` agar paket biner `.gpkg.tar` yang sudah jadi terkumpul rapi di area output yang siap diunduh dengan satu klik.
 
+---
+
+## 160. Analisis Persistensi Data di Kaggle: File Sesi Sementara vs Fitur Kaggle Datasets Permanen
+
+### 💬 Pertanyaan Pengguna:
+> *"apa hanya setap sesi aja lalu terhapus"*
+
+---
+
+### 🔍 1. Sifat Dasar Sistem Virtual Machine (Sesi Interaktif):
+Secara *default*, sistem operasi virtual di Kaggle memang bersifat **sementara (*ephemeral*)**:
+* Direktori sistem seperti `/tmp`, `/var`, dan berkas yang Anda ekstrak di sesi interaktif biasa akan **direset ke kondisi awal** saat sesi ditutup atau mati.
+* Ini sama persis seperti perilaku di Google Colab.
+
+---
+
+### 🛡️ 2. Solusi Kaggle Agar Berkas TIDAK TERHAPUS (Permanen Selamanya):
+
+Kaggle memiliki keunggulan besar dibanding Colab yang membuat data Anda **bisa tersimpan permanen selamanya secara gratis**:
+
+#### A. Fitur "Kaggle Datasets" (Permanen 100% — Kuota 100 GB Gratis):
+* Anda bisa mengunggah master arsip Gentoo Anda ([`stage4-skylake-optimal.tar.zst`](file:///home/rep/stage4-skylake-optimal.tar.zst)) ke fitur **`Datasets`** di Kaggle (dapat disetel sebagai **Private** agar hanya Anda yang bisa melihatnya).
+* **Keuntungan Luar Biasa**:
+  1. **Tersimpan Selamanya**: Berkas tidak akan pernah terhapus walaupun sesi notebook dimatikan berbulan-bulan.
+  2. **Mount Instan 0 Detik**: Setiap kali Anda membuka notebook baru, cukup klik **`+ Add Input`** $\rightarrow$ pilih Dataset Anda. Master Stage 4 Anda langsung muncul seketika di `/kaggle/input/nama-dataset/` tanpa perlu download ulang dari Google Drive lagi!
+
+#### B. Fitur "Output Persistence" (Riwayat Hasil Versi Notebook):
+* Berkas paket biner (*binpkg*) yang dihasilkan oleh kompilasi di direktori `/kaggle/working` **tidak akan hilang** jika Anda menjalankannya menggunakan tombol **`Save Version` $\rightarrow$ `Save & Run All (Commit)`**.
+* Hasil kompilasi biner akan tersimpan permanen di tab **Output** notebook Anda dan bisa Anda unduh kapan saja dari browser.
+
+---
+
+### 🔄 3. Alur Kerja Praktis Jangka Panjang di Kaggle:
+
+1. **Satu Kali Saja**: Unggah `stage4-skylake-optimal.tar.zst` ke Kaggle Dataset pribadi (permanen).
+2. **Kapan pun Butuh Kompilasi**:
+   - Buka notebook Kaggle $\rightarrow$ Sambungkan Dataset Anda.
+   - Ekstrak ke `/tmp/gentoo`.
+   - Jalankan `emerge` dengan 4 vCPU (`MAKEOPTS="-j4"`).
+   - Simpan paket biner `.gpkg.tar` ke `/kaggle/working/binpkgs`.
+3. **Unduh Paket Biner**:
+   - Unduh biner kecil ($\sim$80 MB) ke PC lokal dan pasang via `emerge -K` dalam 1 menit!
+
+
 
 
 
