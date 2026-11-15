@@ -5779,6 +5779,56 @@ Lingkungan Stage 4 di [`/opt/test`](file:///opt/test) memiliki seluruh perangkat
 
 ---
 
+## 144. Investigasi Galat Ekstraksi `Read error (39) : premature end` & Solusi Definitif
+
+### 💬 Galat yang Dilaporkan Pengguna:
+```text
+./usr/lib64/libiberty.a
+/*stdin*\ : Read error (39) : premature end
+tar: Unexpected EOF in archive
+tar: Unexpected EOF in archive
+tar: Error is not recoverable: exiting now
+```
+
+---
+
+### 🔍 1. Investigasi & Analisis Akar Masalah (*Root Cause*):
+Setelah dilakukan pengujian integritas langsung pada berkas arsip dengan perintah:
+```bash
+zstd -t /home/rep/stage4-skylake-optimal.tar.zst
+```
+* **Hasil Pengujian**:
+  ```text
+  lake-optimal.tar.zst : 2.85 GiB... /home/rep/stage4-skylake-optimal.tar.zst : Read error (39) : premature end
+  ```
+* **Penyebab Utama**:
+  1. Pada saat proses kompresi di Google Colab pada sesi sebelumnya, perintah yang dijalankan adalah `tar ... | zstd -19 -T0`.
+  2. Parameter `-19` merupakan tingkat kompresi ekstrem (*ultra-high*) yang membutuhkan waktu sangat lama (>10–15 menit).
+  3. Klien CLI Colab mengalami *timeout* otomatis (batas waktu default 300 detik / 5 menit), sehingga subproses kompresi di Colab terputus paksa sebelum selesai.
+  4. Akibatnya, `zstd` hanya sempat mengompresi berkas hingga direktori `/usr/lib64/libiberty.a` (mencapai 2,85 GB dari total 4,1 GB) dan menghasilkan berkas arsip yang terpotong (*truncated*). Folder penting seperti `/usr/bin` belum sempat masuk ke dalam arsip.
+
+---
+
+### 🧹 2. Tindakan Darurat Pembersihan Disk Lokal:
+Karena ekstraksi yang terputus tersebut telah memakan ruang sebesar **3,5 GB** di partisi root (utilisasi naik ke 94%, tersisa hanya 6,2 GB), pengguna sangat disarankan untuk membersihkan direktori pengujian tersebut terlebih dahulu:
+```bash
+rm -rf /opt/test/*
+```
+*(Ruang disk root akan kembali pulih lega ke 9,6 GB).*
+
+---
+
+### 🚀 3. Solusi Pembuatan Ulang Stage 4 yang Cepat & 100% Utuh:
+Daripada menggunakan `-19` yang lambat dan rawan timeout, gunakan tingkat kompresi seimbang `zstd -6` atau `-3` yang mampu memadatkan seluruh sistem dalam **kurang dari 2 menit** tanpa risiko terputus:
+
+```bash
+# Perintah pembuatan master Stage 4 utuh langsung dari sistem lokal (jalankan sebagai root):
+tar --exclude=/proc/* --exclude=/sys/* --exclude=/dev/* --exclude=/run/* --exclude=/tmp/* --exclude=/mnt/* --exclude=/media/* --exclude=/lost+found --exclude=/var/tmp/* --exclude=/var/cache/distfiles/* --exclude=/var/cache/binpkgs/* --exclude=/var/cache/ccache* --exclude=/var/log/* --exclude=/home/* --exclude=/opt/test/* -cvpf - / | zstd -6 -T0 -o /home/rep/stage4-skylake-complete.tar.zst
+```
+
+---
+
+
 
 
 
