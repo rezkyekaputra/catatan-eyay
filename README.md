@@ -6168,4 +6168,37 @@ Berikut bukti dan kronologi teknisnya:
    - **Portage**: Termasuk seluruh konfigurasi `/etc/portage` Anda (`make.conf`, `00-optimal` Skylake non-AVX, `package.use/mesa` dengan VA-API & proprietary codecs, `package.env` mapping 497 paket).
    - **Desktop & Driver**: Driver Intel Iris/UHD 630, Xorg, JWM, Alsa, Pipewire, D-Bus, Rust 1.92, Mold 2.41, dan semua pustaka sistem lokal Anda yang sedang berjalan stabil saat ini.
 
+---
+
+## 153. Alasan Penamaan Berkas Identik (`stage4-skylake-optimal.tar.zst`) dan Bukti Fisik Penggantian Total
+
+### 💬 Pertanyaan / Kebimbangan Pengguna:
+> *"soalnya tadi namanya sama"*
+
+---
+
+### 💡 1. Mengapa Nama Berkasnya Dibuat Sama?
+Nama target sengaja disamakan (`stage4-skylake-optimal.tar.zst`) agar berfungsi sebagai **pengganti resmi (*drop-in replacement*)** dari arsip lama yang rusak, sehingga seluruh dokumentasi, skrip ekstraksi, dan target symlink tidak perlu diubah-ubah.
+
+Pada langkah pertama skrip [`/home/rep/buat-stage4.sh`](file:///home/rep/buat-stage4.sh):
+```bash
+# [1/3] Mempersiapkan direktori & membersihkan target lama...
+rm -f "$TARGET_REP" "$TARGET_DONGKRAK"
+```
+Skrip secara eksplisit **menghapus bersih (*rm -f*)** sisa berkas lama sebelum proses pengarsipan dimulai, sehingga berkas yang ada sekarang adalah 100% berkas baru yang baru saja di-*generate*.
+
+---
+
+### 🔬 2. Bukti Fisik Nyata Perbedaan Berkas Lama (Colab) vs Berkas Baru (Lokal):
+
+| Parameter Uji | Berkas Rusak dari Colab (Lama) | Berkas Master Lokal Anda (Baru) |
+| :--- | :--- | :--- |
+| **Ukuran Berkas Terkompresi** | **890 MB** | **2,48 GiB** (2.662.023.982 bytes) |
+| **Ukuran Setelah Dekompresi** | Terpotong di **2,85 GB** | Penuh **8,16 GB** (8.163.430.400 bytes) |
+| **Hasil Uji `zstd -t`** | **ERROR** (*premature end / unexpected EOF*) | **LULUS 100% SUKSES** |
+| **Waktu Pembuatan (*Timestamp*)** | Jam 14:xx siang (dari cloud) | **Nov 15 16:51** (beberapa menit lalu di PC lokal) |
+| **Hardlink & Izin Akses** | 1 link, permission terbatas | **2 links** (`-rw-rw-rw-`), shared inode `/home/rep` & `/home/dongkrak` |
+| **Isi Direktori `/home`** | Direktori kosong | Direktori kosong terverifikasi murni |
+
+
 
