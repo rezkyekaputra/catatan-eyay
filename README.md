@@ -4618,3 +4618,29 @@ Sistem Gentoo chroot di Google Colab saat ini berada dalam kondisi **100% prima,
      - Atau sistem hasil build optimasi Colab tertentu?
 
 ---
+
+## 119. Sinkronisasi Pemahaman: Rencana Pemangkasan Sistem Gentoo Colab Menjadi Stage 4 Ultra Ramping Khusus Pentium G5500
+
+### 💬 Klarifikasi Pengguna:
+> Pengguna memilih: *"Sistem Gentoo hasil build optimasi Colab yang tadi kita proses (Python 3.12, FFmpeg VA-API, paket non-AVX)"*  
+> Serta bertanya: *"ada yang bisa dipangkas?"*
+
+---
+
+### 💡 Analisis Kondisi & Strategi Eksekusi:
+1. **Evaluasi Status Terkini**:
+   - Di sesi Colab `cpu-builder`, sistem Gentoo dasar dari Google Drive telah diekstrak ke `/content/gentoo-stage4/`.
+   - Ukuran mentah saat ini masih **8,6 GB** karena masih membawa berkas-berkas bawaan yang tidak diperlukan di PC Pentium G5500 Anda (seperti firmware Nvidia/AMD/Qualcomm, Blender, Google Chrome, dan dependensi ganda).
+2. **Rencana Aksi Pemangkasan Menyeluruh (Target: dari 8,6 GB menjadi ~3,5 – 4 GB)**:
+   - **Langkah 1**: Pangkas seluruh firmware non-Intel di `/usr/lib/firmware/` (menghapus Qualcomm, Nvidia, AMDGPU, Mellanox) $\rightarrow$ **Hemat ~1,4 GB**.
+   - **Langkah 2**: Pangkas dokumentasi (`doc/`, `man/`) dan locale terjemahan asing non-ID/EN $\rightarrow$ **Hemat ~190 MB**.
+   - **Langkah 3**: Pangkas aplikasi desktop yang tidak Anda inginkan (Blender, Chrome jika sudah ada LibreWolf, Vesktop) $\rightarrow$ **Hemat ~900 MB**.
+   - **Langkah 4**: Pangkas duplikasi modul Python 3.14 eksperimental dan kunci sistem permanen pada Python 3.12 stabil $\rightarrow$ **Hemat ~290 MB**.
+   - **Langkah 5**: Konfigurasikan seluruh aturan Portage agar murni menggunakan `-march=skylake -mno-avx -mno-avx2 -mno-fma`.
+
+---
+
+### 📦 Hasil Akhir yang Akan Didapat:
+Sistem Gentoo yang super bersih, ringan, tanpa bloatware, dengan ukuran sangat ramping (~3,5 GB mentah / ~1,5 GB terkompresi Zstandard) yang siap dipindahkan ke PC fisik Anda secara instan.
+
+---
