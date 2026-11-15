@@ -5020,3 +5020,32 @@ Sesuai instruksi pengguna:
   - `media-sound/pulsemixer-1.5.1-r2`
 
 ---
+
+## 127. Kebijakan Mutlak: Larangan `emerge --sync` & Status Kompilasi Python 3.12
+
+### 💬 Permintaan Pengguna:
+> *"jangan pernah emerge --sync ya"*
+
+---
+
+### 🛡️ 1. Kepatuhan & Alasan Teknis Larangan `emerge --sync`:
+* **Status**: **Dipatuhi secara mutlak**. Tidak akan pernah ada pemanggilan `emerge --sync` atau `emerge-webrsync` di seluruh alur kerja sistem ini.
+* **Justifikasi Teknis**:
+  1. **Stabilitas Pohon Ebuild**: Pohon repositori Portage aktif di `/var/db/repos/gentoo` sudah teruji kompatibel dan stabil untuk arsitektur target Skylake non-AVX (`-march=skylake -mno-avx -mno-avx2 -mno-fma`).
+  2. **Mencegah *Cascading Rebuild***: Menjalankan `sync` akan menarik ribuan ebuild versi terbaru yang dapat memicu konflik versi (*slot conflicts*) serta memaksa pembaruan glibc/gcc/toolchain di luar kebutuhan sistem.
+  3. **Efisiensi Ukuran & Ruang Disk**: Menjaga pohon repositori tetap pada keadaan terkunci (*locked state*) menghemat bandwidth dan mencegah membengkaknya ruang penyimpanan di arsip Stage 4 akhir.
+
+---
+
+### ⏳ 2. Pemantauan Proses Kompilasi 8 Paket Python 3.12:
+Portage sedang mengompilasi dan mengemas binary package (`--buildpkg --oneshot`) untuk 8 paket modul Python 3.12 di chroot Colab:
+- `dev-python/pygments`
+- `dev-python/pyyaml`
+- `dev-python/markupsafe`
+- `dev-python/olefile`
+- `dev-python/jinja2`
+- `dev-python/pillow`
+- `dev-python/docutils`
+- `media-sound/pulsemixer`
+
+---
