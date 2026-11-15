@@ -6721,6 +6721,56 @@ rm -rf /home/rep/kaggle-stage4
 ```
 *(Menghapus folder staging aman 100% dan tidak akan menghapus master berkas asli karena menggunakan hardlink).*
 
+---
+
+## 163. Otomasi Pengunggahan Master Stage 4 Menggunakan Modern Kaggle API (`kagglehub`) & Skrip Siap Pakai
+
+### 💬 Masukan Pengguna:
+> *"kagglehub Upload via... kagglehub.dataset_upload(handle, local_dataset_dir)"*
+
+---
+
+### 🌟 1. Keunggulan Library Modern `kagglehub` (v1.0.3):
+Library **`kagglehub`** adalah pustaka Python resmi terbaru dari tim Google/Kaggle yang dirancang jauh lebih ringkas, cepat, dan modern dibanding Kaggle CLI lama:
+* **Tidak Perlu Metadata Rumit**: Tidak perlu membuat file `dataset-metadata.json` secara manual. Kagglehub otomatis mengekstrak judul dan slug langsung dari format handle (`<USERNAME>/<DATASET_SLUG>`).
+* **Upload Cepat & Terenkripsi**: Menggunakan modul SDK Kaggle modern yang mendukung resume transfer data besar.
+
+---
+
+### 🛠️ 2. Persiapan Lingkungan di Host Gentoo:
+Pustaka `kagglehub` telah dipasang di virtual environment terisolasi:
+* Path: `/home/rep/.local/share/kaggle-env`
+* Versi Terpasang: `kagglehub v1.0.3` + `kagglesdk v0.1.38`.
+
+---
+
+### 📜 3. Skrip Otomatis Siap Pakai: [`/home/rep/upload-kaggle.py`](file:///home/rep/upload-kaggle.py)
+Skrip ini telah dibuat dan diberi izin eksekusi (`chmod +x`), dengan fitur otomatis:
+1. Validasi keberadaan API Token `~/.kaggle/kaggle.json`.
+2. Pembuatan hardlink otomatis ke folder staging (nol overhead ruang disk).
+3. Pengunggahan berkas 2,48 GiB ke Kaggle Datasets via `kagglehub.dataset_upload`.
+4. Pembersihan otomatis folder staging setelah upload tuntas.
+
+---
+
+### 🚀 4. Cara Menjalankan Skrip:
+
+1. **Pastikan Token API Kaggle Sudah Ada**:
+   - Unduh dari [kaggle.com/settings](https://www.kaggle.com/settings) $\rightarrow$ klik **`Create New Token`**.
+   - Simpan di terminal:
+     ```bash
+     mkdir -p ~/.kaggle
+     mv ~/Downloads/kaggle.json ~/.kaggle/
+     chmod 600 ~/.kaggle/kaggle.json
+     ```
+2. **Jalankan Skrip Unggah**:
+   ```bash
+   /home/rep/upload-kaggle.py USERNAME_KAGGLE_ANDA
+   ```
+   *(Contoh: `/home/rep/upload-kaggle.py eyay`)*.
+3. Master Stage 4 Anda akan langsung terunggah sebagai Dataset permanen di Kaggle dan siap di-mount di notebook mana pun!
+
+
 
 
 
