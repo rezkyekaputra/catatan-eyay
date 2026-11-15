@@ -6626,6 +6626,102 @@ Setiap kali Anda ingin kompilasi paket baru di masa depan:
    ```
    *(Siap diekstrak ke `/tmp/gentoo` dalam hitungan detik tanpa perlu download ulang!)*
 
+---
+
+## 162. Panduan Lengkap Mengunggah Master Stage 4 via Kaggle CLI (`kaggle datasets create`) dari Terminal Linux
+
+### 💬 Pertanyaan Pengguna:
+> *"ada via cli nya ga"*
+
+---
+
+### 💻 1. Arsitektur Kaggle CLI:
+Kaggle menyediakan utilitas baris perintah resmi (**Kaggle CLI**) yang memungkinkan Anda mengunggah dataset, mengelola notebook, dan mengunduh berkas langsung dari terminal Linux tanpa membuka browser.
+
+---
+
+### 🔑 2. Langkah 1: Mengambil API Token Kaggle (`kaggle.json`):
+1. Buka browser: Masuk ke akun Anda di [kaggle.com/settings](https://www.kaggle.com/settings).
+2. Gulir ke bawah ke bagian **API**.
+3. Klik tombol **`Create New Token`**.
+4. Berkas bernama `kaggle.json` akan otomatis terunduh ke komputer Anda.
+5. Pindahkan berkas tersebut ke direktori `~/.kaggle/` di akun Linux Anda dan kunci izinnya:
+   ```bash
+   mkdir -p ~/.kaggle
+   mv ~/Downloads/kaggle.json ~/.kaggle/
+   chmod 600 ~/.kaggle/kaggle.json
+   ```
+
+---
+
+### ⚙️ 3. Langkah 2: Memasang Kaggle CLI di Sistem Gentoo:
+Gunakan Python Virtual Environment agar bersih dan tidak mengganggu paket sistem Portage:
+
+```bash
+# 1. Buat virtual environment mandiri di folder lokal
+python3.12 -m venv ~/.local/share/kaggle-env
+
+# 2. Pasang modul kaggle resmi
+~/.local/share/kaggle-env/bin/pip install kaggle
+
+# 3. Buat symlink agar perintah 'kaggle' bisa langsung dipanggil
+ln -sf ~/.local/share/kaggle-env/bin/kaggle ~/.local/bin/kaggle
+
+# 4. Uji apakah CLI sudah aktif
+kaggle --version
+```
+
+---
+
+### 📁 4. Langkah 3: Menyiapkan Folder Staging & Metadata:
+Kaggle CLI membutuhkan satu folder yang berisi berkas arsip beserta deskripsi `dataset-metadata.json`:
+
+```bash
+# 1. Buat direktori staging khusus
+mkdir -p /home/rep/kaggle-stage4
+
+# 2. Hubungkan master Stage 4 menggunakan Hard Link (Nol Disk Overhead / Hemat 2,5 GB):
+ln /home/rep/stage4-skylake-optimal.tar.zst /home/rep/kaggle-stage4/
+
+# 3. Buat berkas metadata (Ganti USERNAME_ANDA dengan username Kaggle Anda):
+cat << 'EOF' > /home/rep/kaggle-stage4/dataset-metadata.json
+{
+  "title": "Gentoo Stage4 Skylake Optimal",
+  "id": "USERNAME_ANDA/gentoo-stage4-skylake-optimal",
+  "licenses": [
+    {
+      "name": "CC0-1.0"
+    }
+  ]
+}
+EOF
+```
+
+---
+
+### 🚀 5. Langkah 4: Eksekusi Upload ke Kaggle (Private Dataset):
+
+Jalankan perintah pengunggahan:
+```bash
+kaggle datasets create -p /home/rep/kaggle-stage4
+```
+
+* **Penjelasan Proses**:
+  - Kaggle CLI akan membaca folder `/home/rep/kaggle-stage4`.
+  - Mengunggah berkas `stage4-skylake-optimal.tar.zst` (2,48 GB).
+  - Secara *default*, dataset yang diunggah via CLI disetel berstatus **Private** (Aman & Rahasia).
+  - Terminal akan menampilkan progress bar persentase upload secara *real-time*.
+
+---
+
+### 🧹 6. Langkah 5: Bersihkan Folder Staging:
+Setelah proses upload selesai:
+```bash
+rm -rf /home/rep/kaggle-stage4
+```
+*(Menghapus folder staging aman 100% dan tidak akan menghapus master berkas asli karena menggunakan hardlink).*
+
+
 
 
 
