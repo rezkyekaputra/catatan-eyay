@@ -3580,3 +3580,75 @@ Seluruh pengujian dan proses kompilasi ini dieksekusi di **Google Colab** terleb
 3. **Langkah Berikutnya**:
    - Membangun paket modul kunci `dev-python/markupsafe` dan `dev-python/jinja2` untuk target `python_targets_python3_12`.
    - Melanjutkan proses re-emerge 20 paket bertarget tunggal ke Python 3.12.
+
+---
+
+## 97. Sukses Penuh Downgrade ke Python 3.12 Saja: Pemulihan Runtime Toolchain, Rebuild Bersih, & Depclean Total
+
+### 💬 Permintaan Pengguna:
+> *"ya"* (Instruksi mengeksekusi transisi tuntas ke Python 3.12 saja)
+
+---
+
+### ⚙️ Kronologi & Penanganan Teknis Lengkap di Google Colab (`685924`):
+
+#### 1. Pemulihan Runtime Compiler & Static Objects Glibc
+* Saat modul C-extension Python dikompilasi, linker `ld` melaporkan:
+  ```text
+  cannot find -lgcc: No such file or directory
+  cannot find /usr/lib64/libc_nonshared.a: No such file or directory
+  ```
+* **Penyebab**: Pembersihan berkas `*.a` pada tahap perampingan sistem sebelumnya ikut membuang berkas pustaka statis nonshared glibc dan compiler runtime.
+* **Solusi**: Mengekstrak kembali berkas `usr/lib/gcc/x86_64-pc-linux-gnu/14/` dan `usr/lib64/*.a` (termasuk `libc_nonshared.a`, `libgcc.a`, `crtbegin.o`, `crtend.o`) dari arsip master `/content/stage4.tar.zst`.
+* **Verifikasi Kompiler**: Uji kompilasi kode C dan C++ via `gcc` dan `g++` berjalan 100% sukses (`COMPILER_WORKS_PERFECTLY`).
+
+#### 2. Rebuild Modul Kunci Python 3.12 (Metode Dual-Target Bridge)
+* Menyetel `/etc/portage/make.conf`:
+  ```ini
+  PYTHON_TARGETS="python3_12 python3_14"
+  PYTHON_SINGLE_TARGET="python3_12"
+  ```
+* Mengompilasi dan menguji modul inti:
+  - `dev-python/markupsafe-3.0.3` & `dev-python/jinja2-3.1.6`: Sukses dibangun dan diverifikasi via Python 3.12 (`JINJA2_IMPORT_SUCCESS: version= 3.1.6`).
+  - 11 modul dasar: `flit-core`, `packaging`, `setuptools-scm`, `meson-python`, `mako`, `olefile`, `ensurepip-pip`, `pyyaml`, `lxml`, `pygments`, `docutils` (seluruhnya 100% sukses).
+  - 11 modul perkakas & sistem: `cython`, `pillow`, `gemato`, `portage`, `gentoolkit`, `meson`, `meson-format-array`, `xcb-proto`, `pulsemixer`, `gdbus-codegen`, `glib-utils` (seluruhnya 100% sukses).
+  - Pustaka utilitas: `sys-apps/file` & `sys-apps/util-linux` (seluruhnya 100% sukses).
+
+#### 3. Pemutusan & Penghapusan Total Python 3.14
+Setelah seluruh modul sistem terpasang utuh di Python 3.12:
+1. Menyetel `/etc/portage/make.conf` murni ke Python 3.12 saja:
+   ```ini
+   PYTHON_TARGETS="python3_12"
+   PYTHON_SINGLE_TARGET="python3_12"
+   ```
+2. Mengunci preferensi eksekusi global di `/etc/python-exec/python-exec.conf`:
+   ```text
+   python3.12
+   ```
+3. Meng-unmerge Python 3.14 dari sistem:
+   ```bash
+   emerge --unmerge dev-lang/python:3.14
+   rm -rf /usr/lib/python3.14
+   ```
+
+#### 4. Audit Akhir & Verifikasi Konsistensi Sistem
+* **Status Python Aktif**:
+  ```bash
+  python --version  # -> Python 3.12.14
+  python3 --version # -> Python 3.12.14
+  ```
+* **Uji Modul Inti**: `sys`, `os`, `jinja2`, `markupsafe`, `yaml`, `lxml` diimpor mulus tanpa error.
+* **Audit Ketergantungan Yatim (`emerge --depclean`)**:
+  - `Number to remove: 0` (Nol dependensi rusak/yatim).
+* **Audit Dynamic Linking (`revdep-rebuild --pretend`)**:
+  - `Your system is consistent` (0 broken files / libraries).
+* **Total Paket Terpasang**: **531 paket** (dari 624 paket awal, bersih dari bloatware).
+* **Total Ukuran Sistem di Chroot**: **3,3 GB** (dari 8,6 GB awal, sangat ramping dan efisien).
+
+---
+
+### 🚀 Status Kesiapan Kompilasi LibreWolf di Colab:
+* Emerge pretend `emerge -pv www-client/librewolf` telah diaudit:
+  - Tersedia di pohon Gentoo: `www-client/librewolf-144.0.2_p1`.
+  - Dependensi yang dibutuhkan: `nasm`, `icu`, `cargo-c`, `cbindgen`, `dav1d`, `libvpx`, dan `rust`.
+  - Direkomendasikan menggunakan `dev-lang/rust-bin-1.85.0` sebagai compiler Rust resmi Mozilla untuk memangkas waktu tunggu 2 jam kompilasi rustc, sementara browser `librewolf` tetap dikompilasi 100% dari source code murni dengan optimasi khusus Pentium Gold G5500 Skylake non-AVX.
