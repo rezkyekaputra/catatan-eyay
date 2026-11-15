@@ -3143,3 +3143,38 @@ Pemeriksaan terhadap isi berkas `/content/gentoo-stage4/efi/` dan sistem lokal m
 Your system is consistent
 ```
 **Hasil**: Sistem **100% konsisten, sehat, dan bebas broken libraries**. Seluruh pustaka sistem inti, compiler C/C++ GCC 14.3.1, Clang 19, dan Rust tetap utuh sempurna.
+
+---
+
+## 85. Pemetaan Repositori (Overlays) di Sistem Gentoo Stage 4: Peran Masing-Masing & Deteksi Overlay Tidak Terpakai
+
+### 💬 Pertanyaan Anda:
+> *"ada repositori yang lain ga selain gentoo"*
+
+---
+
+### ⚙️ Hasil Audit Repositori Aktif di Sistem Anda:
+
+Pemeriksaan terhadap `/etc/portage/repos.conf/` dan `/var/db/repos/` menunjukkan ada **4 repositori** yang terdaftar di sistem Stage 4 Anda:
+
+| Nama Repositori | Lokasi Direktori | Asal / URL Sumber | Paket yang Terpasang di Sistem | Status Kebutuhan |
+| :--- | :--- | :--- | :--- | :--- |
+| **`gentoo`** | `/var/db/repos/gentoo` | `rsync://rsync.gentoo.org/gentoo-portage` | **621 paket** (Glibc, GCC, Xorg, PipeWire, dll.) | **Wajib Utama** (Pohon resmi Gentoo). |
+| **`bentoo`** | `/var/db/repos/bentoo` | `https://github.com/lucascouts/bentoo.git` | `www-client/librewolf` | **Wajib untuk LibreWolf** (Sumber ebuild LibreWolf). |
+| **`custom1`** | `/var/db/repos/custom1` | Lokal (`/var/db/repos/custom1`) | `media-libs/mesa-25.2.8`<br>`dev-util/mesa_clc-25.2.8` | **Wajib untuk Grafis** (Kustomisasi driver GPU Anda). |
+| **`gentoo-zh`** | `/var/db/repos/gentoo-zh` | `https://github.com/gentoo-zh/overlay.git` | **0 PAKET (KOSONG)** | **Tidak Digunakan**: Dapat dihapus/di-disable untuk menghemat ruang. |
+
+---
+
+### 🌐 Repositori Populer Lainnya di Ekosistem Gentoo (Bisa Diaktifkan Kapan Saja):
+Jika di kemudian hari Anda membutuhkan paket perangkat lunak khusus yang tidak ada di `gentoo`:
+1. **`guru`**: Repositori resmi komunitas Gentoo terbesar (setara dengan AUR di Arch Linux), dikelola bersama oleh ribuan pengguna Gentoo.
+2. **`steam-overlay`**: Repositori resmi untuk ekosistem gaming Steam di Linux.
+3. **`science`**: Kumpulan aplikasi riset, komputasi sains, dan AI.
+4. **`brave-overlay`**: Repositori khusus peramban privasi Brave.
+
+Perintah untuk melihat atau mengaktifkan repositori di Gentoo:
+```bash
+eselect repository list        # Melihat daftar 470+ repositori resmi komunitas
+eselect repository enable <nama_repo>   # Mengaktifkan repositori
+```
