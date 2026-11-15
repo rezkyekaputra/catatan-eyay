@@ -3057,3 +3057,40 @@ Setelah sistem menyusut ke 5,4 GB, audit tingkat lanjut menemukan beberapa kompo
 * **Potensi Pembersihan Tahap 2**: **~1,35 GB**
 * **Hasil Akhir Setelah Pembersihan Tahap 2**: **~4,0 GB saja!**
 * **Ukuran Arsip Tarball Kompresi (`zstd -19`)**: Diperkirakan menyusut drastis ke **~1,1 s/d 1,2 GB** (hanya butuh waktu beberapa detik untuk diunggah/diunduh).
+
+---
+
+## 83. Klarifikasi Mengapa Direktori `/efi` Terbawa ke Stage 4 & Status Rencana Non-EFI
+
+### 💬 Pertanyaan Anda:
+> *"kenapa efi kan rencana nya ga efi"*
+
+---
+
+### ⚙️ Investigasi Penyebab Berkas EFI Terbawa:
+
+Pemeriksaan terhadap isi berkas `/content/gentoo-stage4/efi/` dan sistem lokal mengungkap penyebabnya:
+
+#### 1. Asal Usul Berkas di Arsip Stage 4:
+* Di mesin lokal Anda, partisi `/dev/sda1` terpasang (*mounted*) di titik kait `/efi` sesuai konfigurasi `/etc/fstab`:
+  ```ini
+  PARTUUID=c4ef88c2-cef6-4db3-828e-7cbf01304458   /efi    vfat    defaults    0 2
+  ```
+* Saat perintah pengarsipan `tar` dijalankan pada tanggal 2 November lalu, perintah mencakup root `/` dan **belum mengecualikan direktori `/efi`** (belum ada parameter `--exclude=/efi/*`).
+* Akibatnya, isi partisi `/dev/sda1` ikut terbawa ke dalam arsip Stage 4, yang ternyata berisi:
+  - `/efi/EFI/Gentoo/BOOTX64.EFI` (12 MB, kernel EFI tanggal 2 Nov)
+  - `/efi/EFI/Gentoo/BOOTX64.EFI.bak` (12 MB, cadangan kernel tanggal 29 Okt)
+  - **Total: 24 MB**.
+
+---
+
+### 🚀 Kesimpulan & Solusi untuk Rencana Non-EFI:
+1. **Di Google Colab (`/content/gentoo-stage4`)**:
+   - Karena Colab berjalan di atas lingkungan virtual cloud dan tujuan kita adalah build farm software, berkas `/efi` ini **100% tidak ada gunanya**.
+   - Berkas `/efi/EFI/Gentoo/*` ini langsung kita hapus agar sistem bersih sesuai rencana non-EFI Anda.
+2. **Di Mesin Lokal untuk Pengarsipan Mendatang**:
+   - Ke depannya, perintah pembuatan Stage 4 wajib menambahkan parameter:
+     ```bash
+     --exclude=/efi/* --exclude=/boot/EFI/*
+     ```
+   - Dengan begitu, arsip cadangan Anda akan 100% murni bebas dari residu EFI.
