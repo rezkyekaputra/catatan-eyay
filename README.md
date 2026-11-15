@@ -3360,3 +3360,32 @@ Di dalam sistem Stage 4 (`/content/gentoo-stage4`), terdeteksi ada **2 VERSI GCC
    Your system is consistent
    ```
    **Hasil**: Sistem **100% konsisten**, stabil, dan kini versi toolchain Stage 4 identik 1:1 dengan mesin fisik lokal Anda.
+
+---
+
+## 91. Eksekusi Unmerge 10 Paket Residu & Aplikasi 'Hantu': Sinkronisasi Mutlak Database Portage
+
+### 💬 Permintaan Pengguna:
+> *"unmerge saja aplikasi hantu nya"*
+
+---
+
+### ⚙️ Tindakan yang Dilakukan:
+
+1. **Unmerge 10 Paket Residu & Non-Esensial**:
+   * **Paket Residu Fisik**: `media-gfx/blender`, `www-client/google-chrome`, `media-fonts/iosevka`, `sys-kernel/linux-firmware`.
+   * **Paket Non-EFI & Dialup**: `sys-boot/efibootmgr`, `net-dialup/wvdial`, `sys-apps/usb_modeswitch`.
+   * **Pustaka Rendering Blender**: `media-libs/opencolorio`, `media-libs/openimageio`, `media-libs/opensubdiv`.
+
+2. **Sinkronisasi File `@world`**:
+   - Seluruh 10 paket di atas telah dicabut secara tuntas dari `/var/lib/portage/world`.
+
+3. **Pembersihan Dependensi Tanpa Induk (*Depclean*)**:
+   - Menjalankan `emerge --depclean --quiet` untuk membuang seluruh pustaka sekunder yang tidak lagi memiliki ketergantungan.
+
+4. **Verifikasi Integritas Dinamis (*Revdep-Rebuild*)**:
+   ```text
+   * Checking dynamic linking consistency
+   Your system is consistent
+   ```
+   **Hasil**: Sistem **100% konsisten**, stabil, dan database paket kini bersih sempurna tanpa ada metadata paket 'hantu'.
