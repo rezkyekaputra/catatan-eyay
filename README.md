@@ -5991,6 +5991,35 @@ echo "======================================================================"
 
 ---
 
+## 148. Pemantauan Langsung Proses Pembuatan Master Stage 4 Lokal (`stage4-skylake-optimal.tar.zst`)
+
+### 💬 Laporan Pengguna:
+> *"/home/rep/buat-stage4.sh sudah"*
+
+---
+
+### ⚙️ 1. Status Eksekusi Proses Latar Belakang (*Active Background Pipeline*):
+Berdasarkan audit proses sistem Linux (`ps aux`), skrip [`/home/rep/buat-stage4.sh`](file:///home/rep/buat-stage4.sh) yang dijalankan oleh pengguna sebagai root sedang **berjalan aktif secara stabil**:
+
+* **PID Induk**: `42013` (`/bin/bash /home/rep/buat-stage4.sh`)
+* **Proses Pengarsipan**: `42015` (`tar --exclude=...`)
+* **Proses Kompresi Multi-Thread**: `42016` (`zstd -6 -T0 -o /home/rep/stage4-skylake-optimal.tar.zst`)
+* **Progres Ukuran Berkas Saat Ini**: **>635 MB** (dan terus bertambah memadat).
+
+---
+
+### ⏱️ 2. Catatan Kinerja I/O Harddisk (5400 RPM):
+* Harddisk mekanik Toshiba MK1665GSX (5400 RPM) sedang memproses pembacaan ribuan pustaka dan biner sistem secara berurutan.
+* Seluruh isi `/home/*` (termasuk belasan gigabyte arsip lama) telah berhasil dilewati (*bypassed*) sehingga kompresi berjalan sangat fokus hanya pada berkas sistem esensial.
+* Setelah kompresi selesai, skrip akan otomatis:
+  1. Menyesuaikan izin berkas ke mode `0666` (`rep:rep`).
+  2. Membuat tautan otomatis ke [`/home/dongkrak/stage4-skylake-optimal.tar.zst`](file:///home/dongkrak/stage4-skylake-optimal.tar.zst).
+  3. Menjalankan verifikasi integritas penuh (`zstd -t`).
+  4. Menampilkan teks `SUKSES!` beserta *checksum* SHA256 di terminal pengguna.
+
+---
+
+
 
 
 
