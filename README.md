@@ -5049,3 +5049,59 @@ Portage sedang mengompilasi dan mengemas binary package (`--buildpkg --oneshot`)
 - `media-sound/pulsemixer`
 
 ---
+
+## 128. Eliminasi Repositori Eksternal (`gentoo-zh` & `bentoo`), Uninstall `antigravity-cli`, & Preservasi Repositori `custom1`
+
+### 💬 Permintaan Pengguna:
+> *"hapus repository selain gentoo linux dan custom1 dan uninstall, custom1 jangan karena ada mesa dll"*
+
+---
+
+### 🛡️ 1. Status & Preservasi Repositori Inti
+Sesuai arahan pengguna, repositori berikut dipertahankan sepenuhnya:
+* **`gentoo`**: Repositori resmi sistem Gentoo Linux (`/var/db/repos/gentoo`).
+* **`custom1`**: Repositori kustom lokal pengguna (`/var/db/repos/custom1`) yang memuat resep kompilasi grafis inti Intel:
+  - `media-libs/mesa-25.2.8`
+  - `dev-util/mesa_clc-25.2.8`
+
+---
+
+### ✂️ 2. Eksekusi Penghapusan Repositori Eksternal & Paket Terkait
+1. **Unmerge Aplikasi Pihak Ketiga**:
+   - `dev-util/antigravity-cli-1.3.2` (satu-satunya aplikasi yang di-install dari repositori eksternal `gentoo-zh`) berhasil di-deselect dari `@world` dan di-unmerge secara bersih:
+     ```bash
+     emerge --deselect dev-util/antigravity-cli
+     emerge --unmerge dev-util/antigravity-cli
+     ```
+2. **Pembersihan Konfigurasi & Direktori Repositori**:
+   - Menghapus konfigurasi `/etc/portage/repos.conf/eselect-repo.conf`.
+   - Menghapus folder pohon ebuild eksternal:
+     - `/var/db/repos/bentoo` (Menghemat 30 MB)
+     - `/var/db/repos/gentoo-zh` (Menghemat 14 MB)
+3. **Hasil Verifikasi Repositori Aktif (`portageq get_repos /`)**:
+   ```text
+   custom1 gentoo
+   ```
+   Sistem kini 100% murni hanya mengacu pada repositori resmi `gentoo` dan `custom1`.
+
+---
+
+### 🐍 3. Sukses Penuh Finalisasi Python 3.12
+* Seluruh 8 paket modul dan perkakas Python 3.12 berhasil dikompilasi ulang dengan target `python3_12`:
+  - `dev-python/pygments-2.21.0`
+  - `dev-python/pyyaml-6.0.3`
+  - `dev-python/markupsafe-3.0.3`
+  - `dev-python/olefile-0.47`
+  - `dev-python/jinja2-3.1.6`
+  - `dev-python/pillow-12.3.0`
+  - `dev-python/docutils-0.23`
+  - `media-sound/pulsemixer-1.5.1-r2`
+* **Uji Impor Fungsional**: Seluruh modul Python 3.12 (`portage`, `gemato`, `requests`, `urllib3`, `jinja2`, `markupsafe`, `yaml`, `PIL`, `docutils`, `pygments`, `olefile`, `setuptools`, `wheel`, `flit_core`) terverifikasi aktif dengan status `[OK]`. Biner CLI [`/usr/bin/pulsemixer`](file:///usr/bin/pulsemixer) teruji responsif dan berfungsi normal.
+
+---
+
+### 📊 4. Rekapitulasi Ukuran & Kondisi Sistem:
+* **Ukuran Sistem Saat Ini**: **4,9 GB** (Turun dari 5,8 GB, total terpangkas **3,7 GB** dari ukuran awal 8,6 GB!).
+* **Total Paket di `@world`**: Menyusut menjadi **47 paket** murni kebutuhan esensial.
+
+---
