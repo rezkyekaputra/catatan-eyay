@@ -3178,3 +3178,40 @@ Perintah untuk melihat atau mengaktifkan repositori di Gentoo:
 eselect repository list        # Melihat daftar 470+ repositori resmi komunitas
 eselect repository enable <nama_repo>   # Mengaktifkan repositori
 ```
+
+---
+
+## 86. Penghapusan Paket dari Overlays `bentoo` & `gentoo-zh`, Pembersihan Repositori, & Retensi Eksklusif `custom1`
+
+### 💬 Permintaan Pengguna:
+> *"uninstall aja aplikasi dari bentoo gentoo-zh dan pertahankan custom1 lalu bersihkan sisa2"*
+
+---
+
+### ⚙️ Tindakan Eksekusi & Pembersihan Menyeluruh:
+
+1. **Unmerge Paket Terpasang dari `bentoo` & `gentoo-zh`**:
+   - `dev-lang/go` (Bahasa Go — unmerge tuntas)
+   - `sci-ml/ollama` (Ollama backend — unmerge tuntas)
+   - `dev-util/antigravity-cli` (Antigravity CLI — unmerge tuntas)
+   - `net-im/vesktop-bin` (Vesktop Discord — unmerge tuntas)
+   - Seluruh entri di atas otomatis dicabut dari daftar paket pilihan pengguna (`/var/lib/portage/world`).
+
+2. **Penghapusan Repositori Overlays dari Sistem**:
+   - Menghapus direktori ebuild `/var/db/repos/bentoo` (**-30 MB**).
+   - Menghapus direktori ebuild `/var/db/repos/gentoo-zh` (**-14 MB**).
+   - Membersihkan blok entri `[bentoo]` dan `[gentoo-zh]` dari konfigurasi `/etc/portage/repos.conf/`.
+
+3. **Pembersihan Kata Kunci & Aturan Masking**:
+   - Menghapus berkas konfigurasi usang di `/etc/portage/package.accept_keywords/`:
+     - `antigravity`
+     - `ollama`
+     - `vesktop`
+     - `librewolf`
+
+4. **Retensi Eksklusif Repositori `custom1`**:
+   - Repositori lokal **`custom1`** (`/var/db/repos/custom1`) dipertahankan 100% utuh bersama paket driver grafis Intel Anda (`media-libs/mesa-25.2.8` dan `dev-util/mesa_clc-25.2.8`).
+   - Repositori resmi **`gentoo`** tetap aktif sebagai pohon utama sistem operasi.
+
+5. **Pembersihan Dependensi Tanpa Induk (*Depclean*)**:
+   - Perintah `emerge --depclean` dijalankan untuk menyisir dan menghapus pustaka sekunder yang tidak lagi memiliki ketergantungan.
