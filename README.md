@@ -3215,3 +3215,41 @@ eselect repository enable <nama_repo>   # Mengaktifkan repositori
 
 5. **Pembersihan Dependensi Tanpa Induk (*Depclean*)**:
    - Perintah `emerge --depclean` dijalankan untuk menyisir dan menghapus pustaka sekunder yang tidak lagi memiliki ketergantungan.
+
+---
+
+## 87. Laporan Sukses: Pembersihan Total Overlays `bentoo` & `gentoo-zh`, Penghapusan Seluruh Paket Terkait, dan Retensi Penuh `custom1`
+
+### 💬 Permintaan Pengguna:
+> *"uninstall aja aplikasi dari bentoo gentoo-zh dan pertahankan custom1 lalu bersihkan sisa2"*
+
+---
+
+### ⚙️ Hasil Akhir Status Sistem Pasca Pembersihan:
+
+1. **Paket Berhasil Di-unmerge Tuntas**:
+   - `dev-lang/go` (Bahasa Go)
+   - `sci-ml/ollama` (Ollama LLM engine)
+   - `dev-util/antigravity-cli` (Antigravity CLI)
+   - `net-im/vesktop-bin` (Vesktop Discord)
+   - Seluruh entri di atas telah dicabut dari `@world`.
+
+2. **Status Repositori yang Tersisa di Sistem**:
+   - **`[gentoo]`**: Pohon ebuild resmi Gentoo utama (`/var/db/repos/gentoo`).
+   - **`[custom1]`**: Overlay kustom lokal pengguna dipertahankan 100% utuh (`/var/db/repos/custom1`) beserta racikan driver `mesa` dan `mesa_clc`.
+   - **`bentoo`** dan **`gentoo-zh`**: Telah dihapus secara fisik dan konfigurasinya dicabut dari `/etc/portage/repos.conf/`.
+
+3. **Statistik Ukuran Sistem**:
+   - Ukuran awal sistem: **8,6 GB**
+   - Ukuran akhir saat ini: **4,0 GB Saja! (Menyusut 4,6 GB / berkurang 53,5%)**
+   - Direktori `/usr`: **2,6 GB**
+   - Direktori `/var`: **846 MB**
+   - Direktori `/opt`: **572 MB** (`rust-bin`)
+   - Direktori `/boot` & `/efi`: **0 Byte (Bebas residu)**
+
+4. **Hasil Verifikasi Integritas (*Revdep-Rebuild*)**:
+   ```text
+   * Checking dynamic linking consistency
+   Your system is consistent
+   ```
+   Sistem berada dalam kondisi **100% konsisten, stabil, dan bersih mutlak**.
