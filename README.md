@@ -7004,4 +7004,44 @@ kaggle datasets create -p .
 ```
 *(Jangan lupa tanda titik `.` di akhir perintah)*. Anda akan dapat melihat langsung *progress bar* persentase pengunggahan di layar terminal Anda!
 
+---
+
+## 169. Pembuatan & Publikasi Notebook Kaggle via CLI Terminal (`gentoo-builder-notebook`)
+
+### 💬 Permintaan Pengguna:
+> *"apakah kamu bisa buat notebook baru menggunakan cli di terminal"*  
+> *"lanjutkan sama kamu"*
+
+---
+
+### 🚀 1. Inisialisasi & Konfigurasi Notebook Kaggle
+Di dalam direktori kerja [`/home/rep/kaggle-stage4-notebook/`](file:///home/rep/kaggle-stage4-notebook/):
+* **Metadata (`kernel-metadata.json`)**:
+  * **Handle / ID**: `rezkyekaputra/gentoo-builder-notebook`
+  * **Judul**: *Gentoo Builder Notebook*
+  * **Dataset Terkait**: `rezkyekaputra/gentoo-stage4-skylake-optimal` (otomatis terpasang di `/kaggle/input/gentoo-stage4-skylake-optimal/`)
+  * **Akses Internet**: `true`
+  * **Tipe**: `notebook` (Python 3)
+
+* **Berkas Notebook ([`notebook.ipynb`](file:///home/rep/kaggle-stage4-notebook/notebook.ipynb))**:
+  * **Sel 1**: Pengecekan spesifikasi CPU, RAM, dan sisa kuota disk Kaggle.
+  * **Sel 2**: Verifikasi berkas dataset master Stage 4 (`stage4-skylake-optimal.tar.zst`).
+  * **Sel 3**: Otomasi ekstraksi master Stage 4 ke direktori chroot `/kaggle/working/gentoo` menggunakan Zstandard.
+  * **Sel 4**: Pengujian lingkungan chroot Gentoo (`/bin/bash`, `emerge --version`, `gcc`).
+
+---
+
+### 📤 2. Pengunggahan ke Server Kaggle via CLI
+Perintah eksekusi:
+```bash
+kaggle kernels push -p /home/rep/kaggle-stage4-notebook --no-run
+```
+
+* **Status Publikasi**: Sukses terunggah (*Kernel version 1 successfully saved*).
+* **Status Worker Cloud**: `KernelWorkerStatus.COMPLETE`.
+* **Tautan Akses Web**: [https://www.kaggle.com/code/rezkyekaputra/gentoo-builder-notebook](https://www.kaggle.com/code/rezkyekaputra/gentoo-builder-notebook)
+
+---
+
+
 
