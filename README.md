@@ -5269,3 +5269,39 @@ Uji eksekusi langsung terhadap perkakas inti sistem di chroot Colab membuktikan 
 * **Estimasi Arsip Master Stage 4 (`.tar.zst`)**: Diproyeksikan hanya **~1,0 – 1,1 GB**!
 
 ---
+
+## 133. Pembuatan Master Arsip Final Stage 4 (`stage4-skylake-optimal.tar.zst`)
+
+### 💬 Permintaan Pengguna:
+> *"sekarang kita arsipkan ke master stage 4.tar.zst"*
+
+---
+
+### ⚙️ 1. Prosedur Sanitasi & Filter Pengecualian (*Sanitization & Exclusion Filters*):
+Sebelum proses pembungkusan arsip dilakukan, seluruh direktori dinamis dan cache dibersihkan untuk memastikan integritas dan kemurnian Stage 4:
+* Mengosongkan folder temporer runtime: `/tmp/*` dan `/var/tmp/portage-disk/*`.
+* Memastikan direktori mountpoint inti siap pakai dengan perizinan standar (`chmod 1777` pada `/tmp` dan `/var/tmp`).
+* Menerapkan aturan pengecualian standar Gentoo Stage 4:
+  ```bash
+  --exclude='./proc/*' \
+  --exclude='./sys/*' \
+  --exclude='./dev/*' \
+  --exclude='./run/*' \
+  --exclude='./tmp/*' \
+  --exclude='./var/tmp/*' \
+  --exclude='./var/cache/distfiles/*' \
+  --exclude='./var/cache/binpkgs/*' \
+  --exclude='./var/log/*' \
+  --exclude='./lost+found'
+  ```
+
+---
+
+### 🗜️ 2. Mesin Kompresi Zstandard Tingkat Tinggi (`zstd -19 -T0`):
+* **Format Kompresi**: Tarball terkompresi Zstandard (`.tar.zst`).
+* **Parameter**:
+  - `-19`: Rasio kompresi ultra-tinggi (*ultra-high compression ratio*) untuk memadatkan seluruh sistem 4,1 GB menjadi arsip super-ringkas (~1 GB).
+  - `-T0`: Utilisasi seluruh thread CPU secara paralel untuk kecepatan pemrosesan maksimal.
+  - `-p`: Preservasi perizinan berkas UNIX, kepemilikan UID/GID, tautan simbolik (*symlinks*), dan atribut sistem.
+
+---
