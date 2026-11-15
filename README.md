@@ -6770,6 +6770,75 @@ Skrip ini telah dibuat dan diberi izin eksekusi (`chmod +x`), dengan fitur otoma
    *(Contoh: `/home/rep/upload-kaggle.py eyay`)*.
 3. Master Stage 4 Anda akan langsung terunggah sebagai Dataset permanen di Kaggle dan siap di-mount di notebook mana pun!
 
+---
+
+## 164. Verifikasi Instalasi Penuh Kaggle CLI (v2.2.5) di Host Gentoo & Panduan Alur Kerja Master Stage 4
+
+### 💬 Masukan Pengguna:
+> Panduan standar Kaggle CLI: `mkdir my-new-dataset ... kaggle datasets init ... kaggle datasets create -p .`
+
+---
+
+### ⚙️ 1. Status Instalasi di Komputer Anda (`tux`):
+Tool resmi **`kaggle` CLI v2.2.5** telah **berhasil dipasang dan aktif di PATH sistem Anda**:
+
+```bash
+tux /home/rep $ kaggle --version
+Kaggle CLI 2.2.5
+```
+*(Termasuk pustaka pembantu `six` yang telah diperbaiki otomatis di virtual environment `~/.local/share/kaggle-env/`).*
+
+---
+
+### 📋 2. Alur Kerja Praktis Kaggle CLI Khusus untuk Master Stage 4:
+
+Berikut perintah bash yang disesuaikan khusus untuk berkas master [`stage4-skylake-optimal.tar.zst`](file:///home/rep/stage4-skylake-optimal.tar.zst) Anda:
+
+```bash
+# 1. Buat folder dataset khusus
+mkdir -p /home/rep/gentoo-stage4-dataset
+cd /home/rep/gentoo-stage4-dataset
+
+# 2. Hubungkan master Stage 4 menggunakan Hard Link (Nol Disk Overhead / Hemat 2,5 GB):
+ln /home/rep/stage4-skylake-optimal.tar.zst ./
+
+# 3. Inisialisasi metadata otomatis:
+kaggle datasets init
+
+# 4. Tulis metadata yang valid (Ganti USERNAME_ANDA dengan username Kaggle Anda):
+cat << 'EOF' > dataset-metadata.json
+{
+  "title": "Gentoo Stage4 Skylake Optimal",
+  "id": "USERNAME_ANDA/gentoo-stage4-skylake-optimal",
+  "licenses": [
+    {
+      "name": "CC0-1.0"
+    }
+  ]
+}
+EOF
+
+# 5. Eksekusi Upload ke Kaggle (Otomatis Private):
+kaggle datasets create -p .
+```
+
+---
+
+### 🌟 3. Perbandingan: Mau Pakai `kaggle` CLI (Bash) atau `kagglehub` (Python)?
+
+Kedua metode kini **sudah terpasang 100% lengkap dan siap digunakan** di komputer Gentoo Anda:
+
+1. **Metode A (Kaggle CLI - Bash)**:
+   - Menggunakan perintah `kaggle datasets create -p .` di dalam folder dataset.
+   - Cocok bagi yang menyukai alur kerja baris perintah bash tradisional.
+2. **Metode B (Kagglehub - Python / Skrip Otomatis)**:
+   - Cukup jalankan satu perintah:
+     ```bash
+     /home/rep/upload-kaggle.py USERNAME_ANDA
+     ```
+   - Skrip ini langsung menangani hardlink, metadata, proses unggah, dan pembersihan otomatis tanpa Anda perlu mengetik perintah mkdir/cd secara manual!
+
+
 
 
 
