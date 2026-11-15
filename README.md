@@ -4467,3 +4467,43 @@ Inilah alasan mengapa alur kerja kita dirancang dengan strategi preservasi data:
 * Saat ini hanya ada 1 sesi aktif yang berfokus penuh di node TPU v5e-1.
 
 ---
+
+## 115. Audit Status Sesi TPU v5e-1 (Pruned oleh Google Colab Akibat Saldo Compute Units 0.00) & Aktivasi Sesi CPU Standar (`cpu-builder`)
+
+### 💬 Pertanyaan Pengguna:
+> *"sudah?"*
+
+---
+
+### ⚠️ Laporan Kondisi Real-time Node TPU v5e-1:
+* Pada pukul 14:05 WIB (setelah ~1,5 jam), sistem Google Colab melakukan terminasi otomatis terhadap sesi TPU:
+  ```json
+  {"timestamp": "2026-11-15T07:05:02.754845+00:00", "event_type": "session_terminated", "reason": "pruned"}
+  ```
+* **Penyebab Teknis (*Root Cause*)**:
+  1. **Saldo Unit Komputasi Nol**: Pemeriksaan `colab usage` menunjukkan `Current balance: 0.00 compute units`.
+  2. **Tarif TPU**: Node TPU v5e-1 membutuhkan konsumsi ~3,17 CU/jam. Karena saldo unit bernilai 0, Google Colab memangkas (*pruned*) mesin TPU begitu masa tenggang penggunaan gratisnya terlampaui.
+  3. **Upaya Re-assign TPU**: Percobaan membuat sesi TPU baru menghasilkan respons Google `503 Service Unavailable` karena kuota TPU gratis sedang tidak tersedia untuk akun tanpa saldo CU.
+
+---
+
+### 🛡️ Status Integritas Data Sistem (100% Aman):
+* **Data Master Tidak Hilang**:
+  - Berkas master Stage 4 tetap aman tersimpan di Google Drive Anda (File ID: `1-p96dJlyV75ZOiCnf8NmptHl-gX5jw4O`).
+  - Berkas arsip lokal utuh di PC Anda: [`/home/dongkrak/stage4-ultra-ramping.tar.zst`](file:///home/dongkrak/stage4-ultra-ramping.tar.zst) (4,8 GB) dan [`/home/dongkrak/gentoo-stage4.tar.zst`](file:///home/dongkrak/gentoo-stage4.tar.zst) (2,9 GB).
+  - Seluruh konfigurasi Portage (`make.conf`, `package.use`, `package.env`, `gcc-optimal.conf`) telah tersimpan aman di GitHub *catatan-eyay*.
+
+---
+
+### 🚀 Status Sesi Colab Saat Ini:
+* Sesi CPU standar gratis bernama **`cpu-builder`** telah berhasil dibuat dan aktif:
+  - **Spesifikasi**: 2 vCPUs Intel Xeon, RAM 12 GB, Disk 100 GB NVMe.
+  - **Status**: Siap digunakan tanpa batas kuota berbayar (*free tier eligible*).
+
+---
+
+### 🎯 Pilihan Langkah Selanjutnya:
+1. **Opsi A (Rekomendasi)**: Mengingat sistem Stage 4 saat ini sudah memiliki **GCC 14.3.1 fungsional** beserta seluruh optimasi (Python 3.12, SQLite3, FFmpeg, dll.), kita dapat langsung beralih ke persiapan **pemindahan/instalasi sistem Stage 4 ke PC fisik Anda** sesuai rencana awal.
+2. **Opsi B**: Jika tetap ingin mengompilasi ulang GCC 14 dengan optimasi PGO + LTO khusus Pentium G5500, kita dapat menjalankannya di sesi CPU standar `cpu-builder` di latar belakang (*background build*).
+
+---
