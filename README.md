@@ -6236,3 +6236,75 @@ tux /home/rep # ls -li /home/rep/stage4-skylake-optimal.tar.zst /home/dongkrak/s
    - Tidak memakan kuota ganda (tidak membuang 5 GB disk space).
 4. **Fleksibilitas Akses Pengguna**:
    - Baik saat Anda login sebagai user `rep` atau user `dongkrak`, Anda bisa langsung mengakses, memverifikasi, maupun mengekstrak master Stage 4 ini dari direktori masing-masing tanpa terkena kendala permission.
+
+---
+
+## 155. Daftar Layanan Cloud CPU Gratis Terbaik Selain Google Colab untuk Kompilasi Gentoo & Build Server
+
+### 💬 Pertanyaan Pengguna:
+> *"selain cpu colab. ada ga cpu gratis lain nya"*
+
+---
+
+### 🌐 1. Rekomendasi Layanan Cloud CPU Gratis Paling Unggul:
+
+Selain Google Colab, ada beberapa penyedia cloud CPU gratis yang sangat bertenaga, bahkan beberapa di antaranya memiliki spesifikasi **CPU dan RAM yang lebih besar serta sesi yang lebih panjang** daripada Google Colab:
+
+---
+
+### 1. Kaggle Notebooks (Milik Google — Pesaing Terbaik Colab)
+* **Spesifikasi**: **4 vCPU** (Intel Xeon) + **30 GB RAM** + **73 GB Disk NVMe**.
+* **Batas Waktu Sesi**: Hingga **9 s/d 12 jam non-stop** (jauh lebih lama dari Colab yang sering putus dalam 3–4 jam).
+* **Syarat Akses**: **100% Gratis Tanpa Kartu Kredit**. Cukup daftar akun Kaggle dan verifikasi nomor HP satu kali untuk mengaktifkan akses internet.
+* **Keunggulan untuk Gentoo**:
+  - RAM-nya masif (30 GB), sangat aman untuk kompilasi C++/Rust berat seperti LibreWolf / Chromium / GCC.
+  - Memiliki 4 vCPU (Colab biasa hanya 2 vCPU).
+  - Bisa menjalankan bash script, chroot Gentoo, atau membuka reverse SSH via `tmate` / `cloudflared`.
+
+---
+
+### 2. GitHub Actions (Automated CI/CD Build Server)
+* **Spesifikasi**: **4 vCPU** + **16 GB RAM** + **SSD NVMe Cepat**.
+* **Kuota**: **UNLIMITED (Tanpa Batas Menit)** untuk repositori publik (Open Source), atau **2.000 menit/bulan** untuk repositori privat.
+* **Batas Waktu per Job**: Hingga **6 jam penuh per workflow run**.
+* **Keunggulan untuk Gentoo**:
+  - Arsitektur paling ideal untuk dijadikan **Pabrik Binpkg Gentoo Otomatis**.
+  - Anda bisa membuat file `.github/workflows/build.yml` yang menjalankan container Gentoo, mengompilasi paket yang diinginkan, lalu secara otomatis mengunggah paket biner `.gpkg.tar` atau `.tbz2` ke tab **GitHub Releases** untuk langsung Anda download ke PC lokal.
+
+---
+
+### 3. GitHub Codespaces (Cloud IDE & Terminal Interaktif)
+* **Spesifikasi**: Pilihan **2 Core** atau **4 Core** + **8 GB s/d 16 GB RAM** + **32 GB SSD**.
+* **Kuota Gratis**: **120 core-hours gratis setiap bulan** untuk semua akun GitHub biasa (tanpa kartu kredit).
+* **Lingkungan**: Full Linux container (Ubuntu) dengan akses `sudo` penuh, terminal interaktif di browser atau terhubung ke VS Code lokal.
+* **Keunggulan**: Sangat nyaman jika Anda ingin mengetik perintah bash langsung di terminal tanpa perantara notebook Python.
+
+---
+
+### 4. Google Cloud Shell
+* **Spesifikasi**: VM Linux Debian dengan **8 GB RAM** dan direktori `$HOME` persisten sebesar 5 GB.
+* **Kuota**: **50 jam per minggu gratis** untuk setiap pemilik akun Google biasa.
+* **Akses**: Langsung tersedia di browser via portal Google Cloud (`shell.cloud.google.com`).
+* **Keunggulan**: Instan, tidak perlu instalasi apapun, full root akses via Docker di dalam Cloud Shell.
+
+---
+
+### 5. Oracle Cloud Free Tier (Always Free Compute Instance — 24/7)
+* **Spesifikasi**:
+  - **Opsi ARM (Ampere Altra)**: Hingga **4 OCPU (4 core fisik / 8 vCPU) + 24 GB RAM + 200 GB Storage NVMe**.
+  - **Opsi AMD x86_64**: 2 VM AMD x86 Always Free (1 vCPU, 1 GB RAM).
+* **Masa Aktif**: **Aktif 24 Jam Selamanya (*Always Free*)**, bukan sesi sementara. Anda mendapatkan IP publik IPv4 statis dan akses root SSH murni.
+* **Syarat**: Memerlukan kartu debit/kredit saat pendaftaran awal untuk verifikasi anti-fraud (dipotong nominal kecil refundable lalu gratis selamanya).
+
+---
+
+### 📊 Tabel Perbandingan Singkat:
+
+| Layanan | CPU & RAM | Durasi Sesi / Kuota | Perlu Kartu Kredit? | Cocok Untuk |
+| :--- | :--- | :--- | :--- | :--- |
+| **Kaggle** | **4 vCPU / 30 GB RAM** | **9–12 Jam** | ❌ **Tidak** (Hanya No HP) | Kompilasi berat (LibreWolf, Mesa, GCC) |
+| **GitHub Actions** | **4 vCPU / 16 GB RAM** | **6 Jam** (Unlimited jam di public repo) | ❌ **Tidak** | Build Server otomatis / Binpkg generator |
+| **GitHub Codespaces** | **2–4 vCPU / 8–16 GB RAM** | 120 core-hours/bln | ❌ **Tidak** | Terminal Linux interaktif langsung |
+| **Google Cloud Shell** | **2 vCPU / 8 GB RAM** | 50 Jam / Minggu | ❌ **Tidak** | Quick tasks & skrip bash |
+| **Oracle Cloud** | **4 Core / 24 GB RAM** | **24/7 Selamanya** | 💳 **Ya** (Verifikasi awal) | Server kompilasi mandiri permanen |
+
