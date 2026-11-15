@@ -5565,6 +5565,44 @@ chmod 666 /home/rep/stage4-skylake-optimal.tar.zst
 
 ---
 
+## 140. Verifikasi Purna-Terminasi Sesi Cloud Google Colab & Pelepasan Sumber Daya
+
+### 💬 Pertanyaan Pengguna:
+> *"collab sesi nya sudah di hapus?"*
+
+---
+
+### 🛡️ 1. Bukti Teknis Penghapusan Sesi Colab di Tingkat Server:
+Berdasarkan log audit jaringan Colab CLI dan API Google Colab:
+1. **Panggilan API Pelepasan Instansi (*Unassign Instance*)**:
+   ```http
+   POST https://colab.research.google.com/tun/m/unassign/m-s-usc1b9-va6m3t1g5za8
+   Status: 204 No Content (Sukses Total / Instance Destroyed)
+   ```
+2. **Kueri Status Instansi Aktif (*Active Sessions*)**:
+   ```bash
+   colab sessions
+   ```
+   * **Hasil Keluaran Server**:
+     ```text
+     [colab] No active sessions found on server.
+     ```
+   * **Data Balasan JSON Server**:
+     ```json
+     {"assignments": []}
+     ```
+   *(Array kosong `[]` membuktikan tidak ada lagi instansi VM `cpu-builder` yang berjalan di cloud Google Colab).*
+
+---
+
+### 💻 2. Pembersihan Sisi Komputer Lokal (*Client Side*):
+* Berkas status konfigurasi lokal [`~/.config/colab-cli/sessions.json`](file:///home/rep/.config/colab-cli/sessions.json) telah kosong (`{}`).
+* Seluruh proses *background daemon* / *proxy tunnel* (SSH PID 40408, 40409, 40410) telah dimatikan bersih dari memori RAM.
+* Master berkas arsip Stage 4 [`/home/rep/stage4-skylake-optimal.tar.zst`](file:///home/rep/stage4-skylake-optimal.tar.zst) dan hardlink di [`/home/dongkrak/stage4-skylake-optimal.tar.zst`](file:///home/dongkrak/stage4-skylake-optimal.tar.zst) (890 MB) tetap aman dan utuh di penyimpanan fisik PC lokal.
+
+---
+
+
 
 
 
