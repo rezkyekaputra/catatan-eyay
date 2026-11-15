@@ -6894,15 +6894,47 @@ atau:
 ```bash
 /home/rep/upload-kaggle.py rezkyekaputra
 ```
-akan langsung mengunggah arsip 2,48 GiB ke akun Kaggle `rezkyekaputra` secara permanen dan privat!
 
+---
 
+## 166. Keberhasilan Penuh Autentikasi Kaggle API & Kesiapan Eksekusi Unggah Dataset `rezkyekaputra`
 
+### 💬 Laporan Pengguna:
+> ```bash
+> [rep-box]:~$ export KAGGLE_API_TOKEN=KGAT_...
+> [rep-box]:~$ mkdir -p ~/.kaggle && echo KGAT_... > ~/.kaggle/access_token && chmod 600 ~/.kaggle/access_token
+> [rep-box]:~$ kaggle competitions list
+> ```
 
+---
 
+### 🟢 1. Status Verifikasi API: SUKSES 100%!
+Pengujian koneksi API resmi Kaggle dari terminal host Gentoo telah berhasil:
+* **Uji Daftar Kompetisi**: Berhasil membaca daftar kompetisi aktif dari server Kaggle.
+* **Uji Daftar Dataset Pribadi**:
+  ```bash
+  tux /home/rep $ kaggle datasets list --mine
+  No datasets found
+  ```
+  *(Akun `rezkyekaputra` telah terotentikasi penuh dan siap menerima dataset pertama).*
+* **Pembaruan Skrip Otomatis**: Skrip [`/home/rep/upload-kaggle.py`](file:///home/rep/upload-kaggle.py) telah dimutakhirkan agar otomatis mendeteksi `~/.kaggle/access_token` dan `KAGGLE_API_TOKEN`.
 
+---
 
+### 📦 2. Status Berkas di Folder Staging:
+Direktori [`/home/rep/gentoo-stage4-dataset/`](file:///home/rep/gentoo-stage4-dataset/) siap diunggah:
+* `stage4-skylake-optimal.tar.zst` (2.662.023.982 bytes / 2,48 GiB) $\rightarrow$ *Hard Link* (Nol overhead disk).
+* `dataset-metadata.json` $\rightarrow$ Target ID: `rezkyekaputra/gentoo-stage4-skylake-optimal`.
 
+---
 
+### 🚀 3. Perintah Eksekusi Unggah (Tinggal Dijalankan):
+Pengguna dapat memilih salah satu cara:
+```bash
+# Opsi 1: Menggunakan Kaggle CLI langsung
+cd /home/rep/gentoo-stage4-dataset && kaggle datasets create -p .
 
-
+# Opsi 2: Menggunakan Skrip Otomatis Python
+/home/rep/upload-kaggle.py rezkyekaputra
+```
+Dataset akan terunggah dengan status **Private (Aman)** dan tersimpan secara permanen selamanya di cloud Kaggle.
