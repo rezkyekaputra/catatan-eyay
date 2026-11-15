@@ -4727,3 +4727,78 @@ Agar ketika Anda melakukan pembaruan sistem di masa depan (`emerge -uDN @world` 
 * Dengan filter ini, Portage secara otomatis memblokir instalasi firmware hardware asing selamanya, menjaga sistem Anda tetap ultra ramping!
 
 ---
+
+## 122. Inventarisasi & Audit Seluruh Aplikasi Terpasang pada Sistem Gentoo Pasca-Pemangkasan
+
+### 💬 Permintaan Pengguna:
+> *"cek aplikasi apa aja yang terinstall"*
+
+---
+
+### 📋 Daftar Lengkap Aplikasi Terpasang (Berdasarkan Kategori Fungsional):
+
+#### 1. Antarmuka Grafis Desktop (GUI & X11):
+* **Window Manager**: `x11-wm/jwm` (Joe's Window Manager — ultra ringan, konsumsi RAM < 30 MB)
+* **File Manager & Viewer**:
+  - `x11-misc/xfe` (X File Explorer — pengelola berkas cepat tanpa dependensi GNOME/KDE)
+  - `xfi` (Image viewer / penampil gambar)
+  - `xfw` (Text editor grafis ringkas)
+  - `xfp` (Package manager GUI)
+* **Application Launcher**: `x11-misc/rofi` (Menu peluncur aplikasi modern via pintasan keyboard)
+* **Compositor & Efek**: `x11-misc/picom` (Compositor ringan anti-tearing & transparansi)
+* **Display Server**: `x11-base/xorg-server`, `x11-apps/xrandr`, `x11-apps/mesa-progs` (`glxinfo`, `glxgears`), `x11-libs/libXinerama`
+
+---
+
+#### 2. Tata Suara & Akselerasi Grafis Intel:
+* **Audio Server Modern**: `media-video/pipewire`, `media-video/wireplumber`
+* **Mixer Suara CLI**: `media-sound/pulsemixer` (Pengatur volume interaktif di terminal)
+* **Grafis & Hardware Video Acceleration**:
+  - `media-libs/mesa` (OpenGL/Vulkan core driver)
+  - `media-libs/libva-intel-driver` (Akselerasi decoding video keras VA-API khusus Intel UHD 610)
+
+---
+
+#### 3. Jaringan, Koneksi, & Keamanan:
+* **VPN**: `net-vpn/wireguard-tools` (WireGuard VPN client & server)
+* **Konektivitas Nirkabel (WiFi)**: `net-wireless/wpa_supplicant`
+* **Manajemen Jaringan Otomatis**: `net-misc/dhcpcd`
+* **Remote Terminal**: `net-misc/openssh`
+* **Sinkronisasi Waktu Akurat**: `net-misc/openntpd`
+* **Modem USB Seluler**: `net-dialup/wvdial`, `sys-apps/usb_modeswitch`
+
+---
+
+#### 4. Bahasa Pemrograman & Perkakas Pengembang (Development):
+* **Kompilator Utama**: `sys-devel/gcc:14` (GCC 14.3.1 C, C++, Fortran khusus Skylake non-AVX)
+* **High-Speed Linker**: `sys-devel/mold` (Linker modern super cepat)
+* **Runtime Python**: `dev-lang/python` (Python 3.12 stabil & Python 3.14)
+* **JavaScript Engine**: `net-libs/nodejs`
+* **Bahasa Lain**: `dev-lang/go` (Go compiler), `dev-lang/lua` (Lua), `/opt/rust-bin-1.92.0` (Rust compiler)
+* **Version Control & Alat Build**: `dev-vcs/git`, `dev-util/ccache`, `dev-util/antigravity-cli`
+* **Debugging**: `dev-debug/gdb`, `dev-debug/strace`
+
+---
+
+#### 5. Mesin Kecerdasan Buatan (Local AI):
+* **AI Runtime**: `sci-ml/ollama` (Engine eksekusi model LLM lokal di `/usr/sbin/ollama`)
+
+---
+
+#### 6. Utilitas Sistem, CLI, & Terminal:
+* **Hak Akses Superuser**: `app-admin/doas` (Alternatif sudo yang aman dan ringan)
+* **Monitoring Proses**: `sys-process/htop`
+* **Terminal Multiplexer**: `app-misc/tmux`
+* **Informasi Sistem**: `app-misc/neofetch`
+* **Editor Teks CLI**: `app-editors/nano`
+* **Kompresi & Ekstraksi**: `app-arch/7zip`, `app-arch/lz4`, `app-arch/unrar`, `zstd`
+* **Perangkat Keras & Boot**: `sys-apps/usbutils` (`lsusb`), `sys-fs/dosfstools`, `sys-boot/efibootmgr`, `sys-apps/pv`
+* **Tipografi / Font**: `media-fonts/iosevka`, `media-fonts/terminus-font`
+* **Kernel & Firmware**: `sys-kernel/gentoo-sources:6.12.111`, `sys-kernel/linux-firmware` (Intel-only)
+
+---
+
+### 💡 Catatan Status Browser:
+Aplikasi browser seperti Google Chrome telah dibersihkan dari sistem Colab ini. Di komputer fisik lokal Anda, Anda telah menggunakan **LibreWolf** di [`/opt/librewolf/`](file:///opt/librewolf/) yang siap diintegrasikan atau dipasang saat sistem dipindahkan ke PC Anda.
+
+---
