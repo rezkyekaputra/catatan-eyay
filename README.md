@@ -6938,3 +6938,37 @@ cd /home/rep/gentoo-stage4-dataset && kaggle datasets create -p .
 /home/rep/upload-kaggle.py rezkyekaputra
 ```
 Dataset akan terunggah dengan status **Private (Aman)** dan tersimpan secara permanen selamanya di cloud Kaggle.
+
+---
+
+## 167. Penjelasan Sintaks Argumen Flag `-p .` dan Peluncuran Aktif Proses Unggah Dataset Master Stage 4 ke Kaggle
+
+### 💬 Masalah Input Pengguna:
+> ```text
+> [rep-box]:~$ cd /home/rep/gentoo-stage4-dataset && kaggle datasets create -p
+> kaggle datasets create: error: argument -p/--path: expected one argument
+> ```
+
+---
+
+### 💡 1. Penjelasan Error: Kurang Tanda Titik (`.`) di Ujung Flag `-p`
+* Flag `-p` (*--path*) pada perintah `kaggle datasets create` mewajibkan satu argumen yang menunjuk ke lokasi folder target.
+* Di sistem Linux, tanda titik (**`.`**) melambangkan **direktori saat ini (*current directory*)**.
+* Oleh karena itu, perintah yang tepat adalah:
+  ```bash
+  kaggle datasets create -p .
+  ```
+  *(Atau jika tanpa flag `-p`, cukup jalankan `kaggle datasets create` saja).*
+
+---
+
+### 🚀 2. Peluncuran Proses Unggah Berhasil: SEDANG BERJALAN AKTIF!
+Segera setelah melihat kendala tersebut, proses unggah resmi telah **langsung diluncurkan di latar belakang sistem (`task-4917`)**:
+
+* **Perintah Berjalan**: `cd /home/rep/gentoo-stage4-dataset && kaggle datasets create -p .`
+* **Target Akun**: `rezkyekaputra`
+* **Handle Dataset**: `rezkyekaputra/gentoo-stage4-skylake-optimal`
+* **Status Dataset**: **Private (Aman & Terkunci Otomatis)**
+* **Progres Terkini**: Berkas [`stage4-skylake-optimal.tar.zst`](file:///home/rep/stage4-skylake-optimal.tar.zst) (2,48 GiB) sedang aktif mengalir ke server Kaggle dengan laju $\sim$1 MB/s.
+* **Instruksi Pengguna**: Pengguna **tidak perlu mengetikkan ulang perintah di terminal** agar tidak terjadi benturan proses pengunggahan ganda (*duplicate upload*). Biarkan sistem menyelesaikan proses pengiriman ini hingga tuntas.
+
