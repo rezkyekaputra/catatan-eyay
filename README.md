@@ -5867,6 +5867,37 @@ Pengguna cukup menjalankan skrip ini melalui terminal root / administrator:
 
 ---
 
+## 146. Konfirmasi & Pengamanan Pengecualian Direktori `/home/*` Secara Mutlak Pada `buat-stage4.sh`
+
+### 💬 Pertanyaan Pengguna:
+> *"home ga ikut kan"*
+
+---
+
+### 🛡️ 1. Penegasan & Jaminan Teknis:
+**TIDAK IKUT SAMA SEKALI (100% DIKECUALIKAN).**  
+Seluruh isi dari direktori `/home/*` (termasuk berkas pribadi, riwayat dokumen, serta berkas-berkas cadangan tarball lama di `/home/dongkrak/` dan `/home/rep/`) **TIDAK AKAN DIBAWA MASUK** ke dalam master Stage 4.
+
+Hanya direktori kosong `/home/` yang disertakan sebagai titik kait (*mountpoint*) sistem UNIX murni.
+
+---
+
+### 🔒 2. Penerapan Pola Exclusion Berlapis (*Bulletproof Tar Patterns*):
+Untuk mencegah jebakan GNU Tar (di mana *leading slash* dapat diabaikan atau *shell globbing* dapat mengganggu ekspansi pola), skrip [`/home/rep/buat-stage4.sh`](file:///home/rep/buat-stage4.sh) telah diperbarui dengan pola bertingkat dalam tanda petik tunggal:
+
+```bash
+--exclude='home/*' \
+--exclude='./home/*' \
+--exclude='/home/*' \
+```
+Dengan sintaks ini:
+1. Shell tidak akan mengekspansi nama pengguna ke dalam baris perintah sebelum `tar` dijalankan.
+2. Mesin `tar` akan memblokir setiap berkas atau folder di bawah `/home/` baik dibaca secara absolut maupun relatif.
+3. Cadangan arsip lama yang ada di `/home/` tidak akan menyebabkan rekursi pembengkakan arsip.
+
+---
+
+
 
 
 
