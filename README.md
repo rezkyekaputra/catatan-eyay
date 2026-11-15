@@ -5741,6 +5741,45 @@ umount /opt/test/sys /opt/test/proc /opt/test/dev/pts /opt/test/dev
 
 ---
 
+## 143. Analisis Kemampuan Kompilasi di Lingkungan `/opt/test` (Toolchain & Batasan Ruang Disk)
+
+### 💬 Pertanyaan Pengguna:
+> *"apa bisa compile di situ /opt/test"*
+
+---
+
+### 🎯 1. Kesimpulan Singkat:
+**BISA BANGET, TETAPI DENGAN PERHATIAN KHUSUS PADA RUANG DISK.**  
+Lingkungan Stage 4 di [`/opt/test`](file:///opt/test) memiliki seluruh perangkat dasar rantai kompilasi (*complete C/C++ compiler toolchain*), sehingga Anda bisa mengompilasi program C/C++, ekstensi Python, maupun paket-paket kecil hingga menengah via Portage (`emerge`).
+
+---
+
+### 🛠️ 2. Toolchain Kompilasi yang Tersedia Lengkap di `/opt/test`:
+1. **Kompiler C & C++**: `sys-devel/gcc-14` (`gcc`, `g++`) berstatus aktif dan stabil.
+2. **Assembler & Linker**: `sys-devel/binutils` (`as`, `ar`, `ranlib`, `ld.bfd`) dan ultra-fast linker `sys-devel/mold`.
+3. **Build Systems**: `sys-devel/make`, `dev-build/cmake`, `dev-build/ninja`, dan `dev-build/meson`.
+4. **Header Pustaka Standar**: Header GLibc (`/usr/include`) dan pustaka inti Linux.
+5. **Manajer Paket Portage**: `sys-apps/portage` (`emerge`) siap melakukan kompilasi dari ebuild.
+
+---
+
+### ⚠️ 3. Batasan Penting yang Harus Diperhatikan:
+
+#### A. Kapasitas Ruang Disk Sementara (`PORTAGE_TMPDIR`):
+* Setelah ekstraksi Stage 4 (4,1 GB) ke `/opt/test`, sisa ruang kosong pada partisi root [`/dev/sda3`](file:///dev/sda3) adalah **$\sim$5,5 GB**.
+* **Yang Aman Dikompilasi**: Paket kecil hingga menengah (seperti `htop`, `tmux`, `fastfetch`, utilitas CLI, pustaka kecil, atau program buatan sendiri berukuran < 1 GB).
+* **Yang JANGAN Dikompilasi di `/opt/test`**: Paket raksasa (*heavy monster packages*) seperti `llvm/clang`, `gcc`, `chromium`, atau `webkit-gtk`. Kompilasi paket-paket raksasa ini membutuhkan ruang sementara 15 GB – 25 GB di `/var/tmp/portage-disk/`, yang akan menyebabkan galat fatal *No space left on device* dan membekukan sistem induk.
+
+#### B. Bahasa Pemrograman Khusus yang Telah Di-unmerge:
+* **Rust**: Paket `dev-lang/rust-bin` telah di-unmerge untuk menghemat 572 MB. Jika ingin mengompilasi paket berbasis Rust, instal kembali `rust-bin` atau gunakan paket biner siap pakai (misalnya `librewolf-bin`).
+* **Go & Node.js**: Telah dilepas untuk menghemat $\sim$290 MB.
+
+#### C. Aturan Emas Portage:
+* **DILARANG MENJALANKAN `emerge --sync`**: Tetap patuhi aturan mutlak untuk tidak menjalankan sinkronisasi pohon portage agar pohon ebuild lokal tetap presisi dan terkunci.
+
+---
+
+
 
 
 
