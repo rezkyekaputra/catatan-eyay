@@ -5528,5 +5528,43 @@ Sesuai instruksi pengguna untuk menyudahi dan menghapus sesi Colab:
 
 ---
 
+## 139. Perbaikan Izin Akses Berkas (*Permission Fix*) Hardlink Arsip untuk Akun `dongkrak` & Unggah Google Drive
+
+### 💬 Masalah Pengguna:
+> *"ln /home/rep/stage4-skylake-optimal.tar.zst /home/dongkrak/stage4-skylake-optimal.tar.zst mau saya upload ke gdrive tapi ga tervaca"*
+
+---
+
+### 🔍 1. Analisis Akar Masalah (*Root Cause*):
+1. **Izin Awal Berkas Hasil Unduhan Colab**:
+   - Berkas diunduh oleh akun `rep` dengan izin ketat *default* `umask`:
+     ```text
+     -rw------- 1 rep rep 890M /home/rep/stage4-skylake-optimal.tar.zst (mode 0600)
+     ```
+2. **Karakteristik Hardlink UNIX**:
+   - Perintah `ln /home/rep/... /home/dongkrak/...` berhasil membuat tautan fisik (*hardlink* dengan *link count* = 2) yang menunjuk ke *inode* yang sama.
+   - Karena *inode*-nya sama, atribut kepemilikan dan perizinan berkas di `/home/dongkrak/` tetap `rep:rep` dengan mode `0600` (`-rw-------`).
+   - Akibatnya, ketika pengguna login sebagai `dongkrak` atau membuka browser/Google Drive di profil `dongkrak`, sistem operasi menolak akses baca (*Permission Denied* / berkas tidak terbaca).
+
+---
+
+### 🛠️ 2. Solusi & Eksekusi Perbaikan:
+Memberikan hak izin baca dan tulis universal bagi pengguna non-root pada *inode* berkas master arsip:
+```bash
+chmod 666 /home/rep/stage4-skylake-optimal.tar.zst
+```
+
+* **Hasil Verifikasi Izin Baru**:
+  ```text
+  -rw-rw-rw- 2 rep rep 932851712 Nov 15 15:57 /home/dongkrak/stage4-skylake-optimal.tar.zst
+  -rw-rw-rw- 2 rep rep 932851712 Nov 15 15:57 /home/rep/stage4-skylake-optimal.tar.zst
+  ```
+* **Status**:
+  - Akun `dongkrak` kini memiliki izin baca penuh (`r--`) dan tulis (`rw-`).
+  - Google Drive (baik via peramban web maupun utilitas CLI) dapat langsung membaca, membuka, dan mengunggah berkas [`/home/dongkrak/stage4-skylake-optimal.tar.zst`](file:///home/dongkrak/stage4-skylake-optimal.tar.zst) tanpa hambatan izin akses lagi.
+
+---
+
+
 
 
