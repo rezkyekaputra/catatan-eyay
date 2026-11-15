@@ -5416,3 +5416,48 @@ Browser web modern membutuhkan fondasi sistem (*runtime dependencies*) berikut, 
 
 ---
 
+## 137. Audit Lanjutan Berkas Sisa & Paket Redundan yang Dapat Dihapus / Di-uninstall
+
+### 💬 Pertanyaan Pengguna:
+> *"ada lagi yang bisa di hapus dan di uninstall?"*
+
+---
+
+### 📥 1. Konfirmasi Berkas Lokal Stage 4:
+Sebelum audit dilakukan, proses transfer master arsip ke komputer lokal telah **selesai 100% sempurna**:
+* **Berkas**: [`/home/rep/stage4-skylake-optimal.tar.zst`](file:///home/rep/stage4-skylake-optimal.tar.zst) (890 MB)
+* **Checksum Validasi (SHA256)**:
+  `caec659ed4c060b62e03fa7ba2d63a95762a434f70798ee7ccacdb54fec446fd`  
+  *(Checksum lokal identik persis dengan checksum remote container Colab).*
+
+---
+
+### 🗑️ 2. Daftar Berkas Sisa yang 100% Aman Dihapus Langsung (Menghemat > 550 MB):
+Berdasarkan penelusuran mendalam direktori sistem chroot di container Colab, ditemukan berkas-berkas besar yang tidak lagi diperlukan:
+
+| Target Berkas / Lokasi | Ukuran | Status & Keterangan |
+| :--- | :--- | :--- |
+| `/stage3-amd64-openrc-20260927T170058Z.tar.xz` | **265 MB** | **Sisa Tarball Bootstrap Awal**. Berkas arsip Stage 3 awal yang tertinggal di root `/`. Aman 100% dihapus. |
+| `sys-devel/gcc-15.3.0` (unmerge) | **263 MB** | **Kompiler Ganda (Redundan)**. Kompiler aktif sistem adalah GCC 14 (`x86_64-pc-linux-gnu-14`). GCC 15 berstatus tidak aktif. |
+| `/boot/vmlinuz.old` & `/boot/System.old` | **22.3 MB** | **Kernel Cadangan Lama**. Kernel aktif saat ini adalah Linux 6.12.111 (`vmlinuz`). |
+| `/etc/portage.bak-20261101` | **560 KB** | Cadangan direktori konfigurasi lama. |
+| `/root/*.txt` & `.bash_history-*.tmp` | **~200 KB** | Berkas catatan sementara (`blenderpaket.txt`, `nodejs.txt`, `rr.txt`, `watch_*`). |
+
+> **Total Potensi Penghematan Langsung**: **~551 MB uncompressed** (jika dikompresi ulang, ukuran arsip master `.tar.zst` dapat menyusut lebih lanjut dari 890 MB ke kisaran $\sim$700 MB).
+
+---
+
+### ⚙️ 3. Kandidat Paket Tambahan yang Dapat Di-uninstall (Opsional):
+Jika pengguna menginginkan sistem yang semakin minimalis dan ramping:
+1. **Kompiler Clang (`llvm-core/clang`, 45 MB)**:
+   - Jika kompilasi sistem seluruhnya dipercayakan pada GCC 14, paket Clang compiler dapat dilepas, dengan tetap mempertahankan pustaka *runtime* LLVM (`llvm-core/llvm`) untuk akselerasi grafis Mesa.
+2. **Firmware Wi-Fi Non-Intel di `/usr/lib/firmware` (Potensi $\sim$50 – 100 MB)**:
+   - Memangkas firmware kartu jaringan non-Intel (seperti Realtek `rtw89`, Texas Instruments, Cirrus, ATM eagle) yang tidak terdapat pada motherboard pengguna.
+3. **Utilitas Opsional Desktop di `@world`**:
+   - `x11-misc/xfe` (Manajer berkas grafis XFE) jika pengguna lebih memilih terminal atau peramban berkas lain.
+   - `x11-misc/picom` (Kompositor efek bayangan/transparansi) jika menginginkan performa window manager murni tanpa efek visual.
+   - `dev-debug/strace` (Utilitas debugging sistem).
+
+---
+
+
