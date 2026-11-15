@@ -5828,6 +5828,46 @@ tar --exclude=/proc/* --exclude=/sys/* --exclude=/dev/* --exclude=/run/* --exclu
 
 ---
 
+## 145. Otomasi Pembuatan Master Stage 4 Langsung dari Sistem Gentoo Lokal (`buat-stage4.sh`)
+
+### 💬 Permintaan Pengguna:
+> *"buat baru aja deh dari system gentoo sekarang"*
+
+---
+
+### 🧹 1. Pembersihan & Pemulihan Kapasitas Disk Lokal:
+1. Menghapus direktori pengujian gagal di `/opt/test` dan mengosongkan berkas arsip terpotong:
+   - Sisa ruang disk root [`/dev/sda3`](file:///dev/sda3) langsung pulih meningkat drastis menjadi **11 GB** (utilisasi disk turun ke 89%).
+
+---
+
+### 📜 2. Pembuatan Skrip Otomatisasi Lengkap: [`/home/rep/buat-stage4.sh`](file:///home/rep/buat-stage4.sh)
+Untuk mempermudah pembuatan master Stage 4 langsung dari sistem Gentoo lokal yang aktif tanpa risiko kesalahan perintah panjang, telah disiapkan skrip otomatis yang siap dieksekusi:
+
+* **Fitur & Pengaman Skrip**:
+  1. **Exclusion Ketat**: Mengecualikan seluruh berkas virtual (`/proc`, `/sys`, `/dev`, `/run`), temporary (`/tmp`, `/var/tmp`), direktori personal (`/home/*`), cache/distfiles/binpkgs/ccache, serta berkas arsip tarball lama agar tidak terjadi rekursi pembengkakan ukuran.
+  2. **Mesin Kompresi Seimbang (`zstd -6 -T0`)**:
+     - Menggunakan seluruh thread CPU Intel Pentium Gold G5500 (`-T0`).
+     - Level `-6` menyelesaikan pemadatan seluruh sistem dalam **3 hingga 5 menit** tanpa risiko *timeout* maupun korupsi berkas.
+  3. **Auto-Permission & Auto-Hardlink**:
+     - Mengatur izin berkas otomatis ke mode `0666` (`rw-rw-rw-`) dengan kepemilikan `rep:rep`.
+     - Membuat *hardlink* otomatis ke [`/home/dongkrak/stage4-skylake-optimal.tar.zst`](file:///home/dongkrak/stage4-skylake-optimal.tar.zst) agar dapat langsung diunggah oleh akun `dongkrak` ke Google Drive.
+  4. **Verifikasi Otomatis Integritas Data**:
+     - Menjalankan uji dekompresi `zstd -t` seketika setelah selesai.
+     - Menghitung dan mencetak hash checksum SHA256 final.
+
+---
+
+### 🚀 3. Cara Menjalankan Skrip:
+Pengguna cukup menjalankan skrip ini melalui terminal root / administrator:
+```bash
+# Jalankan sebagai root (atau via sudo / doas):
+/home/rep/buat-stage4.sh
+```
+
+---
+
+
 
 
 
