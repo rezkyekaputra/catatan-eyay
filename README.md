@@ -3389,3 +3389,42 @@ Di dalam sistem Stage 4 (`/content/gentoo-stage4`), terdeteksi ada **2 VERSI GCC
    Your system is consistent
    ```
    **Hasil**: Sistem **100% konsisten**, stabil, dan database paket kini bersih sempurna tanpa ada metadata paket 'hantu'.
+
+---
+
+## 92. Kepastian Versi Python Sistem Gentoo: Standar Utama Python 3.14 vs Residu Python 3.12
+
+### 💬 Pertanyaan Anda:
+> *"python 12 atau 14?"*
+
+---
+
+### ⚙️ Analisis Konfigurasi & Status Python di Sistem Anda:
+
+**JAWABANNYA: SISTEM ANDA 100% MENGGUNAKAN PYTHON 3.14 (PYTHON 14).**
+
+Berikut adalah bukti teknis konfigurasi sistem:
+
+1. **Konfigurasi Portage (`make.conf`)**:
+   ```ini
+   PYTHON_TARGETS="python3_14"
+   PYTHON_SINGLE_TARGET="python3_14"
+   ```
+   Seluruh ebuild dan modul Python di Gentoo Anda dikonfigurasi untuk secara eksklusif menargetkan **Python 3.14**.
+
+2. **Konfigurasi Eksekusi Biner (`/etc/python-exec/python-exec.conf`)**:
+   Berkas preferensi sistem menetapkan:
+   ```text
+   python3.14
+   ```
+   Sehingga setiap kali perintah `python3` atau skrip Python dieksekusi, sistem secara otomatis memanggil binary **`Python 3.14.7`**.
+
+3. **Mengapa Sempat Ada Jejak Python 3.12?**:
+   * Python 3.12 adalah versi bawaan lama saat Anda menginstal Gentoo pertama kali (*bootstrap stage3 awal*).
+   * Ketika sistem Anda di-upgrade ke Python 3.14, direktori pustaka lama `/usr/lib/python3.12/` (sebesar 191 MB) masih tertinggal sebagai residu pasif.
+   * Residu 191 MB tersebut telah kita bersihkan pada sesi perampingan sebelumnya di Colab dan terbukti sama sekali tidak mempengaruhi stabilitas sistem.
+
+---
+
+### 💡 Kesimpulan:
+Sistem Gentoo Anda adalah sistem mutakhir yang berjalan di atas **Python 14 (3.14.7)**. Python 12 sudah usang dan tidak lagi menjadi target kompilasi maupun eksekusi di sistem Anda.
