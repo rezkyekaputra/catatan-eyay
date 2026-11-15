@@ -6485,6 +6485,45 @@ Setelah GCC selesai dikompilasi di Kaggle:
    ```
 4. **Hasilnya**: Paket GCC terbaru langsung terpasang di Gentoo Anda dalam **1 menit** tanpa komputer Anda panas atau bising!
 
+---
+
+## 159. Rincian Batasan & Regulasi Layanan Google Kaggle (Durasi Sesi, Kapasitas Disk, dan Kuota CPU)
+
+### 💬 Pertanyaan Pengguna:
+> *"batas nya ada ga di kaggle"*
+
+---
+
+### 📋 1. Ringkasan Batasan Resmi Kaggle (Mode CPU):
+
+| Jenis Batasan | Batas Maksimal | Penjelasan Teknis |
+| :--- | :--- | :--- |
+| **Durasi Sesi Interaktif** | **12 Jam per Sesi** | Notebook yang dibuka di browser bisa berjalan hingga 12 jam non-stop sebelum reset. |
+| **Durasi Sesi Background (Commit)** | **9 Jam per Run** | Fitur *"Save & Run All"*: skrip berjalan di cloud mandiri tanpa perlu buka browser/laptop (bisa ditinggal tidur). |
+| **Batas Idle (Tidak Aktif)** | **60 Menit (1 Jam)** | Jika tab browser ditutup saat tidak ada komputasi aktif, sesi akan otomatis mati setelah 1 jam. |
+| **Kuota Jam Mingguan CPU** | **UNLIMITED (Tanpa Batas!)** | Tidak ada jatah limit mingguan untuk CPU. Anda bisa memakainya setiap hari gratis selamanya. *(Hanya GPU yang dibatasi 30 jam/minggu)*. |
+| **Penyimpanan Output (`/kaggle/working`)** | **20 GB** | Tempat menyimpan berkas biner/output akhir yang bisa diunduh ke PC lokal. |
+| **Penyimpanan Sementara (`/tmp`)** | **$\sim$73 GB** | Ruang kerja sementara (*scratch space*), sangat luas untuk direktori kompilasi `PORTAGE_TMPDIR="/tmp"`. |
+| **Batas Sesi Bersamaan (*Concurrency*)** | **1 Interaktif + 3 Background** | Anda bisa menjalankan 1 sesi interaktif di browser dan sampai 3 sesi kompilasi otomatis di latar belakang. |
+
+---
+
+### 💡 2. Tips Menghindari Batasan Kaggle untuk Kompilasi Gentoo:
+
+1. **Gunakan Fitur "Save & Run All (Commit)" untuk Kompilasi Panjang**:
+   - Jika ingin mengompilasi paket besar (seperti GCC, LibreWolf, atau Rust), jangan tunggu di browser.
+   - Buat skrip di notebook, lalu klik tombol biru **`Save Version`** $\rightarrow$ pilih **`Save & Run All (Commit)`**.
+   - Server Kaggle akan mengeksekusi kompilasi secara mandiri di background hingga 9 jam. Anda bisa langsung mematikan laptop Anda.
+2. **Arahkan Portage ke `/tmp`**:
+   - Direktori `/kaggle/working` memiliki batas 20 GB. Agar kompilasi tidak kehabisan ruang disk, atur di `make.conf`:
+     ```bash
+     PORTAGE_TMPDIR="/tmp"
+     ```
+   - Direktori `/tmp` memiliki kapasitas hingga **73 GB**, lebih dari cukup untuk menampung seluruh proses build Gentoo.
+3. **Simpan Paket Biner di `/kaggle/working`**:
+   - Arahkan `PKGDIR="/kaggle/working/binpkgs"` agar paket biner `.gpkg.tar` yang sudah jadi terkumpul rapi di area output yang siap diunduh dengan satu klik.
+
+
 
 
 
