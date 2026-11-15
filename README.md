@@ -5897,6 +5897,101 @@ Dengan sintaks ini:
 
 ---
 
+## 147. Transparansi & Penjelasan Rinci Isi Skrip `buat-stage4.sh`
+
+### 💬 Pertanyaan Pengguna:
+> *"(~/buat-stage4.sh didalam in iap aperintah nya"*
+
+---
+
+### 📜 1. Isi Lengkap Berkas [`/home/rep/buat-stage4.sh`](file:///home/rep/buat-stage4.sh):
+
+```bash
+#!/bin/bash
+# ==============================================================================
+# SKRIP PEMBUATAN MASTER STAGE 4 GENTOO LINUX (INTEL PENTIUM GOLD G5500)
+# ==============================================================================
+set -e
+
+TARGET="/home/rep/stage4-skylake-optimal.tar.zst"
+LINK_TARGET="/home/dongkrak/stage4-skylake-optimal.tar.zst"
+
+echo "======================================================================"
+echo " [1/3] Mempersiapkan direktori & membersihkan target lama..."
+echo "======================================================================"
+rm -f "$TARGET" "$LINK_TARGET"
+
+echo "======================================================================"
+echo " [2/3] Memulai pengarsipan sistem dan kompresi Zstandard (-6 -T0)..."
+echo "       CATATAN: Seluruh isi /home/* TIDAK DIBAWA (DIKECUALIKAN 100%)."
+echo "       Hanya direktori kosong /home yang dipertahankan."
+echo "       Mohon tunggu, proses memakan waktu sekitar 3 - 5 menit."
+echo "======================================================================"
+tar \
+    --exclude='proc/*' --exclude='./proc/*' --exclude='/proc/*' \
+    --exclude='sys/*' --exclude='./sys/*' --exclude='/sys/*' \
+    --exclude='dev/*' --exclude='./dev/*' --exclude='/dev/*' \
+    --exclude='run/*' --exclude='./run/*' --exclude='/run/*' \
+    --exclude='tmp/*' --exclude='./tmp/*' --exclude='/tmp/*' \
+    --exclude='mnt/*' --exclude='./mnt/*' --exclude='/mnt/*' \
+    --exclude='media/*' --exclude='./media/*' --exclude='/media/*' \
+    --exclude='lost+found' --exclude='./lost+found' \
+    --exclude='var/tmp/*' --exclude='./var/tmp/*' \
+    --exclude='var/cache/distfiles/*' --exclude='./var/cache/distfiles/*' \
+    --exclude='var/cache/binpkgs/*' --exclude='./var/cache/binpkgs/*' \
+    --exclude='var/cache/ccache*' --exclude='./var/cache/ccache*' \
+    --exclude='var/log/*' --exclude='./var/log/*' \
+    --exclude='usr/src/*' --exclude='./usr/src/*' \
+    --exclude='home/*' --exclude='./home/*' --exclude='/home/*' \
+    --exclude='root/.cache/*' --exclude='./root/.cache/*' \
+    --exclude='root/.ccache*' --exclude='./root/.ccache*' \
+    --exclude='opt/test*' --exclude='./opt/test*' \
+    --exclude='*.tar.zst' \
+    --exclude='*.tar.gz' \
+    --exclude='*.tar.xz' \
+    -cvpf - / 2>/dev/null | zstd -6 -T0 -o "$TARGET"
+
+echo "======================================================================"
+echo " [3/3] Memverifikasi integritas berkas & mengatur izin akses..."
+echo "======================================================================"
+# Set permission agar akun rep dan dongkrak bisa membaca penuh
+chmod 666 "$TARGET"
+chown rep:rep "$TARGET"
+
+# Buat hardlink untuk akun dongkrak (agar bisa upload ke Google Drive)
+ln -f "$TARGET" "$LINK_TARGET" || true
+
+# Uji integritas berkas
+echo "Hasil uji dekompresi Zstandard:"
+zstd -t "$TARGET"
+
+# Tampilkan ukuran dan hash SHA256
+echo "----------------------------------------------------------------------"
+ls -lh "$TARGET"
+echo -n "SHA256: "
+sha256sum "$TARGET"
+echo "----------------------------------------------------------------------"
+echo "SUKSES! Master Stage 4 telah berhasil dibuat dan 100% utuh terverifikasi!"
+echo "Lokasi: $TARGET dan $LINK_TARGET"
+echo "======================================================================"
+```
+
+---
+
+### 🧩 2. Bedah Logika 3 Bagian Utama Skrip:
+1. **Bagian 1 (Pembersihan)**: Menghapus sisa berkas lama agar tidak terjadi konflik atau penolakan penimpaan berkas oleh `zstd`.
+2. **Bagian 2 (Pengarsipan & Kompresi)**:
+   - Mengecualikan 19 pola direktori dinamis/sementara (`/proc`, `/sys`, `/dev`, `/run`, `/tmp`, `/var/tmp`, `/var/cache/*`, `/home/*`, dll).
+   - Mengalirkan (*piping*) data langsung ke `zstd -6 -T0` yang memanfaatkan seluruh thread CPU Intel Pentium Gold G5500.
+3. **Bagian 3 (Otomasi Izin & Uji Integritas)**:
+   - Memberikan mode `0666` dan kepemilikan `rep:rep`.
+   - Membuat hardlink ke [`/home/dongkrak/stage4-skylake-optimal.tar.zst`](file:///home/dongkrak/stage4-skylake-optimal.tar.zst).
+   - Menjalankan uji integritas `zstd -t` seketika untuk memastikan tidak ada galat *premature EOF*.
+   - Mencetak hash SHA256 final sebagai bukti keaslian berkas.
+
+---
+
+
 
 
 
