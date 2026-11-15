@@ -6838,6 +6838,65 @@ Kedua metode kini **sudah terpasang 100% lengkap dan siap digunakan** di kompute
      ```
    - Skrip ini langsung menangani hardlink, metadata, proses unggah, dan pembersihan otomatis tanpa Anda perlu mengetik perintah mkdir/cd secara manual!
 
+---
+
+## 165. Persiapan Direktori Staging Kaggle `rezkyekaputra` & Panduan Aktivasi Autentikasi CLI
+
+### 💬 Permintaan Pengguna:
+> *"/home/rep/upload-kaggle.py rezkyekaputra coba aktifkan yang cli"*
+
+---
+
+### 📦 1. Direktori Staging Dataset Telah Siap 100%:
+Direktori khusus pengunggahan telah disiapkan di [`/home/rep/gentoo-stage4-dataset/`](file:///home/rep/gentoo-stage4-dataset/):
+* **Master Stage 4 Terhubung**: [`stage4-skylake-optimal.tar.zst`](file:///home/rep/gentoo-stage4-dataset/stage4-skylake-optimal.tar.zst) (2,48 GiB) menggunakan *Hard Link* (Nol overhead disk).
+* **Metadata Resmi Dikonfigurasi**:
+  ```json
+  {
+    "title": "Gentoo Stage4 Skylake Optimal",
+    "id": "rezkyekaputra/gentoo-stage4-skylake-optimal",
+    "licenses": [
+      {
+        "name": "CC0-1.0"
+      }
+    ]
+  }
+  ```
+
+---
+
+### 🔑 2. Langkah Terakhir untuk Mengaktifkan Akses CLI:
+Server Kaggle menolak unggahan sebelum akun `rezkyekaputra` terverifikasi. Untuk mengaktifkannya, silakan pilih salah satu dari 2 cara instan ini:
+
+#### Cara 1: Unduh Kunci Token API (Paling Cepat):
+1. Buka browser: [kaggle.com/settings/api](https://www.kaggle.com/settings/api) (atau buka profil $\rightarrow$ Settings $\rightarrow$ cari bagian **API**).
+2. Klik tombol **`Create New Token`** (atau `Generate New Token`).
+3. Berkas `kaggle.json` akan terunduh ke komputer Anda.
+4. Anda bisa:
+   - Memindahkan berkas ke: `mkdir -p ~/.kaggle && mv ~/Downloads/kaggle.json ~/.kaggle/ && chmod 600 ~/.kaggle/kaggle.json` **atau**
+   - Cukup salin teks di dalam berkas tersebut dan kirimkan ke chat ini.
+
+#### Cara 2: Login via Browser Langsung:
+Jalankan di terminal Anda:
+```bash
+kaggle auth login
+```
+Lalu ikuti tautan yang muncul untuk memberi izin akses.
+
+---
+
+### 🚀 3. Eksekusi Upload Otomatis:
+Segera setelah token terpasang, perintah:
+```bash
+cd /home/rep/gentoo-stage4-dataset && kaggle datasets create -p .
+```
+atau:
+```bash
+/home/rep/upload-kaggle.py rezkyekaputra
+```
+akan langsung mengunggah arsip 2,48 GiB ke akun Kaggle `rezkyekaputra` secara permanen dan privat!
+
+
 
 
 
