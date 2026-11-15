@@ -4438,3 +4438,32 @@ Inilah alasan mengapa alur kerja kita dirancang dengan strategi preservasi data:
    - Sistem langsung siap pakai tanpa perlu instalasi ulang dari nol!
 
 ---
+
+## 114. Analisis Batas Waktu Sesi Google Colab TPU v5e-1 & Penghentian Sesi CPU Lama (`685924`)
+
+### 💬 Pertanyaan Pengguna:
+> *"berapa jam lagi tpu ini habis"*
+
+---
+
+### ⏱️ Status Batas Waktu & Sisa Durasi Sesi TPU:
+* **Waktu Mesin Mulai Berjalan (Boot Time)**: Pukul 11:34 WIB (Uptime saat ini: ~1 jam 7 menit).
+* **Batas Maksimal Eksekusi Colab (Max Wall-clock Lifetime)**: **12 Jam**.
+* **Sisa Waktu Sesi TPU yang Tersedia**: **~10 hingga 11 JAM LAGI** (Baru akan habis sekitar pukul **23:30 WIB malam nanti**).
+* **Status Idle Timeout**: Tidak berlaku/aman, karena mesin sedang aktif 100% menjalankan kompilasi di 24 core AMD EPYC.
+
+---
+
+### 💡 Analisis Kebutuhan vs Sisa Waktu:
+* Sisa durasi kompilasi GCC 14 kita hanya membutuhkan **~15 menit lagi** (selesai ~12:55 WIB).
+* Pengemasan akhir *master snapshot* Stage 4 hanya butuh **~3-5 menit**.
+* Artinya, seluruh pekerjaan kita akan tuntas sebelum pukul 13:10 WIB, **sangat jauh sebelum batas waktu 12 jam Google Colab habis**.
+
+---
+
+### 🛑 Optimalisasi Kuota: Penghentian Sesi CPU Lama (`685924`):
+* Karena data sistem Gentoo telah 100% berpindah dan diekstrak di TPU, sesi lama CPU `685924` sudah tidak diperlukan lagi.
+* Sesi `685924` telah **berhasil dihentikan (`colab stop -s 685924`)** agar tidak membebani pemakaian unit komputasi secara bersamaan.
+* Saat ini hanya ada 1 sesi aktif yang berfokus penuh di node TPU v5e-1.
+
+---
