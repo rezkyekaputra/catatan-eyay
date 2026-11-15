@@ -4141,3 +4141,52 @@ sys-devel/gcc:14 cxx fortran openmp zstd lto graphite default-stack-clash-protec
 * **Eliminasi Frontend Berlebih (`-ada -d -go -rust -objc -objc++ -jit`)**: Memangkas bloat bahasa yang tidak dipakai, mempercepat kompilasi dan menghemat ruang disk chroot.
 
 ---
+
+## 107. Migrasi Runtime ke Google Cloud TPU v5e-1 (24 vCPUs AMD EPYC, 47 GB RAM) & Setup Kompilasi GCC Ultra-Cepat
+
+### 💬 Permintaan Pengguna:
+> *"ganti runtime ke v5e-1 TPU"*
+
+---
+
+### 🚀 Keuntungan Masif Migrasi ke Cloud TPU v5e-1:
+Sesi komputasi Colab CPU standar (`685924`) sebelumnya hanya memiliki **2 vCPUs Intel Xeon** dan **12 GB RAM**. Membangun GCC dengan Link-Time Optimization (`lto`) dan Profile-Guided Optimization (`pgo`) membutuhkan waktu ~1,5 hingga 2 jam.
+
+Dengan beralih ke runtime **TPU v5e-1**:
+* **CPU Core**: Melonjak 12x lipat dari 2 vCPU menjadi **24 vCPUs AMD EPYC 7B13**!
+* **Kapasitas RAM**: Melonjak 4x lipat dari 12 GB menjadi **47 GB RAM**!
+* **Ruang Disk NVMe**: Tersedia **226 GB SSD** ultra-cepat.
+* **Waktu Kompilasi GCC**: Diperkirakan terpangkas drastis dari **~2 jam menjadi hanya ~10–15 menit** dengan `MAKEOPTS="-j24 -l24"`.
+
+---
+
+### 🛠️ Langkah-Langkah Eksekusi:
+
+#### 1. Provisioning Runtime TPU v5e-1
+Sesi baru dialokasikan melalui Colab CLI:
+```bash
+colab new -s tpu --tpu V5E1
+```
+* **Hasil Verifikasi**:
+  - `Session READY`.
+  - ID Sesi: `[tpu] tpu-v5e1-s-r-usw4a0-s5rn2dn3ruem`
+  - Akselerator: Hardware V5E1, Variant TPU, Status Active.
+
+#### 2. Spesifikasi Node TPU VM (`lscpu & free -h`)
+```text
+CPU(s):           24
+Model name:       AMD EPYC 7B13
+Mem Total:        47 GiB
+Mem Available:    45 GiB
+Disk Free:        226 GiB
+```
+
+#### 3. Persiapan & Transfer State Gentoo Stage 4
+* Menyiapkan dependensi kompresi `zstd` pada host TPU:
+  ```bash
+  apt-get update -qq && apt-get install -y -qq zstd
+  ```
+* Membungkus chroot termutakhir `/content/gentoo-stage4/` (3,3 GB bersih dengan seluruh optimasi Python 3.12, FFmpeg VA-API, dan penghapusan AVX2) dari sesi `685924` menjadi arsip master `stage4-optimal.tar.zst`.
+* Menghubungkan transfer cloud-to-cloud berkecepatan tinggi antar kedua VM Google Cloud.
+
+---
