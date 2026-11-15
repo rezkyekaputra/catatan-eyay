@@ -4888,3 +4888,84 @@ Aplikasi browser seperti Google Chrome telah dibersihkan dari sistem Colab ini. 
   Output: `PORTAGE + PYTHON 3.12 + SKYLAKE COMPILER 100% VERIFIED!`
 
 ---
+
+## 125. Audit Aplikasi Terpasang di Stage 4 & Identifikasi Potensi Pemangkasan Lanjutan
+
+### 💬 Permintaan Pengguna:
+> *"cek aplikasi yang terinstall dan lihat ada ga potensi untuk di uninstall"*
+
+---
+
+### 🔍 1. Audit Lengkap Aplikasi & Paket di `@world` (54 Paket)
+Berdasarkan pembacaan berkas [`/var/lib/portage/world`](file:///var/lib/portage/world) dan pohon sistem aktif di chroot Colab, paket-paket yang saat ini terpasang diklasifikasikan sebagai berikut:
+
+1. **Lingkungan Desktop & GUI (X11)**:
+   - Window Manager: `x11-wm/jwm` (Joe's Window Manager, sangat ringan ~2 MB).
+   - Menu & Launcher: `x11-misc/rofi`
+   - Compositor: `x11-misc/picom`
+   - File Manager: `x11-misc/xfe` (X File Explorer, memuat biner `xfe`, `xfi`, `xfp`, `xfw`).
+   - Xorg Core: `x11-base/xorg-server`, `x11-apps/xrandr`, `x11-apps/mesa-progs`.
+
+2. **Audio & Multimedia**:
+   - Audio Server: `media-video/pipewire`, `media-video/wireplumber`
+   - Mixer CLI: `media-sound/pulsemixer`
+   - Akselerasi Grafis: `media-libs/mesa`, `media-libs/libva-intel-driver`
+
+3. **Tipografi & Font (`/usr/share/fonts`)**:
+   - `media-fonts/iosevka`: **380 MB** (Sangat besar karena memuat ratusan berkas TTF varian bobot).
+   - `media-fonts/terminus-font`: **1,8 MB** (Font bitmap/monospace sangat cepat & ringan).
+   - `media-fonts/liberation-fonts`: **4,3 MB** (Pengganti font standar Arial/Times).
+
+4. **Kompilator, Runtime & Bahasa Pemrograman**:
+   - C/C++: `sys-devel/gcc:14`, `sys-devel/mold` (linker kilat), `sys-devel/llvm:19`
+   - Rust: `/opt/rust-bin-1.92.0` (**572 MB**)
+   - Go: `dev-lang/go` (**250 MB** di `/usr/lib/go`)
+   - Node.js: `net-libs/nodejs` (**41 MB** biner `/usr/bin/node`)
+   - Python: `dev-lang/python:3.12`
+   - Lua: `dev-lang/lua`
+
+5. **AI / Machine Learning**:
+   - `sci-ml/ollama`: Biner Ollama (**29 MB** di `/usr/bin/ollama`, menarik `dev-lang/go` 250 MB).
+
+6. **Layanan Jaringan & Cetak**:
+   - Internet/LAN: `net-misc/dhcpcd`, `net-wireless/wpa_supplicant`, `net-vpn/wireguard-tools`
+   - Remote & Waktu: `net-misc/openssh`, `net-misc/openntpd`
+   - Layanan Cetak: `net-print/cups` (menghasilkan `cups.desktop`)
+   - Dial-Up / USB Modem Jadul: `net-dialup/wvdial`, `sys-apps/usb_modeswitch`
+
+7. **Utilitas CLI, Kernel & Pemeliharaan Sistem**:
+   - Editor & Multiplexer: `app-editors/nano`, `app-misc/tmux`, `app-misc/neofetch`, `sys-process/htop`, `sys-apps/pv`
+   - Hak Akses: `app-admin/doas`
+   - Kompresi: `app-arch/7zip`, `app-arch/lz4`, `app-arch/unrar`
+   - Disk & Hardware: `sys-boot/efibootmgr`, `sys-fs/dosfstools`, `sys-apps/usbutils`
+   - Portage Management: `app-portage/gentoolkit`, `app-portage/genlop`, `app-eselect/eselect-repository`
+   - Asisten & VCS: `dev-util/antigravity-cli` (`/usr/bin/agy`), `dev-vcs/git`
+   - Debug & Cache: `dev-debug/gdb`, `dev-debug/strace`, `dev-util/ccache`
+   - Kernel: `sys-kernel/gentoo-sources:6.12.111`, `sys-kernel/linux-firmware` (Intel-only)
+
+---
+
+### ✂️ 2. Kandidat Utama yang Berpotensi Besar untuk Di-Uninstall
+
+Berdasarkan analisis ketergantungan balik (*reverse dependencies*) dan kesesuaian dengan prosesor **Intel Pentium Gold G5500 (2 Cores / 2 Threads, tanpa AVX/AVX2)**:
+
+| No | Nama Paket | Perkiraan Ruang Dipangkas | Status Dependensi (*Reverse Deps*) | Alasan & Rekomendasi |
+| :--- | :--- | :--- | :--- | :--- |
+| **1** | **`sci-ml/ollama`** + **`dev-lang/go`** | **~280 – 300 MB** ⚡ | **0 reverse dependencies** di luar Go | **Sangat Direkomendasikan**. Menjalankan LLM lokal via Ollama di CPU Pentium 2-core non-AVX tidak praktis dan sangat berat. Menghapus Ollama membuat `dev-lang/go` (250 MB) juga bisa dibersihkan total. |
+| **2** | **`media-fonts/iosevka`** | **~380 MB** ⚡ | Font standalone | **Sangat Direkomendasikan**. Folder `/usr/share/fonts/iosevka` memakan 380 MB. Sistem sudah memiliki `terminus-font` (1,8 MB) dan `liberation-fonts` (4,3 MB) yang jauh lebih hemat. Bisa dihapus atau disisakan hanya varian Regular jika masih dibutuhkan. |
+| **3** | **`net-libs/nodejs`** | **~45 – 50 MB** | **0 reverse dependencies** | **Direkomendasikan** jika Anda tidak menjalankan aplikasi web server/skrip JavaScript di CLI secara lokal pada PC ini. |
+| **4** | **`net-print/cups`** | **~30 MB** | Layanan print server | **Direkomendasikan** jika PC Pentium tidak dihubungkan langsung ke mesin printer fisik via USB/jaringan. Juga membersihkan menu `cups.desktop`. |
+| **5** | **`net-dialup/wvdial`** + `sys-apps/usb_modeswitch` | **~20 MB** | Dial-up modem PPP klasik | **Direkomendasikan** jika koneksi internet menggunakan Wi-Fi atau kabel LAN biasa (bukan modem dial-up USB GSM jadul). |
+| **6** | **`dev-util/ccache`** & **`dev-debug/gdb`** | **~70 – 90 MB** | Ccache: 0 r-deps, GDB: hanya debugedit | **Opsional**. Berguna jika sering kompilasi atau debug C/C++. Jika sistem murni desktop harian siap pakai, bisa dipangkas. |
+
+---
+
+### 💡 3. Dampak ke Penghematan Ukuran & Efisiensi Rebuild Python 3.12:
+1. **Potensi Pengurangan Ukuran**:
+   - Jika paket 1 s.d. 5 dipangkas: Menghemat **~750 MB – 850 MB**.
+   - Ukuran sistem dari **5,6 GB** akan menyusut menjadi **~4,7 GB**!
+   - Ukuran arsip `.tar.zst` akhir diperkirakan hanya **~1,2 – 1,4 GB**!
+2. **Keuntungan untuk Rebuild Python 3.12**:
+   - Menghapus paket yang tidak diinginkan sekarang mencegah Portage mengkompilasi ulang modul/binding Python yang tidak perlu, sehingga proses finalisasi Python 3.12 jauh lebih cepat dan bersih.
+
+---
